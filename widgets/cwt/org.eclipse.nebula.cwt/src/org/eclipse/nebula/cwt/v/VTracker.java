@@ -369,8 +369,8 @@ public class VTracker implements DisposeListener {
 			if(oldFocus != null && !oldFocus.isDisposed()) {
 				oldFocus.redraw();
 			}
+			notifyWidgetFocusListeners(focusControl, oldFocus);
 			if(newFocus != null) {
-				notifyWidgetFocusListeners(focusControl, oldFocus);
 				return true;
 			}
 			return false;
