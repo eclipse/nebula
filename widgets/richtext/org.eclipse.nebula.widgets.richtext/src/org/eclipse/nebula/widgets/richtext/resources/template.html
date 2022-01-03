@@ -185,7 +185,11 @@
         				//notify the ModifyListener
         				'change' 			: function() { textModified(); },
         				//ensure the key pressed event is fired if Enter is pressed
-        				'key'				: function(event) { event.data.preventDefault(false); },
+        				'key'				: function(event) { 
+							if (event.data.keyCode == 13) {
+								event.data.preventDefault(false);
+							}
+						},
         				//notify the KeyListener
         				'contentDom'		: function() {
         				    this.document.on('keydown', function(evt) {
@@ -200,7 +204,7 @@
         				    		//open the ckeditor find and replace dialog
         				    		CKEDITOR.instances.editor.execCommand('replace')
         				    	}
-        				    	
+
         				        keyPressed(evt.data.getKey(), evt.data.getKeystroke());
         				    });
         				    this.document.on('keyup', function(evt) {
