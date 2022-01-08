@@ -78,6 +78,7 @@
 		<module>../../widgets/fontawesome</module>
 		<module>../../widgets/roundedswitch</module>
 		<module>../../widgets/segmentedbar</module>
+		<module>../../widgets/tiles</module>
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>
