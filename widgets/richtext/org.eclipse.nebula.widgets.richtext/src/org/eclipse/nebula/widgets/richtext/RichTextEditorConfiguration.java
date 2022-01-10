@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2016, 2019 Dirk Fauth.
+ * Copyright (c) 2016, 2022 Dirk Fauth.
  *
  *
  * This program and the accompanying materials
@@ -150,6 +150,11 @@ public class RichTextEditorConfiguration {
 	 * Default is <code>true</code>.
 	 */
 	private boolean removeFormat = true;
+
+	/**
+	 * Configure if the IE should auto format URLs or not.
+	 */
+	private boolean autoUrlFormattingDisabled = false;
 
 	private Set<String> removedButtons = new HashSet<>();
 
@@ -642,4 +647,28 @@ public class RichTextEditorConfiguration {
 		}
 	}
 
+	/**
+	 * 
+	 * @return <code>true</code> if the auto-formatting of URLs in IE is disabled,
+	 *         <code>false</code> if not.
+	 *
+	 * @since 1.5
+	 */
+	public boolean isAutoUrlFormattingDisabled() {
+		return this.autoUrlFormattingDisabled;
+	}
+
+	/**
+	 * Configure if the auto-formatting of URLs should be disabled on Windows systems with an
+	 * Internet Explorer as system browser.
+	 * 
+	 * @param autoUrlFormattingDisabled
+	 *            <code>true</code> if the auto-formatting of URLs in IE should be disabled,
+	 *            <code>false</code> if not.
+	 * 
+	 * @since 1.5
+	 */
+	public void setAutoUrlFormattingDisabled(boolean autoUrlFormattingDisabled) {
+		this.autoUrlFormattingDisabled = autoUrlFormattingDisabled;
+	}
 }

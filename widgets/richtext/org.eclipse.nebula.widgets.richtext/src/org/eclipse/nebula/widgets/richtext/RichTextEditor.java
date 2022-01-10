@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2015, 2020 CEA LIST.
+ * Copyright (c) 2015, 2022 CEA LIST.
  *
  *
  * This program and the accompanying materials
@@ -288,6 +288,10 @@ public class RichTextEditor extends Composite {
 				CKEDITOR_SHIFT = (Double) browser.evaluate("return getCKEditorSHIFT()");
 
 				editorLoaded = true;
+
+				if (RichTextEditor.this.editorConfig.isAutoUrlFormattingDisabled()) {
+					browser.evaluate("document.execCommand('AutoUrlDetect', false, false);");
+				}
 
 				// only add this function for resizable inline editing
 				if (resizable && embedded) {
