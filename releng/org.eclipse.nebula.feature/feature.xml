@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.feature"
       label="Nebula Widgets"
-      version="2.7.0.qualifier"
+      version="2.6.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
