@@ -302,7 +302,11 @@ public class TextAssist extends Composite {
 			}
 
 			popup.setLocation(x, y);
-			popup.setVisible(true);
+			if (!popup.isVisible()) {
+				popup.setVisible(true);
+				popup.moveAbove(getShell());
+			}
+
 			if (IS_LINUX) {
 				getDisplay().timerExec(0, () -> {
 					table.forceFocus();
