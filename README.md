@@ -12,11 +12,14 @@ You'll find update sites for all releases and also for the latest build
 * [Questions](https://github.com/eclipse/nebula/discussions) 
 * [Mailing list](https://dev.eclipse.org/mailman/listinfo/nebula-dev)
 
-## Patches 
+## Contribute
 We can accept your patches if you have signed the [Eclipse Contributors Agreement (ECA)](https://wiki.eclipse.org/ECA) 
 which ensures users of these libraries that they can use your code without getting into any legal trouble.
 
 For every patch we require a [corresponding GitHub issue.](https://github.com/eclipse/nebula/issues)
+
+## Setup a Development enviroment
+* [![Create Eclipse Development Environment for Eclipse Nebula](https://download.eclipse.org/oomph/www/setups/svg/nebua.svg)](https://www.eclipse.org/setups/installer/?url=https://raw.githubusercontent.com/eclipse/nebula/master/oomph.setup&show=true "Click to open Eclipse-Installer Auto Launch or drag into your running installer")
 
 ## Building on our build server
 After admin approval, pull requests gets build by these two jobs:
