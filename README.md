@@ -8,7 +8,8 @@ Please have a look at https://www.eclipse.org/nebula/downloads.php
 You'll find update sites for all releases and also for the latest build
 
 ## Contact
-* [Issues/Questions](https://github.com/eclipse/nebula/issues)
+* [Issues](https://github.com/eclipse/nebula/issues)
+* [Questions](https://github.com/eclipse/nebula/discussions) 
 * [Mailing list](https://dev.eclipse.org/mailman/listinfo/nebula-dev)
 
 ## Patches 
