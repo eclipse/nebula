@@ -15,7 +15,7 @@ You'll find update sites for all releases and also for the latest build
 We can accept your patches if you have signed the [Eclipse Contributors Agreement (ECA)](https://wiki.eclipse.org/ECA) 
 which ensures users of these libraries that they can use your code without getting into any legal trouble.
 
-For every patch we require a [corresponding Bugzilla issue.](https://bugs.eclipse.org/bugs/)
+For every patch we require a [corresponding GitHub issue.](https://github.com/eclipse/nebula/issues)
 
 ## Building on our build server
 After admin approval, pull requests gets build by these two jobs:
