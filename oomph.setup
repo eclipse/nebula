@@ -107,11 +107,11 @@
       <repositoryList
           name="Nebula Dependencies">
         <repository
-            url="http://download.eclipse.org/nebula/snapshot"/>
+            url="https://download.eclipse.org/nebula/snapshot"/>
         <repository
-            url="http://download.eclipse.org/nebula/incubation/snapshot"/>
+            url="https://download.eclipse.org/nebula/incubation/snapshot"/>
         <repository
-            url="http://download.eclipse.org/tools/gef/updates/legacy/integration"/>
+            url="https://download.eclipse.org/tools/gef/updates/legacy/integration"/>
       </repositoryList>
     </targlet>
   </setupTask>
