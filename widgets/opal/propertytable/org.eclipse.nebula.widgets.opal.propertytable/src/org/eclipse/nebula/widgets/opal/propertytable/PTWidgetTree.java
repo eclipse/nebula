@@ -167,9 +167,11 @@ public class PTWidgetTree extends AbstractPTWidget {
 			}
 			fillData();
 		} finally {
-			tree.setRedraw(true);
-			tree.redraw();
-			tree.update();
+			if (tree != null) {
+				tree.setRedraw(true);
+				tree.redraw();
+				tree.update();
+		}
 		}
 	}
 
