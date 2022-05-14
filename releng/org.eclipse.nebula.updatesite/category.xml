@@ -1,186 +1,186 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.nebula.widgets.xviewer.feature_1.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.xviewer.feature" version="1.1.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.xviewer.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.xviewer.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.ganttchart.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.ganttchart.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.ganttchart.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.ganttchart.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.pshelf.css.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.pshelf.css.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.pshelf.css.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.pshelf.css.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.pshelf.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.pshelf.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.pshelf.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.pshelf.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.grid.feature_1.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.grid.feature" version="1.1.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.grid.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.grid.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.grid.css.feature_1.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.grid.css.feature" version="1.1.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.grid.css.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.grid.css.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.richtext.feature_1.5.0.qualifier.jar" id="org.eclipse.nebula.widgets.richtext.feature" version="1.5.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.richtext.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.richtext.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.paperclips.feature_2.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.paperclips.feature" version="2.1.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.paperclips.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.paperclips.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.pgroup.feature_0.0.0.jar" id="org.eclipse.nebula.widgets.pgroup.feature" version="0.0.0">
+   <feature url="features/org.eclipse.nebula.widgets.pgroup.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.pgroup.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.visualization.feature_2.1.0.qualifier.jar" id="org.eclipse.nebula.visualization.feature" version="2.1.0.qualifier">
+   <feature url="features/org.eclipse.nebula.visualization.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.visualization.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.compositetable.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.compositetable.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.compositetable.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.compositetable.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.gallery.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.gallery.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.gallery.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.gallery.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.examples.feature_1.0.4.qualifier.jar" id="org.eclipse.nebula.examples.feature" version="1.0.4.qualifier">
+   <feature url="features/org.eclipse.nebula.examples.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.examples.feature" version="2.6.0.qualifier">
       <category name="Nebula Examples View"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.effects.stw.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.effects.stw.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.effects.stw.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.effects.stw.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.geomap.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.geomap.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.geomap.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.geomap.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.examples.release.feature_1.1.0.qualifier.jar" id="org.eclipse.nebula.examples.release.feature" version="1.1.0.qualifier">
+   <feature url="features/org.eclipse.nebula.examples.release.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.examples.release.feature" version="2.6.0.qualifier">
       <category name="Nebula Release all Widgets and Examples"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.oscilloscope.feature_1.4.0.qualifier.jar" id="org.eclipse.nebula.widgets.oscilloscope.feature" version="1.4.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.oscilloscope.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.oscilloscope.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.cwt.feature_1.1.0.qualifier.jar" id="org.eclipse.nebula.cwt.feature" version="1.1.0.qualifier">
+   <feature url="features/org.eclipse.nebula.cwt.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.cwt.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.breadcrumb.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.breadcrumb.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.breadcrumb.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.breadcrumb.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.checkboxgroup.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.checkboxgroup.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.checkboxgroup.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.checkboxgroup.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.columnbrowser.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.columnbrowser.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.columnbrowser.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.columnbrowser.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.commons.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.commons.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.commons.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.commons.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.dialog.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.dialog.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.dialog.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.dialog.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.duallist.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.duallist.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.duallist.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.duallist.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.header.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.header.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.header.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.header.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.heapmanager.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.heapmanager.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.heapmanager.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.heapmanager.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.logindialog.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.logindialog.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.logindialog.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.logindialog.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.multichoice.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.multichoice.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.multichoice.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.multichoice.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.notifier.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.notifier.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.notifier.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.notifier.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.preferencewindow.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.preferencewindow.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.preferencewindow.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.preferencewindow.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.promptsupport.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.promptsupport.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.promptsupport.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.promptsupport.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.propertytable.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.propertytable.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.propertytable.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.propertytable.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.rangeslider.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.rangeslider.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.rangeslider.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.rangeslider.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.starrating.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.starrating.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.starrating.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.starrating.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.textassist.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.textassist.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.textassist.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.textassist.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.tipoftheday.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.tipoftheday.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.tipoftheday.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.tipoftheday.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.titledseparator.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.titledseparator.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.titledseparator.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.titledseparator.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.roundedtoolbar.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.roundedtoolbar.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.roundedtoolbar.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.roundedtoolbar.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.calculator.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.calculator.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.calculator.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.calculator.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.horizontalspinner.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.horizontalspinner.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.horizontalspinner.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.horizontalspinner.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.launcher.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.launcher.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.launcher.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.launcher.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.panels.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.panels.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.panels.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.panels.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.switchbutton.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.switchbutton.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.switchbutton.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.switchbutton.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.progresscircle.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.progresscircle.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.progresscircle.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.progresscircle.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.nebulaslider.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.nebulaslider.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.nebulaslider.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.nebulaslider.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.floatingtext.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.floatingtext.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.floatingtext.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.floatingtext.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.splitbutton.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.splitbutton.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.splitbutton.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.splitbutton.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.badgedlabel.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.badgedlabel.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.badgedlabel.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.badgedlabel.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.passwordrevealer.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.passwordrevealer.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.passwordrevealer.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.passwordrevealer.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.ctreecombo.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.ctreecombo.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.ctreecombo.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.ctreecombo.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.led.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.led.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.led.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.led.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.stepbar.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.stepbar.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.stepbar.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.stepbar.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.fontawesome.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.fontawesome.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.fontawesome.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.fontawesome.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.chips.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.chips.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.chips.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.chips.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.tablecombo.css.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.tablecombo.css.feature" version="1.2.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.tablecombo.css.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.tablecombo.css.feature" version="1.2.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.feature" version="2.6.0.qualifier">
       <category name="Nebula Release all Widgets and Examples"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.cdatetime.feature_0.0.0.jar" id="org.eclipse.nebula.widgets.cdatetime.feature" version="0.0.0">
+   <feature url="features/org.eclipse.nebula.widgets.cdatetime.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.cdatetime.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.cdatetime.css.feature_1.4.0.qualifier.jar" id="org.eclipse.nebula.widgets.cdatetime.css.feature" version="1.4.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.cdatetime.css.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.cdatetime.css.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.oscilloscope.css.feature_1.4.0.qualifier.jar" id="org.eclipse.nebula.widgets.oscilloscope.css.feature" version="1.4.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.oscilloscope.css.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.oscilloscope.css.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.segmentedbar.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.segmentedbar.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.segmentedbar.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.segmentedbar.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.tiles.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.tiles.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.tiles.feature_2.6.0.qualifier.jar" id="org.eclipse.nebula.widgets.tiles.feature" version="2.6.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <bundle id="org.eclipse.nebula.widgets.tablecombo" version="1.2.0.qualifier">

@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.widgets.xviewer.feature"
       label="%featureName"
-      version="1.1.0.qualifier"
+      version="2.6.0.qualifier"
       provider-name="%providerName">
 
    <description url="http://www.eclipse.org/nebula/widgets/xviewer/xviewer.php">

@@ -21,13 +21,13 @@ Contributors:
 
 	<parent>
 		<groupId>org.eclipse.nebula</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>2.6.0-SNAPSHOT</version>
 		<artifactId>starrating</artifactId>
 	</parent>
 
   <artifactId>org.eclipse.nebula.widgets.opal.starrating.feature</artifactId>
   <packaging>eclipse-feature</packaging>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>2.6.0-SNAPSHOT</version>
 
   <name>Star Rating Feature</name>
 

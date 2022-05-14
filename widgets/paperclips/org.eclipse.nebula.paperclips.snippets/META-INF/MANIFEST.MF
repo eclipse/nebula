@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PaperClips Snippets Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.paperclips.snippets
-Bundle-Version: 2.1.0.qualifier
+Bundle-Version: 2.6.0.qualifier
 Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.nebula.paperclips.core;bundle-version="[2.1.0,3.0.0)",
  org.eclipse.nebula.paperclips.widgets;bundle-version="[2.1.0,3.0.0)",

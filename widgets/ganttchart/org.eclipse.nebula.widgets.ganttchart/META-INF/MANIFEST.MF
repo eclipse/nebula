@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Nebula Ganttchart Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.ganttchart
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 2.6.0.qualifier
 Require-Bundle: org.eclipse.swt
 Export-Package: org.eclipse.nebula.widgets.ganttchart,
  org.eclipse.nebula.widgets.ganttchart.dnd,

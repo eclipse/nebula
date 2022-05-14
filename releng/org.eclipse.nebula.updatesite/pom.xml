@@ -28,6 +28,6 @@ Contributors:
 	<packaging>eclipse-repository</packaging>
 
 	<name>Eclipse Nebula Plugin Update Site</name>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>2.6.0-SNAPSHOT</version>
 
 </project>

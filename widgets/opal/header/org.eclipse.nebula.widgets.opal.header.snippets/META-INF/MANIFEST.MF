@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Opal Header Snippets Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.opal.header.snippets
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 2.6.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 RRequire-Bundle: org.eclipse.nebula.widgets.opal.header;bundle-version="1.0.0"
 Export-Package: org.eclipse.nebula.widgets.opal.header.snippets
-Require-Bundle: org.eclipse.nebula.widgets.opal.header;bundle-version="1.0.0",
+Require-Bundle: org.eclipse.nebula.widgets.opal.header,
  org.eclipse.swt

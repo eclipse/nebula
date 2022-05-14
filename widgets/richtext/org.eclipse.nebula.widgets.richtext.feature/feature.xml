@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.widgets.richtext.feature"
       label="Nebula RichText Feature"
-      version="1.5.0.qualifier"
+      version="2.6.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Opal DualList Snippets
 Bundle-SymbolicName: org.eclipse.nebula.widgets.opal.duallist.snippets
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 2.6.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.nebula.widgets.opal.duallist;bundle-version="1.0.0",
  org.eclipse.swt

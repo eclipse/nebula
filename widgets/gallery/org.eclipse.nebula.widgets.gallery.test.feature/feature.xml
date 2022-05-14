@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.widgets.gallery.test.feature"
       label="Test.feature"
-      version="1.0.0">
+      version="2.6.0.qualifier">
 
    <description url="http://eclipse.org/nebula">
       Gallery

@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.widgets.opal.notifier.feature"
       label="Nebula Opal Notifier Widget"
-      version="1.0.0.qualifier"
+      version="2.6.0.qualifier"
       provider-name="Eclipse Nebula, Laurent CARON">
 
    <description url="http://eclipse.org/nebula">
