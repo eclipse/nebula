@@ -93,7 +93,7 @@
    <feature url="features/org.eclipse.nebula.widgets.opal.promptsupport.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.promptsupport.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.opal.propertytable.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.propertytable.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.opal.propertytable.feature_1.0.1.qualifier.jar" id="org.eclipse.nebula.widgets.opal.propertytable.feature" version="1.0.1.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.opal.rangeslider.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.rangeslider.feature" version="1.0.0.qualifier">
