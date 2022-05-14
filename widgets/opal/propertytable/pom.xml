@@ -4,7 +4,7 @@
 	<groupId>org.eclipse.nebula</groupId>
 	<artifactId>propertytable</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 
 	<parent>
 		<groupId>org.eclipse.nebula</groupId>
