@@ -5,7 +5,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -15,7 +15,6 @@ package org.eclipse.nebula.widgets.xviewer.core.model;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.nebula.widgets.xviewer.core.util.XViewerUtil;
 
 /**
@@ -66,6 +65,9 @@ public class CustomizeData implements Comparable<CustomizeData> {
    public String getXml(boolean visibleColumnsOnly) {
       StringBuilder sb = new StringBuilder(
          "<XTreeProperties name=\"" + name + "\" namespace=\"" + nameSpace + "\" guid=\"" + guid + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+      sb.append("<personal>");
+      sb.append(personal);
+      sb.append("</personal>");
       sb.append(sortingData.getXml());
       sb.append(filterData.getXml());
       sb.append(columnFilterData.getXml());
@@ -75,6 +77,7 @@ public class CustomizeData implements Comparable<CustomizeData> {
    }
 
    private static Pattern pattern = Pattern.compile("name=\"(.*?)\".*?namespace=\"(.*?)\".*?guid=\"(.*?)\""); //$NON-NLS-1$
+   private static Pattern personalPattern = Pattern.compile("<personal>(.*?)</personal>"); //$NON-NLS-1$
 
    public void setFromXml(String xml) {
       Matcher m = pattern.matcher(xml);
@@ -86,6 +89,10 @@ public class CustomizeData implements Comparable<CustomizeData> {
          String name2 = "Invalid customize format for " + xml.substring(0, 50);
          setName(name2); //$NON-NLS-1$
          return;
+      }
+      m = personalPattern.matcher(xml);
+      if (m.find()) {
+         personal = m.group(1).equals("true");
       }
       sortingData.setFromXml(xml);
       filterData.setFromXml(xml);
