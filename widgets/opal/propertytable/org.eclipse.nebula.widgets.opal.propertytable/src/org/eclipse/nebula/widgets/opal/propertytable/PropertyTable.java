@@ -184,11 +184,17 @@ public class PropertyTable extends Composite {
 		if (bulkUpdateInProgress) {
 			return this;
 		}
-		widget = widget.disposeAndBuild(this);
-		if (hasBeenBuilt) {
-			setLayout(new FillLayout());
-			widget.build();
-			layout();
+		try {
+			setRedraw(false);
+			widget = widget.disposeAndBuild(this);
+			if (hasBeenBuilt) {
+				setLayout(new FillLayout());
+				widget.build();
+				layout();
+			}
+		} finally {
+			setRedraw(true);
+			redraw();
 		}
 		return this;
 	}
