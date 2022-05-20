@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Laurent CARON
+ * Copyright (c) 2012-2022 Laurent CARON
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@
 package org.eclipse.nebula.widgets.opal.propertytable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -102,7 +102,7 @@ public class PTWidgetTree extends AbstractPTWidget {
 		if (getParentPropertyTable().sorted) {
 			data = new TreeMap<>();
 		} else {
-			data = new HashMap<>();
+			data = new LinkedHashMap<>();
 		}
 
 		for (final PTProperty p : getParentPropertyTable().getPropertiesAsList()) {

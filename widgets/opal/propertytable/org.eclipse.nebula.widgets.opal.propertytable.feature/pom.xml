@@ -21,13 +21,13 @@ Contributors:
 
 	<parent>
 		<groupId>org.eclipse.nebula</groupId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.0.2-SNAPSHOT</version>
 		<artifactId>propertytable</artifactId>
 	</parent>
 
   <artifactId>org.eclipse.nebula.widgets.opal.propertytable.feature</artifactId>
   <packaging>eclipse-feature</packaging>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.2-SNAPSHOT</version>
 
   <name>Property Table Feature</name>
 
