@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Nebula Oscilloscope CSS Plugin
 Bundle-SymbolicName: org.eclipse.nebula.widgets.oscilloscope.css;singleton:=true
 Bundle-Version: 1.4.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.swt,
  org.eclipse.nebula.widgets.oscilloscope,
  org.eclipse.e4.ui.services;bundle-version="0.10.0",
@@ -11,5 +11,4 @@ Require-Bundle: org.eclipse.swt,
  org.eclipse.e4.ui.css.swt;bundle-version="0.10.0"
 Export-Package: org.eclipse.nebula.widgets.oscilloscope.css
 Bundle-Vendor: Eclipse.org
-Import-Package: org.w3c.dom;version="2.0.0",
- org.w3c.dom.css;version="2.0.0"
+Automatic-Module-Name: org.eclipse.nebula.widgets.oscilloscope.css

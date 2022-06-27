@@ -17,4 +17,5 @@ Export-Package: org.eclipse.nebula.paperclips.core,
  org.eclipse.nebula.paperclips.core.text,
  org.eclipse.nebula.paperclips.core.text.internal
 Bundle-ClassPath: .
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Automatic-Module-Name: org.eclipse.nebula.paperclips.core
