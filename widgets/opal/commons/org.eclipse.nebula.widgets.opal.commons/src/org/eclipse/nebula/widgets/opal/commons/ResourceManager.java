@@ -70,8 +70,11 @@ public class ResourceManager {
 
 	public static final String MULTICHOICE_MESSAGE = "multichoice.message";
 	public static final String MULTICHOICE_MESSAGE_PLURAL = "multichoice.message.plural";
-	
+
 	public static final String APPLY = "apply";
+
+	public static final String SELECT_ALL = "selectAll";
+	public static final String DESELECT_ALL = "deselectAll";
 
 	/**
 	 * Get a translated label
