@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -78,6 +79,7 @@ public class MultiChoice<T> extends Composite {
 	private String separator;
 	private MultiChoiceLabelProvider labelProvider;
 	private int preferredHeightOfPopup;
+	private boolean showSelectUnselectAll;
 
 	/**
 	 * Constructs a new instance of this class given its parent.
@@ -176,14 +178,11 @@ public class MultiChoice<T> extends Composite {
 			}
 
 			if (getShell() == event.widget) {
-				getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (isDisposed()) {
-							return;
-						}
-						handleFocusEvents(SWT.FocusOut);
+				getDisplay().asyncExec(() -> {
+					if (isDisposed()) {
+						return;
 					}
+					handleFocusEvents(SWT.FocusOut);
 				});
 			}
 		};
@@ -1022,8 +1021,7 @@ public class MultiChoice<T> extends Composite {
 			return;
 		}
 
-		for (int i = 0; i < this.checkboxes.size(); i++) {
-			final Button currentButton = this.checkboxes.get(i);
+		for (final Button currentButton : this.checkboxes) {
 			if (!currentButton.isDisposed()) {
 				final Object content = currentButton.getData();
 				currentButton.setSelection(this.selection.contains(content));
@@ -1051,7 +1049,18 @@ public class MultiChoice<T> extends Composite {
 	 */
 	private void createPopup() {
 		this.popup = new Shell(getShell(), SWT.NO_TRIM | SWT.ON_TOP);
-		this.popup.setLayout(new FillLayout());
+
+		Composite parent;
+		if (showSelectUnselectAll) {
+			popup.setLayout(new FillLayout());
+			parent = new Composite(popup, SWT.BORDER);
+		} else {
+			parent = popup;
+		}
+		final GridLayout gridLayout = new GridLayout(2, true);
+		gridLayout.marginWidth = gridLayout.marginHeight = gridLayout.horizontalSpacing = 0;
+		gridLayout.verticalSpacing = 10;
+		parent.setLayout(gridLayout);
 
 		final int[] popupEvents = { SWT.Close, SWT.Deactivate, SWT.Dispose };
 		for (final int popupEvent : popupEvents) {
@@ -1062,7 +1071,24 @@ public class MultiChoice<T> extends Composite {
 			return;
 		}
 
-		this.scrolledComposite = new ScrolledComposite(this.popup, SWT.BORDER | SWT.V_SCROLL);
+		if (showSelectUnselectAll) {
+			final Link selectAllLink = new Link(parent, SWT.NONE);
+			selectAllLink.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, false, false));
+			selectAllLink.setText("<a>" + ResourceManager.getLabel(ResourceManager.SELECT_ALL) + "</a>");
+			selectAllLink.addListener(SWT.Selection, e -> {
+				changeButtonState(true);
+			});
+
+			final Link deselectAllLink = new Link(parent, SWT.NONE);
+			deselectAllLink.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, false, false));
+			deselectAllLink.setText("<a>" + ResourceManager.getLabel(ResourceManager.DESELECT_ALL) + "</a>");
+			deselectAllLink.addListener(SWT.Selection, e -> {
+				changeButtonState(false);
+			});
+		}
+
+		this.scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | (showSelectUnselectAll ? SWT.NONE : SWT.BORDER));
+		this.scrolledComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
 		final Composite content = new Composite(this.scrolledComposite, SWT.NONE);
 		content.setLayout(new GridLayout(this.numberOfColumns, true));
 
@@ -1105,6 +1131,12 @@ public class MultiChoice<T> extends Composite {
 		this.scrolledComposite.setExpandVertical(true);
 		content.pack();
 		this.preferredHeightOfPopup = content.getSize().y;
+	}
+
+	private void changeButtonState(final boolean checked) {
+		for (final Button checkBoxButton : checkboxes) {
+			checkBoxButton.setSelection(checked);
+		}
 	}
 
 	/**
@@ -1374,4 +1406,25 @@ public class MultiChoice<T> extends Composite {
 		checkNullElement();
 		return text.getText();
 	}
+
+	/**
+	 * @return <code>true</code> if the hyperlinks "Select all" and "Deselect all" are displayted
+	 */
+	public boolean isShowSelectUnselectAll() {
+		checkWidget();
+		return showSelectUnselectAll;
+	}
+
+	/**
+	 * @param showSelectUnselectAll set to "true" to display the hyperlinks "Select all" and "Deselect all"
+	 */
+	public void setShowSelectUnselectAll(final boolean showSelectUnselectAll) {
+		checkWidget();
+		this.showSelectUnselectAll = showSelectUnselectAll;
+		if (popup != null && !popup.isDisposed()) {
+			popup.dispose();
+		}
+		createPopup();
+	}
+
 }

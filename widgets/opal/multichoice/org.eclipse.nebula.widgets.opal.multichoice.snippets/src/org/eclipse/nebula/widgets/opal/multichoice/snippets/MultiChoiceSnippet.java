@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.nebula.widgets.opal.multichoice.MultiChoice;
-import org.eclipse.nebula.widgets.opal.multichoice.MultiChoiceLabelProvider;
 import org.eclipse.nebula.widgets.opal.multichoice.MultiChoiceSelectionListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -95,6 +94,16 @@ public class MultiChoiceSnippet {
 		mcSimple.addAll(euroZone);
 		addButons(mcSimple);
 
+		drawLabel(shell, "Simple Multichoice with select/deselect all links:");
+		final MultiChoice<String> mcSelectDeselectAll = new MultiChoice<>(shell, SWT.READ_ONLY);
+		mcSelectDeselectAll.setEditable(false);
+		mcSelectDeselectAll.setShowSelectUnselectAll(true);
+		final GridData gridDataSelectDeselectAll = new GridData(GridData.FILL, GridData.BEGINNING, true, true);
+		gridDataSelectDeselectAll.widthHint = 200;
+		mcSelectDeselectAll.setLayoutData(gridDataSelectDeselectAll);
+		mcSelectDeselectAll.addAll(euroZone);
+		addButons(mcSelectDeselectAll);
+
 		drawLabel(shell, "Multichoice with beans :");
 		final MultiChoice<Country> mcBeans = new MultiChoice<>(shell, SWT.READ_ONLY);
 		mcBeans.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
@@ -157,14 +166,11 @@ public class MultiChoiceSnippet {
 		}
 		final MultiChoice<String> mcLotOfData = new MultiChoice<>(shell, SWT.NONE);
 		mcLotOfData.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
-		mcLotOfData.setLabelProvider(new MultiChoiceLabelProvider() {
-			@Override
-			public String getText(final Object element) {
-				if (element == null) {
-					return "";
-				}
-				return (String) element;
+		mcLotOfData.setLabelProvider(element -> {
+			if (element == null) {
+				return "";
 			}
+			return (String) element;
 		});
 		mcLotOfData.addAll(data);
 		addButons(mcLotOfData);
@@ -177,8 +183,8 @@ public class MultiChoiceSnippet {
 		mcNotEditable.addAll(euroZone);
 		mcNotEditable.setEditable(false);
 		addButons(mcNotEditable);
-		
-		
+
+
 		drawLabel(shell, "Not Enabled Multichoice :");
 		final MultiChoice<String> mcNotEnabled = new MultiChoice<>(shell, SWT.READ_ONLY);
 		final GridData gridDataNotEnabled = new GridData(GridData.FILL, GridData.BEGINNING, true, true);
