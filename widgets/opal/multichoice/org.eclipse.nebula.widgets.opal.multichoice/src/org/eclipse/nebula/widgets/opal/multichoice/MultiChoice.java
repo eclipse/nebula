@@ -1077,6 +1077,7 @@ public class MultiChoice<T> extends Composite {
 			selectAllLink.setText("<a>" + ResourceManager.getLabel(ResourceManager.SELECT_ALL) + "</a>");
 			selectAllLink.addListener(SWT.Selection, e -> {
 				changeButtonState(true);
+				setLabel();
 			});
 
 			final Link deselectAllLink = new Link(parent, SWT.NONE);
@@ -1084,6 +1085,7 @@ public class MultiChoice<T> extends Composite {
 			deselectAllLink.setText("<a>" + ResourceManager.getLabel(ResourceManager.DESELECT_ALL) + "</a>");
 			deselectAllLink.addListener(SWT.Selection, e -> {
 				changeButtonState(false);
+				setLabel();
 			});
 		}
 
