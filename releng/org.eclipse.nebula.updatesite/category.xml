@@ -165,7 +165,7 @@
    <feature url="features/org.eclipse.nebula.widgets.tablecombo.css.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.tablecombo.css.feature" version="1.2.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.feature_2.7.0.qualifier.jar" id="org.eclipse.nebula.feature" version="2.7.0.qualifier">
+   <feature url="features/org.eclipse.nebula.feature_2.7.1.qualifier.jar" id="org.eclipse.nebula.feature" version="2.7.1.qualifier">
       <category name="Nebula Release all Widgets and Examples"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.cdatetime.feature_0.0.0.jar" id="org.eclipse.nebula.widgets.cdatetime.feature" version="0.0.0">
