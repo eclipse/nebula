@@ -22,6 +22,8 @@
 package org.eclipse.nebula.widgets.tablecombo;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -86,9 +88,9 @@ import org.eclipse.swt.widgets.Widget;
  */
 
 public class TableCombo extends Composite {
-	
+
 	private static final boolean IS_GTK = SWT.getPlatform().equalsIgnoreCase("gtk");
-	
+
 	private static int newStyle;
 	private final boolean hasBorder;
 	private Shell popup;
@@ -116,6 +118,7 @@ public class TableCombo extends Composite {
 	private boolean closePupupAfterSelection = true;
 	private boolean selectOnEnter = true;
 	private boolean updateTextWithinSelection = true;
+	private final List<Shell> shellsToBeDisposed = new ArrayList<>();
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value
@@ -219,7 +222,13 @@ public class TableCombo extends Composite {
 
 		renderer = new DefaultTableComboRenderer(this);
 
-		addDisposeListener(e -> popup.dispose());
+		addDisposeListener(e -> {
+			for (final Shell shell : shellsToBeDisposed) {
+				if (shell != null && !shell.isDisposed()) {
+					shell.dispose();
+				}
+			}
+		});
 	}
 
 	private void createListeners() {
@@ -706,6 +715,7 @@ public class TableCombo extends Composite {
 		if (selectionIndex != -1) {
 			table.setSelection(selectionIndex);
 		}
+		shellsToBeDisposed.add(popup);
 	}
 
 	/**
@@ -754,6 +764,11 @@ public class TableCombo extends Composite {
 		// if not visible then return
 		if (!isVisible()) {
 			return;
+		}
+
+		if (!getShell().equals(popup.getParent())) {
+			// Can happen when a part is detached
+			recreatePopup();
 		}
 
 		// get the size of the TableCombo.
@@ -905,6 +920,23 @@ public class TableCombo extends Composite {
 		// set the popup visible
 		popup.setVisible(true);
 
+	}
+
+	private void recreatePopup() {
+		// Create shell and table
+		final Shell tempShell = new Shell(getShell(), SWT.NO_TRIM | SWT.ON_TOP);
+
+		// Add popup listeners
+		final int[] popupEvents = { SWT.Close, SWT.Paint, SWT.Deactivate, SWT.Help };
+		for (final int popupEvent : popupEvents) {
+			popup.removeListener(popupEvent, listener);
+			tempShell.addListener(popupEvent, listener);
+		}
+		table.setParent(tempShell);
+
+		shellsToBeDisposed.add(tempShell);
+
+		popup = tempShell;
 	}
 
 	/*
@@ -2425,10 +2457,12 @@ public class TableCombo extends Composite {
 
 		// set color if requested
 		if (showColorWithinSelection) {
-			if (renderer.getForeground(index) != null)
+			if (renderer.getForeground(index) != null) {
 				text.setForeground(renderer.getForeground(index));
-			if (renderer.getBackground(index) != null)
+			}
+			if (renderer.getBackground(index) != null) {
 				text.setBackground(renderer.getBackground(index));
+			}
 		}
 
 		// set font if requested
@@ -2441,7 +2475,7 @@ public class TableCombo extends Composite {
 		if (updateTextWithinSelection) {
 			text.setText(renderer.getLabel(index));
 		}
-		boolean isReadOnly = (newStyle & SWT.READ_ONLY) != 0;
+		final boolean isReadOnly = (newStyle & SWT.READ_ONLY) != 0;
 		if (!isReadOnly) {
 			text.selectAll();
 		} else {
@@ -2968,10 +3002,11 @@ public class TableCombo extends Composite {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void setRenderer(TableComboRenderer renderer) {
-		checkWidget(); 
-		if (renderer == null)
+	public void setRenderer(final TableComboRenderer renderer) {
+		checkWidget();
+		if (renderer == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.renderer = renderer;
 	}
 
