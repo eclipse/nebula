@@ -1076,16 +1076,14 @@ public class MultiChoice<T> extends Composite {
 			selectAllLink.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, false, false));
 			selectAllLink.setText("<a>" + ResourceManager.getLabel(ResourceManager.SELECT_ALL) + "</a>");
 			selectAllLink.addListener(SWT.Selection, e -> {
-				changeButtonState(true);
-				setLabel();
+				selectAll();
 			});
 
 			final Link deselectAllLink = new Link(parent, SWT.NONE);
 			deselectAllLink.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, false, false));
 			deselectAllLink.setText("<a>" + ResourceManager.getLabel(ResourceManager.DESELECT_ALL) + "</a>");
 			deselectAllLink.addListener(SWT.Selection, e -> {
-				changeButtonState(false);
-				setLabel();
+				deselectAll();
 			});
 		}
 
@@ -1135,11 +1133,6 @@ public class MultiChoice<T> extends Composite {
 		this.preferredHeightOfPopup = content.getSize().y;
 	}
 
-	private void changeButtonState(final boolean checked) {
-		for (final Button checkBoxButton : checkboxes) {
-			checkBoxButton.setSelection(checked);
-		}
-	}
 
 	/**
 	 * Set the value of the label, based on the selected items
