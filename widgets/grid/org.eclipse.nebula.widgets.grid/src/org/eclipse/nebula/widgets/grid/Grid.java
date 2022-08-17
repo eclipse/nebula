@@ -6278,10 +6278,10 @@ public class Grid extends Canvas {
 	 * Initialize all listeners.
 	 */
 	private void initListeners() {
-		disposeListener = e -> onDispose(e);
+		disposeListener = this::onDispose;
 		addListener(SWT.Dispose, disposeListener);
 
-		addPaintListener(e -> onPaint(e));
+		addPaintListener(this::onPaint);
 
 		addListener(SWT.Resize, e -> onResize());
 
@@ -6293,7 +6293,7 @@ public class Grid extends Canvas {
 			getHorizontalBar().addListener(SWT.Selection, e -> onScrollSelection());
 		}
 
-		defaultKeyListener = e -> onKeyDown(e);
+		defaultKeyListener = this::onKeyDown;
 		addListener(SWT.KeyDown, defaultKeyListener);
 
 		addTraverseListener(e -> {
@@ -6322,7 +6322,7 @@ public class Grid extends Canvas {
 		addListener(SWT.MouseDown, this::onMouseDown);
 		addListener(SWT.MouseUp, this::onMouseUp);
 
-		addMouseMoveListener(e -> onMouseMove(e));
+		addMouseMoveListener(this::onMouseMove);
 
 		addMouseTrackListener(new MouseTrackListener() {
 			@Override
@@ -6354,7 +6354,7 @@ public class Grid extends Canvas {
 
 		// Special code to reflect mouse wheel events if using an external
 		// scroller
-		addListener(SWT.MouseWheel, e -> onMouseWheel(e));
+		addListener(SWT.MouseWheel, this::onMouseWheel);
 	}
 
 	/**
@@ -9488,7 +9488,7 @@ public class Grid extends Canvas {
 
 						for (int i = 0; i < items.size(); i++) {
 							if (items.get(i).getParentItem() == null) {
-								children[j] = new Integer(i);
+								children[j] = Integer.valueOf(i);
 								j++;
 							}
 						}
@@ -9496,7 +9496,7 @@ public class Grid extends Canvas {
 					} else {
 						final Object[] children = new Object[length];
 						for (int i = 0; i < items.size(); i++) {
-							children[i] = new Integer(i);
+							children[i] = Integer.valueOf(i);
 						}
 						e.children = children;
 					}
@@ -9631,7 +9631,7 @@ public class Grid extends Canvas {
 
 					for (int i = 0; i < length; i++) {
 						final GridItem item = selectedItems.get(i);
-						children[i] = new Integer(item.getRowIndex());
+						children[i] = Integer.valueOf(item.getRowIndex());
 					}
 					e.children = children;
 				}
