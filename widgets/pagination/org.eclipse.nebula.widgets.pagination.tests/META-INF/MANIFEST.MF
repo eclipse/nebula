@@ -7,6 +7,6 @@ Bundle-SymbolicName: org.eclipse.nebula.widgets.pagination.tests;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.junit
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Fragment-Host: org.eclipse.nebula.widgets.pagination
 Automatic-Module-Name: org.eclipse.nebula.widgets.pagination.tests

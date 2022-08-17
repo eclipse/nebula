@@ -4,8 +4,9 @@ Bundle-Name: RadioGroup Tests
 Bundle-SymbolicName: org.eclipse.nebula.widgets.radiogroup.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Matthew Hall
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Eclipse-RegisterBuddy: org.eclipse.nebula.widgets.radiogroup
 Require-Bundle: org.junit,
  org.eclipse.swt,
  org.eclipse.nebula.widgets.radiogroup
+Automatic-Module-Name: org.eclipse.nebula.widgets.radiogroup.tests

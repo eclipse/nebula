@@ -4,7 +4,7 @@ Bundle-Name: Nebula RadioGroup plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.radiogroup
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Matthew Hall
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.equinox.common,
  org.eclipse.swt,
  org.eclipse.jface,
@@ -15,3 +15,4 @@ Require-Bundle: org.eclipse.equinox.common,
 Export-Package: org.eclipse.nebula.jface.viewer.radiogroup,
  org.eclipse.nebula.widgets.radiogroup,
  org.eclipse.nebula.widgets.radiogroup.forms
+Automatic-Module-Name: org.eclipse.nebula.widgets.radiogroup

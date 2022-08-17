@@ -7,3 +7,5 @@ Fragment-Host: org.eclipse.nebula.widgets.formattedtext;bundle-version="1.0.0"
 Require-Bundle: org.eclipse.swt,
  org.junit
 Export-Package: org.eclipse.nebula.widgets.formattedtext
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Automatic-Module-Name: org.eclipse.nebula.widgets.formattedtext.tests

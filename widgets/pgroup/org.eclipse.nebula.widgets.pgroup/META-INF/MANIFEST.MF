@@ -7,4 +7,5 @@ Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.swt
 Export-Package: org.eclipse.nebula.widgets.pgroup,
  org.eclipse.nebula.widgets.pgroup.internal;x-internal:=true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Automatic-Module-Name: org.eclipse.nebula.widgets.pgroup

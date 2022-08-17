@@ -5,6 +5,7 @@ Bundle-SymbolicName: org.eclipse.nebula.widgets.xviewer.tests;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse.org
 Fragment-Host: org.eclipse.nebula.widgets.xviewer
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit
 Export-Package: org.eclipse.nebula.widgets.xviewer.tests
+Automatic-Module-Name: org.eclipse.nebula.widgets.xviewer.tests

@@ -4,6 +4,7 @@ Bundle-Name: Tipoftheday snippets plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.opal.tipoftheday.snippets
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Laurent CARON
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.nebula.widgets.opal.tipoftheday;bundle-version="1.0.0",
  org.eclipse.swt
+Automatic-Module-Name: org.eclipse.nebula.widgets.tipoftheday.snippets
