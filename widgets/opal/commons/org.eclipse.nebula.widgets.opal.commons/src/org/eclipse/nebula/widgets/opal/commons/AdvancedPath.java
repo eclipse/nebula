@@ -36,8 +36,8 @@ public class AdvancedPath extends Path {
 	/**
 	 * Adds to the receiver the circle specified by x, y, radius
 	 * 
-	 * @param x the x coordinate of the rectangle to add
-	 * @param y the y coordinate of the rectangle to add
+	 * @param x the x coordinate of the circle to add
+	 * @param y the y coordinate of the circle to add
 	 * @param radius the width of the radius
 	 * 
 	 * @exception SWTException
