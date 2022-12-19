@@ -19,7 +19,7 @@ which ensures users of these libraries that they can use your code without getti
 For every patch we require a [corresponding GitHub issue.](https://github.com/eclipse/nebula/issues)
 
 ## Setup a Development enviroment
-* [![Create Eclipse Development Environment for Eclipse Nebula](https://download.eclipse.org/oomph/www/setups/svg/nebula.svg)](https://www.eclipse.org/setups/installer/?url=https://raw.githubusercontent.com/eclipse/nebula/master/oomph.setup&show=true "Click to open Eclipse-Installer Auto Launch or drag into your running installer")
+* [![Create Eclipse Development Environment for Eclipse Nebula](https://download.eclipse.org/oomph/www/setups/svg/nebula.svg)]([https://www.eclipse.org/setups/installer/](https://raw.githubusercontent.com/eclipse/nebula/master/releng/org.eclipse.nebula.nebula-parent/oomph.setup)?url=https://raw.githubusercontent.com/eclipse/nebula/master/releng/org.eclipse.nebula.nebula-parent/oomph.setup&show=true "Click to open Eclipse-Installer Auto Launch or drag into your running installer")
 
 ## Building on our build server
 After admin approval, pull requests gets build by these two jobs:
