@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2015, 2020 CEA LIST.
+ * Copyright (c) 2015, 2023 CEA LIST.
  *
  *
  * This program and the accompanying materials
@@ -440,8 +440,6 @@ public class RichTextPainter {
 		}
 		// add paragraphSpace on top and bottom
 		preferredSize.y += (2 * state.getParagraphCount() * getParagraphSpace());
-
-		preferredSize.y = Math.max(preferredSize.y, bounds.height);
 	}
 
 	private LinePainter addInstruction(
