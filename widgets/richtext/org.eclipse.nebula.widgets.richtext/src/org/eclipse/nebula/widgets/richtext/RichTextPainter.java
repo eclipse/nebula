@@ -228,7 +228,7 @@ public class RichTextPainter {
 						break;
 					case XMLStreamConstants.START_ELEMENT:
 						final StartElement element = event.asStartElement();
-						String elementString = element.getName().toString();
+						String elementString = element.getName().getLocalPart();
 
 						if (TAG_PARAGRAPH.equals(elementString)) {
 							currentLine = createNewLine(lines);
