@@ -326,7 +326,7 @@ public class RichTextPainter {
 
 						break;
 					case XMLStreamConstants.END_ELEMENT:
-						String endElementString = event.asEndElement().getName().toString();
+						String endElementString = event.asEndElement().getName().getLocalPart();
 						if (TAG_PARAGRAPH.equals(endElementString)) {
 							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state,
 									new ResetParagraphInstruction(getParagraphSpace(), state));
