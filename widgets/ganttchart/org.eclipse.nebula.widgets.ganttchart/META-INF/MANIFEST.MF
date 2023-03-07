@@ -12,4 +12,5 @@ Export-Package: org.eclipse.nebula.widgets.ganttchart,
  org.eclipse.nebula.widgets.ganttchart.undoredo.commands,
  org.eclipse.nebula.widgets.ganttchart.utils
 Bundle-Vendor: Eclipse.org
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Automatic-Module-Name: org.eclipse.nebula.widgets.ganttchart

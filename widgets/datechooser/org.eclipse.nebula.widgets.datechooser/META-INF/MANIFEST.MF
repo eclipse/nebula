@@ -4,7 +4,7 @@ Bundle-Name: Nebula DateChooser Widget
 Bundle-SymbolicName: org.eclipse.nebula.widgets.datechooser
 Bundle-Version: 1.0.0.qualifier
 Export-Package: org.eclipse.nebula.widgets.datechooser
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: Eclipse Nebula
 Import-Package: org.eclipse.jface.layout,
  org.eclipse.swt,
@@ -17,3 +17,4 @@ Require-Bundle: org.eclipse.jface;resolution:=optional,
  org.eclipse.core.databinding;resolution:=optional,
  org.eclipse.jface.databinding;resolution:=optional,
  org.eclipse.nebula.widgets.formattedtext;bundle-version="1.0.0"
+Automatic-Module-Name: org.eclipse.nebula.widgets.datechooser

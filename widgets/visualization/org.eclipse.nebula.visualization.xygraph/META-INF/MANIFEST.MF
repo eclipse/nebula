@@ -4,7 +4,7 @@ Bundle-Name: Nebula Visualization XY Graph
 Bundle-SymbolicName: org.eclipse.nebula.visualization.xygraph
 Bundle-Version: 3.1.0.qualifier
 Bundle-Vendor: Eclipse.org
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.swt,
  org.eclipse.draw2d,
  org.eclipse.jface,
@@ -16,3 +16,4 @@ Export-Package: org.eclipse.nebula.visualization.internal.xygraph.toolbar,
  org.eclipse.nebula.visualization.xygraph.linearscale,
  org.eclipse.nebula.visualization.xygraph.styleprovider,
  org.eclipse.nebula.visualization.xygraph.util
+Automatic-Module-Name: org.eclipse.nebula.visualization.xygraph

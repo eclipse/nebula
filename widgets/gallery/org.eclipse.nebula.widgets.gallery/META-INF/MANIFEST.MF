@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Nebula Gallery Widget
 Bundle-SymbolicName: org.eclipse.nebula.widgets.gallery
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.swt,
  org.eclipse.jface;resolution:=optional
 Export-Package: org.eclipse.nebula.animation,
@@ -12,3 +12,4 @@ Export-Package: org.eclipse.nebula.animation,
  org.eclipse.nebula.jface.galleryviewer,
  org.eclipse.nebula.widgets.gallery
 Bundle-Vendor: Eclipse Nebula
+Automatic-Module-Name: org.eclipse.nebula.widgets.gallery

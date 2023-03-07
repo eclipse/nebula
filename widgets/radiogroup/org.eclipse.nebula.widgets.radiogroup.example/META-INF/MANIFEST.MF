@@ -8,4 +8,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.nebula.widgets.radiogroup;bundle-version="0.1.0",
  org.eclipse.nebula.examples;bundle-version="1.0.4"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Automatic-Module-Name: org.eclipse.nebula.widgets.radiogroup.example

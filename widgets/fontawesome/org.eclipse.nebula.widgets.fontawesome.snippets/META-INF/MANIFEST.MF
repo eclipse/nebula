@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: FontAwesome Snippets plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.fontawesome.snippets
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.nebula.widgets.fontawesome;bundle-version="1.0.0"
 Bundle-ClassPath: .,
  swing2swt.jar
+Automatic-Module-Name: org.eclipse.nebula.widgets.fontawesome.snippets

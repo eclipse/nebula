@@ -9,5 +9,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.nebula.examples;bundle-version="1.0.4",
  org.eclipse.swt,
  org.eclipse.jface
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.nebula.widgets.treemapper.examples
+

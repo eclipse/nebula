@@ -4,6 +4,7 @@ Bundle-Name: Tiles widget plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.tiles
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Nebula
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.nebula.widgets.tiles
 Require-Bundle: org.eclipse.swt
+Automatic-Module-Name: org.eclipse.nebula.widgets.tiles

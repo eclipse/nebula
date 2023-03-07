@@ -4,7 +4,8 @@ Bundle-Name: LED widget plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.led
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Nebula
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.nebula.widgets.led
 Require-Bundle: org.eclipse.nebula.widgets.opal.commons;visibility:=reexport,
  org.eclipse.swt
+Automatic-Module-Name: org.eclipse.nebula.widgets.led

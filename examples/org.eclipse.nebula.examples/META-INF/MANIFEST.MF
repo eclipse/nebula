@@ -7,8 +7,9 @@ Bundle-Version: 1.0.4.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.nebula.examples
 Bundle-Activator: org.eclipse.nebula.examples.internal.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
+Automatic-Module-Name: org.eclipse.nebula.examples

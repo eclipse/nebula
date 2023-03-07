@@ -5,6 +5,7 @@ Bundle-SymbolicName: org.eclipse.nebula.widgets.floatingtext.snippets
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse Nebula
 Automatic-Module-Name: org.eclipse.nebula.widgets.floatingtext.snippets
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.swt
 Import-Package: org.eclipse.nebula.widgets.floatingtext
+Automatic-Module-Name: org.eclipse.nebula.widgets.floatingtext.snippets

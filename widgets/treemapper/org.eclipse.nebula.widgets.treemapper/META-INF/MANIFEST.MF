@@ -7,6 +7,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.draw2d,
  org.eclipse.jface
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: Eclipse Nebula
 Export-Package: org.eclipse.nebula.widgets.treemapper
+Automatic-Module-Name: org.eclipse.nebula.widgets.treemapper

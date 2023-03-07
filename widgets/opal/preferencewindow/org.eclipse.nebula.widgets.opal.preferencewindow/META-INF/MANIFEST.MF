@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Opal Preference Window Widget plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.opal.preferencewindow
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.nebula.widgets.opal.commons;bundle-version="1.0.0";visibility:=reexport,
  org.eclipse.nebula.widgets.opal.titledseparator;bundle-version="1.0.0",
  org.eclipse.nebula.widgets.opal.dialog;bundle-version="1.0.0";visibility:=reexport,
@@ -11,3 +11,4 @@ Require-Bundle: org.eclipse.nebula.widgets.opal.commons;bundle-version="1.0.0";v
 Export-Package: org.eclipse.nebula.widgets.opal.preferencewindow,
  org.eclipse.nebula.widgets.opal.preferencewindow.enabler,
  org.eclipse.nebula.widgets.opal.preferencewindow.widgets
+Automatic-Module-Name: org.eclipse.nebula.widgets.opal.preferencewindow
