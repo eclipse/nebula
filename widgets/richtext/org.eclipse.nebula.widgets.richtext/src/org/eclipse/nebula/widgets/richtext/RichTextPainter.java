@@ -77,6 +77,7 @@ public class RichTextPainter {
 
 	public static final String TAG_SPAN = "span";
 	public static final String TAG_STRONG = "strong";
+	public static final String TAG_BOLD = "b";
 	public static final String TAG_EM = "em";
 	public static final String TAG_UNDERLINE = "u";
 	public static final String TAG_STRIKETHROUGH = "s";
@@ -246,7 +247,8 @@ public class RichTextPainter {
 							PaintInstruction styleInstruction = handleStyleConfiguration(element, spanStack, state);
 							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, styleInstruction);
 						}
-						else if (TAG_STRONG.equals(elementString)) {
+						else if (TAG_STRONG.equals(elementString)
+								|| TAG_BOLD.equals(elementString)) {
 							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new BoldPaintInstruction(state));
 						}
 						else if (TAG_EM.equals(elementString)) {
@@ -338,6 +340,7 @@ public class RichTextPainter {
 							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new ResetSpanStylePaintInstruction(state, span));
 						}
 						else if (TAG_STRONG.equals(endElementString)
+								|| TAG_BOLD.equals(endElementString)
 								|| TAG_EM.equals(endElementString)) {
 							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new ResetFontPaintInstruction(state));
 						}
