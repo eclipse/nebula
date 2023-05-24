@@ -80,6 +80,7 @@
 		<module>../../widgets/roundedcheckbox</module>
 		<module>../../widgets/segmentedbar</module>
 		<module>../../widgets/tiles</module>
+		<module>../../widgets/formattedtext</module>
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>
