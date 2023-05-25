@@ -30,10 +30,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.nebula.widgets.formattedtext.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.nebula.widgets.treemapper.feature"
          version="0.0.0"/>
 

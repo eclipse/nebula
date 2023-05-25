@@ -12,9 +12,6 @@
    <feature url="features/org.eclipse.nebula.widgets.datechooser.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.datechooser.feature" version="1.0.0.qualifier">
       <category name="Nebula Individual Incubation Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.formattedtext.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.formattedtext.feature" version="1.0.0.qualifier">
-      <category name="Nebula Individual Incubation Widgets"/>
-   </feature>
    <feature url="features/org.eclipse.nebula.widgets.radiogroup.feature_0.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.radiogroup.feature" version="0.1.0.qualifier">
       <category name="Nebula Individual Incubation Widgets"/>
    </feature>
