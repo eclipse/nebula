@@ -415,8 +415,7 @@ public class RichTextEditor extends Composite {
 	 */
 	public void setText(String text) {
 		if (editorLoaded) {
-			text = text.replace("\n", "\\n").replace("\r", "\\r");
-			browser.evaluate("setText('" + text + "')");
+			browser.evaluate("setText('" + escapeToEvaluate(text) + "')");
 		}
 		else {
 			initialValue = text;
@@ -432,7 +431,7 @@ public class RichTextEditor extends Composite {
 	 *            Text to be inserted into the editor.
 	 */
 	public void insertText(String text) {
-		browser.evaluate("insertText('" + text + "')");
+		browser.evaluate("insertText('" + escapeToEvaluate(text) + "')");
 	}
 
 	/**
@@ -442,7 +441,7 @@ public class RichTextEditor extends Composite {
 	 *            HTML code to be inserted into the editor.
 	 */
 	public void insertHTML(String html) {
-		browser.evaluate("insertHTML('" + html + "')");
+		browser.evaluate("insertHTML('" + escapeToEvaluate(html) + "')");
 	}
 
 	/**
@@ -1439,5 +1438,19 @@ public class RichTextEditor extends Composite {
 				}
 			});
 		}
+	}
+
+	/**
+	 * browser.evaluate evaluates code from a String parameter.
+	 * If a function is called with a javascript-string parameter its value needs to be escaped:
+	 * escape sequences need to be handled (turn \ to \\)
+	 * Single quotes need to be escaped (' to \')
+	 * newlines can not be inside a javascript string literal: turn CR and LF to \r and \n respectivly
+	 *
+	 * @param text
+	 *            Text to be escaped.
+	 */
+	private static String escapeToEvaluate(String text) {
+		return text.replace("\\", "\\\\").replace("\'", "\\\'").replace("\n", "\\n").replace("\r", "\\r");
 	}
 }
