@@ -3,8 +3,8 @@ package org.eclipse.nebula.widgets.formattedtext;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.ISWTObservable;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -63,11 +63,11 @@ public class FormattedTextObservableValue extends AbstractObservableValue implem
 	};
 
 	public FormattedTextObservableValue(final FormattedText formattedText) {
-		this(SWTObservables.getRealm(formattedText.getControl().getDisplay()), formattedText, SWT.Modify);
+		this(DisplayRealm.getRealm(formattedText.getControl().getDisplay()), formattedText, SWT.Modify);
 	}
 
 	public FormattedTextObservableValue(final FormattedText formattedText, int updateEventType) {
-		this(SWTObservables.getRealm(formattedText.getControl().getDisplay()), formattedText, updateEventType);
+		this(DisplayRealm.getRealm(formattedText.getControl().getDisplay()), formattedText, updateEventType);
 	}
 
 	public FormattedTextObservableValue(final Realm realm, final FormattedText formattedText, int updateEventType) {

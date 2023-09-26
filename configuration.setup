@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setup:Configuration
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
+    label="Nebula">
+  <annotation
+      source="http://www.eclipse.org/oomph/setup/BrandingInfo">
+    <detail
+        key="imageURI">
+      <value>https://eclipse.dev/nebula/images/nebula_logo_main_300.png</value>
+    </detail>
+    <detail
+        key="badgeLabel">
+      <value>Nebula</value>
+    </detail>
+  </annotation>
+  <installation
+      name="nebula.installation"
+      label="Nebula Installation">
+    <productVersion
+        href="index:/org.eclipse.setup#//@productCatalogs[name='org.eclipse.products']/@products[name='epp.package.committers']/@versions[name='latest']"/>
+    <description>The Nebula installation provides the tools needed to work with  the set of projects from &lt;a href=&quot;https://github.com/eclipse/nebula&quot;>Nebula's GitHub repository&lt;/a>.</description>
+  </installation>
+  <workspace
+      name="nebula.workspace"
+      label="Nebula Workspace">
+    <stream
+        href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@projects[name='nebula']/@streams[name='master']"/>
+    <description>The Nebula workspace provides the set of projects from &lt;a href=&quot;https://github.com/eclipse/nebula&quot;>Nebula'SimRel GitHub repository&lt;/a>.</description>
+  </workspace>
+  <description>
+    &lt;p>
+    The Nebula configuration provisions a dedicated development environment for working with the set of projects from &lt;a href=&quot;https://github.com/eclipse/Nebula&quot;>Nebula's GitHub repository&lt;/a>.
+    &lt;/p>
+    &lt;p>
+    The installation is based on the latest EPP Committers package,
+    the workspace consists of the projects from Nebula's GitHub repository,
+    and the PDE target platform is minimal.
+    &lt;p>
+    &lt;/p>
+    Please &lt;a href=&quot;https://wiki.eclipse.org/Eclipse_Platform_SDK_Provisioning&quot;>read the tutorial instructions&lt;/a> for more details about how to use a configuration.
+    &lt;/p>
+  </description>
+</setup:Configuration>
