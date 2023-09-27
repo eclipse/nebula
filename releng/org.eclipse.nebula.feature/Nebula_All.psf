@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <psf version="2.0">
 <provider id="org.eclipse.egit.core.GitProvider">
-<project reference="1.0,ssh://git.eclipse.org:29418/www.eclipse.org/nebula.git,master,."/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/cwt/org.eclipse.nebula.cwt"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/cwt/org.eclipse.nebula.cwt.feature"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/cwt/org.eclipse.nebula.cwt.snippets"/>
@@ -229,6 +228,9 @@
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/roundedswitch/org.eclipse.nebula.widgets.roundedswitch.example.e4"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/roundedswitch/org.eclipse.nebula.widgets.roundedswitch.feature"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/roundedswitch/org.eclipse.nebula.widgets.roundedswitch.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/segmentedbar/org.eclipse.nebula.widgets.segmentedbar"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/segmentedbar/org.eclipse.nebula.widgets.segmentedbar.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/segmentedbar/org.eclipse.nebula.widgets.segmentedbar.snippets"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/splitbutton/org.eclipse.nebula.widgets.splitbutton"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/splitbutton/org.eclipse.nebula.widgets.splitbutton.feature"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/splitbutton/org.eclipse.nebula.widgets.splitbutton.snippets"/>
@@ -241,7 +243,11 @@
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/tablecombo/org.eclipse.nebula.widgets.tablecombo.example"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/tablecombo/org.eclipse.nebula.widgets.tablecombo.example.e4"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/tablecombo/org.eclipse.nebula.widgets.tablecombo.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/tablecombo/org.eclipse.nebula.widgets.tablecombo.snippets"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/tablecombo/org.eclipse.nebula.widgets.tablecombo.test"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/tiles/org.eclipse.nebula.widgets.tiles"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/tiles/org.eclipse.nebula.widgets.tiles.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/tiles/org.eclipse.nebula.widgets.tiles.snippets"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/timeline/org.eclipse.nebula.widgets.timeline"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/timeline/org.eclipse.nebula.widgets.timeline.example"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/timeline/org.eclipse.nebula.widgets.timeline.feature"/>
@@ -568,6 +574,11 @@
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.roundedtoolbar.feature" type="4"/>
 <item elementID="=org.eclipse.nebula.widgets.opal.roundedtoolbar.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1695834899311_77" label="SegmentedBar" name="SegmentedBar">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.segmentedbar.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.segmentedbar.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.segmentedbar" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438266449_33" label="Slider" name="Slider">
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.nebulaslider.feature" type="4"/>
 <item elementID="=org.eclipse.nebula.widgets.nebulaslider.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -601,11 +612,17 @@
 <item elementID="=org.eclipse.nebula.widgets.tablecombo.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.tablecombo.feature" type="4"/>
 <item elementID="=org.eclipse.nebula.widgets.tablecombo.css" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.tablecombo.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438998645_55" label="TextAssist" name="TextAssist">
 <item elementID="=org.eclipse.nebula.widgets.opal.textassist.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.textassist.feature" type="4"/>
 <item elementID="=org.eclipse.nebula.widgets.opal.textassist" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1695834860317_76" label="Tiles" name="Tiles">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.tiles.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.tiles.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.tiles" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1581340307453_71" label="Timeline" name="Timeline">
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.timeline.feature" type="4"/>
@@ -643,9 +660,6 @@
 <item elementID="=org.eclipse.nebula.visualization.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.visualization.xygraph.test" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.visualization.feature" type="4"/>
-</workingSets>
-<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534602593365_62" label="Website" name="Website">
-<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/nebula" type="4"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704941386_17" label="XViewer" name="XViewer">
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.xviewer.feature" type="4"/>
