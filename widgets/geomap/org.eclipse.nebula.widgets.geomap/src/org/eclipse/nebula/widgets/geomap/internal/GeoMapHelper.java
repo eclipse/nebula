@@ -95,14 +95,13 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 		thread.setDaemon(true);
 		return thread;
 	};
-	ThreadPoolExecutor executor = new ThreadPoolExecutor(
-			DEFAULT_NUMBER_OF_IMAGEFETCHER_THREADS, 16, 2, TimeUnit.SECONDS,
-			workQueue, threadFactory);
+	ThreadPoolExecutor executor = new ThreadPoolExecutor(DEFAULT_NUMBER_OF_IMAGEFETCHER_THREADS, 16, 2,
+			TimeUnit.SECONDS, workQueue, threadFactory);
 	private Color waitBackground, waitForeground;
 
 	/**
-	 * Initializes a new <code>GeoMapHelper</code> for a specific display,
-	 * position, zoom level and cache size.
+	 * Initializes a new <code>GeoMapHelper</code> for a specific display, position,
+	 * zoom level and cache size.
 	 * 
 	 * @param display
 	 *            the <code>Display</code> to create images for.
@@ -115,23 +114,28 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	 *            cache to prevent reloading from the network.
 	 */
 	@SuppressWarnings("serial")
-	public GeoMapHelper(Display display, Point mapPosition, int zoom,
-			int cacheSize) {
+	public GeoMapHelper(Display display, Point mapPosition, int zoom, int cacheSize) {
 		this(display);
 		if (cacheSize < MIN_CACHE_SIZE) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT,null," - Cache size should be greater than " + MIN_CACHE_SIZE); //$NON-NLS-1$
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, " - Cache size should be greater than " + MIN_CACHE_SIZE); //$NON-NLS-1$
 		}
 		this.cacheSize = cacheSize;
-		this.cache = Collections.synchronizedMap(new LinkedHashMap<TileRef, AsyncImage>(cacheSize, 0.75f,
-				true) {
+		this.cache = Collections.synchronizedMap(new LinkedHashMap<TileRef, AsyncImage>(cacheSize, 0.75f, true) {
 			@Override
-			protected boolean removeEldestEntry(
-					Map.Entry<TileRef, AsyncImage> eldest) {
+			protected boolean removeEldestEntry(Map.Entry<TileRef, AsyncImage> eldest) {
 				boolean remove = size() > GeoMapHelper.this.cacheSize;
 				if (remove) {
 					eldest.getValue().dispose();
 				}
 				return remove;
+			}
+
+			@Override
+			public void clear() {
+				for (AsyncImage image : values()) {
+					image.dispose();
+				}
+				super.clear();
 			}
 		});
 		waitBackground = new Color(display, 0x88, 0x88, 0x88);
@@ -142,9 +146,9 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	}
 
 	/**
-	 * Points the map to the provided graphics context (GC), which could be the
-	 * one provided in an SWT control paint request or one created for rendering
-	 * an SWT Image
+	 * Points the map to the provided graphics context (GC), which could be the one
+	 * provided in an SWT control paint request or one created for rendering an SWT
+	 * Image
 	 * 
 	 * @param gc
 	 *            the graphics context
@@ -167,8 +171,7 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 		for (int y = y0; y < y1; y++) {
 			int dx = x0 * TILE_SIZE - mapPosition.x;
 			for (int x = x0; x < x1; x++) {
-				if (clip == null || dx + TILE_SIZE >= clip.x
-						&& dy + TILE_SIZE >= clip.y && dx <= clip.x + clip.width
+				if (clip == null || dx + TILE_SIZE >= clip.x && dy + TILE_SIZE >= clip.y && dx <= clip.x + clip.width
 						&& dy <= clip.y + clip.height) {
 					paintTile(gc, dx, dy, x, y);
 				}
@@ -195,15 +198,13 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 		boolean imageDrawn = false;
 		int xTileCount = 1 << zoom;
 		int yTileCount = 1 << zoom;
-		boolean tileInBounds = x >= 0 && x < xTileCount && y >= 0
-				&& y < yTileCount;
+		boolean tileInBounds = x >= 0 && x < xTileCount && y >= 0 && y < yTileCount;
 		boolean drawImage = DRAW_IMAGES && tileInBounds;
 		if (drawImage) {
 			TileRef tileRef = new TileRef(x, y, zoom);
 			AsyncImage image = cache.get(tileRef);
 			if (image == null) {
-				image = new AsyncImage(this, tileRef,
-						tileServer.getTileURL(tileRef));
+				image = new AsyncImage(this, tileRef, tileServer.getTileURL(tileRef));
 				cache.put(tileRef, image);
 			}
 			Image swtImage = image.getImage(getDisplay());
@@ -217,9 +218,8 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 				if (image != null) {
 					swtImage = image.getImage(getDisplay());
 					if (swtImage != null) {
-						gc.drawImage(swtImage, x % 2 == 0 ? 0 : TILE_SIZE / 2,
-								y % 2 == 0 ? 0 : TILE_SIZE / 2, TILE_SIZE / 2,
-								TILE_SIZE / 2, dx, dy, TILE_SIZE, TILE_SIZE);
+						gc.drawImage(swtImage, x % 2 == 0 ? 0 : TILE_SIZE / 2, y % 2 == 0 ? 0 : TILE_SIZE / 2,
+								TILE_SIZE / 2, TILE_SIZE / 2, dx, dy, TILE_SIZE, TILE_SIZE);
 						imageDrawn = true;
 					}
 				}
@@ -229,8 +229,7 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 			}
 		}
 		if (DEBUG && !imageDrawn && (tileInBounds || DRAW_OUT_OF_BOUNDS)) {
-			gc.setBackground(display.getSystemColor(
-					tileInBounds ? SWT.COLOR_GREEN : SWT.COLOR_RED));
+			gc.setBackground(display.getSystemColor(tileInBounds ? SWT.COLOR_GREEN : SWT.COLOR_RED));
 			gc.fillRectangle(dx + 4, dy + 4, TILE_SIZE - 8, TILE_SIZE - 8);
 			gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
 			String s = "T " + x + ", " + y + (!tileInBounds ? " #" : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -254,6 +253,7 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	public void dispose() {
 		waitBackground.dispose();
 		waitForeground.dispose();
+		cache.clear();
 	}
 
 	//
@@ -289,7 +289,8 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	}
 
 	/**
-	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#setMapPosition(int, int)
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#setMapPosition(int,
+	 *      int)
 	 */
 	@Override
 	public void setMapPosition(int x, int y) {
@@ -298,17 +299,15 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	}
 
 	/**
-	 * @see
-	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMinZoom()
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMinZoom()
 	 */
 	@Override
 	public int getMinZoom() {
 		return getTileServer().getMinZoom();
 	}
-	
+
 	/**
-	 * @see
-	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMaxZoom()
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMaxZoom()
 	 */
 	@Override
 	public int getMaxZoom() {
@@ -371,8 +370,8 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	private List<InternalGeoMapListener> internalGeoMapListeners = new ArrayList<>();
 
 	/**
-	 * Adds an InternalGeoMapListener that will be notified about painting and
-	 * cache updates
+	 * Adds an InternalGeoMapListener that will be notified about painting and cache
+	 * updates
 	 * 
 	 * @param listener
 	 *            the InternalGeoMapListener
@@ -390,7 +389,7 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	public void removeInternalGeoMapListener(InternalGeoMapListener listener) {
 		internalGeoMapListeners.remove(listener);
 	}
-	
+
 	/**
 	 * @return the number of tiles
 	 */
