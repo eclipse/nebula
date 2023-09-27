@@ -708,10 +708,6 @@ public class FontAwesome {
 	 */
 	private static boolean loadFont() {
 		// Get file from classpath.
-		InputStream in = FontAwesome.class.getResourceAsStream("resources/fontawesome-webfont.ttf");
-		if (in == null) {
-			return false;
-		}
 
 		// Add dispose listener
 		Display.getDefault().addListener(SWT.Dispose, e -> {
@@ -724,13 +720,15 @@ public class FontAwesome {
 		try {
 			// Copy file to temp diretory.
 			String temp = System.getProperty("java.io.tmpdir");
-			final File tempfile = new File(temp, "fontawesome-webfont-" + getCurrentVersion() + ".ttf");
+			final File tempfile = new File(temp,
+					System.getProperty("user.name") + "-fontawesome-webfont-" + getCurrentVersion() + ".ttf");
 			tempfile.deleteOnExit();
-			FileOutputStream out = new FileOutputStream(tempfile);
-			try {
+			try (FileOutputStream out = new FileOutputStream(tempfile);
+					InputStream in = FontAwesome.class.getResourceAsStream("resources/fontawesome-webfont.ttf");) {
+				if (in == null) {
+					return false;
+				}
 				copy(in, out, new byte[DEFAULT_BUFFER_SIZE]);
-			} finally {
-				out.close();
 			}
 			// Load the font.
 			return Display.getDefault().loadFont(tempfile.getAbsolutePath());
