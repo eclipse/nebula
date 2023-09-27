@@ -20,6 +20,7 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -123,6 +124,10 @@ public class FloatingText extends Composite {
 		fStyle = pStyle;
 		setLayout(createLayout(pStyle));
 		fLabel = createLabel(pStyle);
+		fLabel.addDisposeListener(e -> {
+			if (fLabelFont != null)
+				fLabelFont.dispose();
+		});
 		fText = new Text(this, removeStyles(pStyle, SWT.BORDER, SWT.SEPARATOR));
 		fText.setLayoutData(getTextLayoutData());
 		fLabel.setBackground(fText.getBackground());
@@ -134,7 +139,8 @@ public class FloatingText extends Composite {
 			if (!fText.getText().isEmpty() && fLabel.getText().isEmpty()) {
 				fLabel.setText(fText.getMessage());
 			}
-			if (fText.getText().isEmpty() && !fLabel.getText().isEmpty() && !(getDisplay().getFocusControl() == fText)) {
+			if (fText.getText().isEmpty() && !fLabel.getText().isEmpty()
+					&& !(getDisplay().getFocusControl() == fText)) {
 				fLabel.setText("");
 			}
 		});
@@ -154,101 +160,20 @@ public class FloatingText extends Composite {
 		return result;
 	}
 
-	/**
-	 * @return the label that floats above the text
-	 */
-	public Label getLabel() {
-		return fLabel;
-	}
-
-	@Override
-	public GridLayout getLayout() {
-		return (GridLayout) super.getLayout();
-	}
-
-	/**
-	 * @return the underlying text widget.
-	 */
-	public Text getText() {
-		return fText;
-	}
-
-	@Override
-	public void setEnabled(boolean pEnabled) {
-		super.setEnabled(pEnabled);
-		fText.setEnabled(pEnabled);
-		fLabel.setEnabled(pEnabled);
-	}
-
-	/**
-	 * Sets the backgrounds of the label and the text to the provided color.
-	 *
-	 * @param color the color.
-	 */
-	public void setBackgroundColors(Color color) {
-		fText.setBackground(color);
-		fLabel.setBackground(color);
-	}
-
-	/**
-	 * Sets the foregrounds of the label and the text to the provided color.
-	 *
-	 * @param color the color.
-	 */
-	public void setForegroundColors(Color color) {
-		fText.setForeground(color);
-		fLabel.setForeground(color);
-	}
-
-	/**
-	 * Sets the height of the label as ratio of the text height where 100 means that
-	 * the label and text are the same size.
-	 *
-	 * @param ratio the ratio of the label versus the text height
-	 */
-	public void setRatio(int ratio) {
-		fLabelToTextRatio = ratio;
-		fLabel.setLayoutData(getLabelLayoutData());
-		requestLayout();
-	}
-
-	/**
-	 * The default is 90 which means that the label height is 90% of the text text
-	 * height.
-	 * 
-	 * @return the label to text ratio.
-	 * @see FloatingText#setRatio(int)
-	 */
-	public int getLabelRatio() {
-		return fLabelToTextRatio;
-	}
-
-	/**
-	 * If you have used the SWT.SEPARATOR style hint then you can set the width of
-	 * the separator here.
-	 * 
-	 * @param space the amount of pixels
-	 * @return this
-	 */
-	public FloatingText setSeparatorSpace(final int space) {
-		getLayout().verticalSpacing = space;
-		requestLayout();
-		return this;
-	}
-
 	private Label createLabel(final int pStyle) {
 		return new Label(this, SWT.NONE | ((pStyle & SWT.LEFT_TO_RIGHT) > 0 ? SWT.LEFT : SWT.NONE)
 				| ((pStyle & SWT.RIGHT_TO_LEFT) > 0 ? SWT.RIGHT : SWT.NONE)) {
 
 			@Override
-			public Point computeSize(int pWHint, int pHHint, boolean pChanged) {
-				Point result = super.computeSize(pWHint, pHHint, pChanged);
-				result.y = ((GridData) fLabel.getLayoutData()).heightHint;
-				return result;
+			protected void checkSubclass() {
 			}
 
 			@Override
-			protected void checkSubclass() {
+			public Point computeSize(int pWHint, int pHHint, boolean pChanged) {
+				Point result = super.computeSize(pWHint, pHHint, pChanged);
+				result.y = ((GridData) fLabel.getLayoutData()).heightHint;
+				result.y = result.y;
+				return result;
 			}
 		};
 	}
@@ -280,28 +205,71 @@ public class FloatingText extends Composite {
 			});
 			return;
 		}
-		FontData[] fontData = fLabel.getFont().getFontData();
-		FontData[] newFontData = new FontData[fontData.length];
-		int height = fLabel.getSize().y - 2 - (fLabel.getBorderWidth() * 2);
-		height = height > 0 ? height : 2;
-		height = (int) Math.round(height * 72 / getDisplay().getDPI().y);
-		for (int i = 0; i < fontData.length; i++) {
-			newFontData[i] = new FontData(fontData[i].getName(), height, fontData[i].getStyle());
-			newFontData[i].setLocale(fontData[i].getLocale());
-		}
-		if (fLabelFont != null) {
-			fLabelFont.dispose();
-		}
-		fLabelFont = new Font(getDisplay(), newFontData);
-		fLabel.addDisposeListener(e -> fLabelFont.dispose());
+
+		fLabelFont = findFittingFont(fLabel);
+
+		fLabel.getFont().dispose();
 		fLabel.setFont(fLabelFont);
 		fLabel.setText(message);
 	}
 
+	public Font findFittingFont(Label label) {
+		int fontSize = (label.getSize().y * 75) / 100;
+		Font font = getFont(label, fontSize);
+		GC gc = new GC(label);
+		gc.setFont(font);
+		while (fontSize > 2) {
+			int textHeight = gc.textExtent("PQR").y;
+			if (textHeight <= label.getBounds().height) {
+				return font; // Found a fitting font
+			}
+			// Cleanup and decrease font size
+			font.dispose();
+			fontSize--;
+			font = getFont(label, fontSize);
+			gc.setFont(font);
+		}
+		gc.dispose();
+		return font;
+	}
+
+	private Font getFont(Label label, int fontSize) {
+		FontData[] fontData = label.getFont().getFontData();
+		FontData[] newFontData = new FontData[fontData.length];
+		for (int i = 0; i < fontData.length; i++) {
+			newFontData[i] = new FontData(fontData[i].getName(), fontSize, fontData[i].getStyle());
+			newFontData[i].setLocale(fontData[i].getLocale());
+		}
+		return new Font(getDisplay(), newFontData);
+	}
+
+	/**
+	 * @return the label that floats above the text
+	 */
+	public Label getLabel() {
+		return fLabel;
+	}
+
 	private GridData getLabelLayoutData() {
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		gridData.heightHint = (fText.computeSize(-1, -1).y * fLabelToTextRatio) / 100;
+		gridData.heightHint = ((fText.computeSize(-1, -1).y) * fLabelToTextRatio) / 100;
 		return gridData;
+	}
+
+	/**
+	 * The default is 90 which means that the label height is 90% of the text text
+	 * height.
+	 * 
+	 * @return the label to text ratio.
+	 * @see FloatingText#setRatio(int)
+	 */
+	public int getLabelRatio() {
+		return fLabelToTextRatio;
+	}
+
+	@Override
+	public GridLayout getLayout() {
+		return (GridLayout) super.getLayout();
 	}
 
 	private String getMessage() {
@@ -310,6 +278,13 @@ public class FloatingText extends Composite {
 			message = fText.getMessage();
 		}
 		return message == null ? "" : message.trim();
+	}
+
+	/**
+	 * @return the underlying text widget.
+	 */
+	public Text getText() {
+		return fText;
 	}
 
 	private GridData getTextLayoutData() {
@@ -327,6 +302,33 @@ public class FloatingText extends Composite {
 		return result;
 	}
 
+	/**
+	 * Sets the backgrounds of the label and the text to the provided color.
+	 *
+	 * @param color the color.
+	 */
+	public void setBackgroundColors(Color color) {
+		fText.setBackground(color);
+		fLabel.setBackground(color);
+	}
+
+	@Override
+	public void setEnabled(boolean pEnabled) {
+		super.setEnabled(pEnabled);
+		fText.setEnabled(pEnabled);
+		fLabel.setEnabled(pEnabled);
+	}
+
+	/**
+	 * Sets the foregrounds of the label and the text to the provided color.
+	 *
+	 * @param color the color.
+	 */
+	public void setForegroundColors(Color color) {
+		fText.setForeground(color);
+		fLabel.setForeground(color);
+	}
+
 	private void setLabelText(boolean pFocus) {
 		fLabel.setText("");
 		String prompt = fText.getMessage();
@@ -337,5 +339,30 @@ public class FloatingText extends Composite {
 				doSetLabelText();
 			}
 		}
+	}
+
+	/**
+	 * Sets the height of the label as ratio of the text height where 100 means that
+	 * the label and text are the same size.
+	 *
+	 * @param ratio the ratio of the label versus the text height
+	 */
+	public void setRatio(int ratio) {
+		fLabelToTextRatio = ratio;
+		fLabel.setLayoutData(getLabelLayoutData());
+		requestLayout();
+	}
+
+	/**
+	 * If you have used the SWT.SEPARATOR style hint then you can set the width of
+	 * the separator here.
+	 * 
+	 * @param space the amount of pixels
+	 * @return this
+	 */
+	public FloatingText setSeparatorSpace(final int space) {
+		getLayout().verticalSpacing = space;
+		requestLayout();
+		return this;
 	}
 }
