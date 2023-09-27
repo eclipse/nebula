@@ -68,7 +68,10 @@ public class PWIntegerText extends PWText {
 	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWText#convertValue()
 	 */
 	@Override
-	public Object convertValue() {
+	public Integer convertValue() {
+		if(text.getText().isEmpty()) {
+			return (Integer) 0;
+		}
 		return Integer.parseInt(text.getText());
 	}
 
