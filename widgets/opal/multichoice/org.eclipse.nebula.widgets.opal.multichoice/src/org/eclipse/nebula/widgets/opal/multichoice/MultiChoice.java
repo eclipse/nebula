@@ -1422,4 +1422,32 @@ public class MultiChoice<T> extends Composite {
 		createPopup();
 	}
 
+	/**
+	 * @param selection elements to select
+	 */
+	public void setSelected(Set<T> selection) {
+		setSelection(selection);
+	}
+
+	/**
+	 * @return selected elements
+	 */
+	public Set<T> getSelected() {
+		return this.selection;
+	}
+
+	/**
+	 * @return text control
+	 */
+	public Text getTextControl() {
+		return this.text;
+	}
+
+	/**
+	 * @return the arrow button
+	 */
+	public Button getArrowButton() {
+		return this.arrow;
+	}
+
 }
