@@ -18,6 +18,7 @@ package org.eclipse.nebula.widgets.oscilloscope.example;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -127,7 +128,7 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 					if (sound.getSelection()) {
 						clipper.playClip(getActiveSoundfile(), 0);
 					}
-					getOscilloscope().setValue(0, 100 - new Random().nextInt(200));
+					getOscilloscope().setValue(0, 100 - new SecureRandom().nextInt(200));
 				}
 
 				public void setSineValue(int v) {

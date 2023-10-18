@@ -14,6 +14,7 @@
  ******************************************************************************/
 package org.eclipse.nebula.widgets.oscilloscope.snippets;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 import org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope;
@@ -93,7 +94,7 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_2 {
 					for (int i = 0; i < scope.getChannels(); i++) {
 						counter[i] = (double) (i + 10) / 100;
 						System.out.println(counter[i]);
-						value[i] = new Random().nextInt((int) (200 * Math.PI)) / 100;
+						value[i] = new SecureRandom().nextInt((int) (200 * Math.PI)) / 100;
 					}
 				}
 

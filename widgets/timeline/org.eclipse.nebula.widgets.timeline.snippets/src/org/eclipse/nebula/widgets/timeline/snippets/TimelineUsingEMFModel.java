@@ -1,5 +1,6 @@
 package org.eclipse.nebula.widgets.timeline.snippets;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -76,7 +77,7 @@ public class TimelineUsingEMFModel {
 
 		final List<ILane> lanes = Arrays.asList(apdus, apduResponses, commands, responses, another, another2);
 
-		final Random random = new Random(12);
+		final Random random = new SecureRandom();
 		int lastPosition = 0;
 		for (int item = 0; item < 40; item++) {
 			final int laneIndex = random.nextInt(lanes.size());
