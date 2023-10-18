@@ -15,6 +15,7 @@ package org.eclipse.nebula.widgets.grid;
 
 import java.io.OutputStream;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -68,6 +69,13 @@ public class GridUtils
 	{
 
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		String FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+		try {
+			docFactory.setFeature(FEATURE, true);
+		} catch (ParserConfigurationException e) {
+			throw new IllegalStateException("ParserConfigurationException was thrown. The feature '"
+		+ FEATURE + "' is not supported by your XML processor.", e);
+		}
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
 		final Document doc = docBuilder.newDocument();
@@ -102,6 +110,9 @@ public class GridUtils
 
 		// write the content into xml file
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+		transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+		transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 		Transformer transformer = transformerFactory.newTransformer();
 		transformer.setOutputProperty(OutputKeys.INDENT, INDENT_ACCEPTED_VALUE);
 		transformer.setOutputProperty(INDET_PROPERTY, INDENT_VALUE);

@@ -14,6 +14,7 @@
  ******************************************************************************/
 package org.eclipse.nebula.widgets.oscilloscope.snippets;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 import org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope;
@@ -80,7 +81,7 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_1 {
 
 			@Override
 			public void stackEmpty(Oscilloscope scope, int channel) {
-				Random random = new Random();
+				Random random = new SecureRandom();
 
 				if (channel == 0) {
 

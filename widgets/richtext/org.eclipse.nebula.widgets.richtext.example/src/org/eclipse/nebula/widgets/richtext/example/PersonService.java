@@ -1,5 +1,6 @@
 package org.eclipse.nebula.widgets.richtext.example;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -27,7 +28,7 @@ public class PersonService {
 		String[] femaleNames = { "Marge", "Lisa", "Maggie", "Edna", "Helen", "Jessica" };
 		String[] lastNames = { "Simpson", "Leonard", "Carlson", "Smithers", "Flanders", "Krabappel", "Lovejoy" };
 
-		Random randomGenerator = new Random();
+		Random randomGenerator = new SecureRandom();
 
 		Person result = new Person();
 		result.setGender(Gender.values()[randomGenerator.nextInt(2)]);

@@ -14,6 +14,7 @@
  ******************************************************************************/
 package org.eclipse.nebula.widgets.oscilloscope.snippets;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 import org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope;
@@ -62,7 +63,7 @@ public class MultiScope_ScopeWithData {
 		scope.addStackListener(0, new OscilloscopeStackAdapter() {
 			@Override
 			public void stackEmpty(Oscilloscope scope, int channel) {
-				scope.setValue(channel, 25 - new Random().nextInt(50));
+				scope.setValue(channel, 25 - new SecureRandom().nextInt(50));
 			}
 		});
 		scope.getDispatcher(0).dispatch();

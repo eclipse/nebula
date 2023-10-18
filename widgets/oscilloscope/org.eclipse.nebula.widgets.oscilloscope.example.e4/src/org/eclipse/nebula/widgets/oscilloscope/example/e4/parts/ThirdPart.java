@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.eclipse.nebula.widgets.oscilloscope.example.e4.parts;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 import javax.annotation.PostConstruct;
@@ -61,7 +62,7 @@ public class ThirdPart {
 
 			@Override
 			public void stackEmpty(final Oscilloscope scope, final int channel) {
-				final Random random = new Random();
+				final Random random = new SecureRandom();
 
 				if (channel == 0) {
 
