@@ -6,7 +6,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -121,7 +121,7 @@ public class RichTextEditor extends Composite {
 	 * @param parent
 	 *            the parent composite where this rich text editor should be added to
 	 */
-	public RichTextEditor(Composite parent) {
+	public RichTextEditor(final Composite parent) {
 		this(parent, (RichTextEditorConfiguration) null, SWT.NONE);
 	}
 
@@ -139,7 +139,7 @@ public class RichTextEditor extends Composite {
 	 * @deprecated use constructors that take a {@link RichTextEditorConfiguration}
 	 */
 	@Deprecated
-	public RichTextEditor(Composite parent, org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration toolbarConfig) {
+	public RichTextEditor(final Composite parent, final org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration toolbarConfig) {
 		this(parent, toolbarConfig, SWT.NONE);
 	}
 
@@ -153,7 +153,7 @@ public class RichTextEditor extends Composite {
 	 *            the {@link RichTextEditorConfiguration} to use or <code>null</code> for using the default
 	 *            {@link RichTextEditorConfiguration}
 	 */
-	public RichTextEditor(Composite parent, RichTextEditorConfiguration editorConfig) {
+	public RichTextEditor(final Composite parent, final RichTextEditorConfiguration editorConfig) {
 		this(parent, editorConfig, SWT.NONE);
 	}
 
@@ -167,7 +167,7 @@ public class RichTextEditor extends Composite {
 	 *            the style of widget to construct, see {@link Browser} for further style bit
 	 *            information
 	 */
-	public RichTextEditor(Composite parent, int style) {
+	public RichTextEditor(final Composite parent, final int style) {
 		this(parent, (RichTextEditorConfiguration) null, style);
 	}
 
@@ -188,7 +188,7 @@ public class RichTextEditor extends Composite {
 	 * @deprecated use constructors that take a {@link RichTextEditorConfiguration}
 	 */
 	@Deprecated
-	public RichTextEditor(Composite parent, org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration toolbarConfig, int style) {
+	public RichTextEditor(final Composite parent, final org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration toolbarConfig, final int style) {
 		this(parent, toolbarConfig != null ? new RichTextEditorConfiguration(toolbarConfig) : null, style);
 	}
 
@@ -207,7 +207,7 @@ public class RichTextEditor extends Composite {
 	 *
 	 * @see Browser
 	 */
-	public RichTextEditor(Composite parent, RichTextEditorConfiguration editorConfig, int style) {
+	public RichTextEditor(final Composite parent, final RichTextEditorConfiguration editorConfig, final int style) {
 		super(parent, style);
 
 		setLayout(new FillLayout());
@@ -216,15 +216,15 @@ public class RichTextEditor extends Composite {
 		final boolean embedded = (getStyle() & SWT.EMBEDDED) != 0;
 
 		if (embedded) {
-			this.embeddedShell = new Shell(parent.getShell(), SWT.MODELESS);
-			this.embeddedShell.setLayout(new FillLayout());
+			embeddedShell = new Shell(parent.getShell(), SWT.MODELESS);
+			embeddedShell.setLayout(new FillLayout());
 		}
 
 		// remove styles that are not relevant for the browser
-		int browserStyle = style & ~SWT.RESIZE & ~SWT.MIN & ~SWT.EMBEDDED;
+		final int browserStyle = style & ~SWT.RESIZE & ~SWT.MIN & ~SWT.EMBEDDED;
 
-		this.browser = new Browser(!embedded ? this : this.embeddedShell, browserStyle);
-		this.browser.setJavascriptEnabled(true);
+		browser = new Browser(!embedded ? this : embeddedShell, browserStyle);
+		browser.setJavascriptEnabled(true);
 
 		// init editor configuration
 		if (editorConfig == null) {
@@ -233,43 +233,43 @@ public class RichTextEditor extends Composite {
 		else {
 			this.editorConfig = editorConfig;
 		}
-		this.editorConfig.setBrowser(this.browser);
+		this.editorConfig.setBrowser(browser);
 
 		// if SWT.RESIZE is set, we update the configuration
 		if (resizable) {
-			boolean specifyMin = ((getStyle() & SWT.MIN) != 0);
-			int minWidth = specifyMin ? getMinimumWidth() : 0;
-			int minHeight = specifyMin ? getMinimumHeight() : 0;
+			final boolean specifyMin = (getStyle() & SWT.MIN) != 0;
+			final int minWidth = specifyMin ? getMinimumWidth() : 0;
+			final int minHeight = specifyMin ? getMinimumHeight() : 0;
 			this.editorConfig.setResizable(resizable);
 			this.editorConfig.setMinSize(minWidth, minHeight);
 			this.editorConfig.setResizeDirection("both");
 		}
 
-		this.browser.setUrl(templateURL.toString());
+		browser.setUrl(templateURL.toString());
 
-		this.browserFunctions.add(new ModifyFunction(browser, "textModified"));
-		this.browserFunctions.add(new KeyPressedFunction(browser, "keyPressed"));
-		this.browserFunctions.add(new KeyReleasedFunction(browser, "keyReleased"));
-		this.browserFunctions.add(new FocusInFunction(browser, "focusIn"));
-		this.browserFunctions.add(new FocusOutFunction(browser, "focusOut"));
-		this.browserFunctions.add(new JavaExecutionStartedFunction(browser, "javaExecutionStarted"));
-		this.browserFunctions.add(new JavaExecutionFinishedFunction(browser, "javaExecutionFinished"));
-		this.browserFunctions.add(new BrowserFunction(browser, "customizeToolbar") {
+		browserFunctions.add(new ModifyFunction(browser, "textModified"));
+		browserFunctions.add(new KeyPressedFunction(browser, "keyPressed"));
+		browserFunctions.add(new KeyReleasedFunction(browser, "keyReleased"));
+		browserFunctions.add(new FocusInFunction(browser, "focusIn"));
+		browserFunctions.add(new FocusOutFunction(browser, "focusOut"));
+		browserFunctions.add(new JavaExecutionStartedFunction(browser, "javaExecutionStarted"));
+		browserFunctions.add(new JavaExecutionFinishedFunction(browser, "javaExecutionFinished"));
+		browserFunctions.add(new BrowserFunction(browser, "customizeToolbar") {
 			@Override
-			public Object function(Object[] arguments) {
+			public Object function(final Object[] arguments) {
 				RichTextEditor.this.editorConfig.customizeToolbar();
 				return super.function(arguments);
 			}
 		});
-		this.browserFunctions.add(new BrowserFunction(browser, "getAllOptions") {
+		browserFunctions.add(new BrowserFunction(browser, "getAllOptions") {
 			@Override
-			public Object function(Object[] arguments) {
+			public Object function(final Object[] arguments) {
 				// transform the configuration options map into an Object array
 				// necessary as map is not a supported return value
-				Map<String, Object> options = RichTextEditor.this.editorConfig.getAllOptions();
-				Object[] result = new Object[options.size()*2];
+				final Map<String, Object> options = RichTextEditor.this.editorConfig.getAllOptions();
+				final Object[] result = new Object[options.size()*2];
 				int i = 0;
-				for (Map.Entry<String, Object> entry : options.entrySet()) {
+				for (final Map.Entry<String, Object> entry : options.entrySet()) {
 					result[i++] = entry.getKey();
 					result[i++] = entry.getValue() != null ? entry.getValue() : "";
 				}
@@ -277,10 +277,10 @@ public class RichTextEditor extends Composite {
 			}
 		});
 
-		this.browser.addProgressListener(new ProgressListener() {
+		browser.addProgressListener(new ProgressListener() {
 
 			@Override
-			public void completed(ProgressEvent event) {
+			public void completed(final ProgressEvent event) {
 				browser.evaluate("initEditor();");
 
 				CKEDITOR_ALT = (Double) browser.evaluate("return getCKEditorALT()");
@@ -299,7 +299,7 @@ public class RichTextEditor extends Composite {
 					// ckeditor is resized
 					browserFunctions.add(new BrowserFunction(browser, "updateDimensions") {
 						@Override
-						public Object function(Object[] arguments) {
+						public Object function(final Object[] arguments) {
 							// width and height +2 because the editor is 1 pixel
 							// smaller than the browser container on every side
 							setInlineContainerBounds(
@@ -324,7 +324,7 @@ public class RichTextEditor extends Composite {
 					if (embedded) {
 						browserFunctions.add(new BrowserFunction(browser, "activateShellDragMode") {
 							@Override
-							public Object function(Object[] arguments) {
+							public Object function(final Object[] arguments) {
 								mouseDragPosition = new Point(((Double) arguments[0]).intValue(), ((Double) arguments[1]).intValue());
 								return super.function(arguments);
 							};
@@ -332,7 +332,7 @@ public class RichTextEditor extends Composite {
 
 						browserFunctions.add(new BrowserFunction(browser, "deactivateShellDragMode") {
 							@Override
-							public Object function(Object[] arguments) {
+							public Object function(final Object[] arguments) {
 								mouseDragPosition = null;
 								return super.function(arguments);
 							};
@@ -340,9 +340,9 @@ public class RichTextEditor extends Composite {
 
 						browserFunctions.add(new BrowserFunction(browser, "moveShell") {
 							@Override
-							public Object function(Object[] arguments) {
+							public Object function(final Object[] arguments) {
 								if (mouseDragPosition != null) {
-									Point cursorLocation = Display.getDefault().getCursorLocation();
+									final Point cursorLocation = Display.getDefault().getCursorLocation();
 									embeddedShell.setLocation(cursorLocation.x - mouseDragPosition.x, cursorLocation.y - mouseDragPosition.y);
 								}
 								return super.function(arguments);
@@ -363,7 +363,7 @@ public class RichTextEditor extends Composite {
 			}
 
 			@Override
-			public void changed(ProgressEvent event) {
+			public void changed(final ProgressEvent event) {
 			}
 		});
 	}
@@ -373,24 +373,24 @@ public class RichTextEditor extends Composite {
 		// dispose the editor configuration
 		editorConfig.dispose();
 		// dispose the registered BrowserFunctions
-		for (BrowserFunction function : browserFunctions) {
+		for (final BrowserFunction function : browserFunctions) {
 			function.dispose();
 		}
 		// dispose the Browser
 		browser.dispose();
 
 		// dispose the embedded shell if we are in embedded mode
-		if (this.embeddedShell != null && !this.embeddedShell.isDisposed()) {
-			this.embeddedShell.dispose();
+		if (embeddedShell != null && !embeddedShell.isDisposed()) {
+			embeddedShell.dispose();
 		}
 		// call super to ensure the resources of this composite are released
 		super.dispose();
 	}
 
 	@Override
-	public void setVisible(boolean visible) {
-		if (this.embeddedShell != null && !this.embeddedShell.isDisposed()) {
-			this.embeddedShell.setVisible(visible);
+	public void setVisible(final boolean visible) {
+		if (embeddedShell != null && !embeddedShell.isDisposed()) {
+			embeddedShell.setVisible(visible);
 		}
 		super.setVisible(visible);
 	}
@@ -401,7 +401,7 @@ public class RichTextEditor extends Composite {
 	 */
 	public String getText() {
 		if (browser != null && !browser.isDisposed()) {
-			Object result = browser.evaluate("return getText()");
+			final Object result = browser.evaluate("return getText()");
 			return result != null ? result.toString() : null;
 		}
 		return null;
@@ -413,11 +413,14 @@ public class RichTextEditor extends Composite {
 	 * @param text
 	 *            The text to set to the editing area.
 	 */
-	public void setText(String text) {
+	public void setText(final String text) {
 		if (editorLoaded) {
-			browser.evaluate("setText('" + escapeToEvaluate(text) + "')");
-		}
-		else {
+			try {
+				browser.evaluate("setText('" + escapeToEvaluate(text) + "')");
+			} catch (final Exception ignored) {
+				// Ignore the exception
+			}
+		} else {
 			initialValue = text;
 		}
 	}
@@ -430,7 +433,7 @@ public class RichTextEditor extends Composite {
 	 * @param text
 	 *            Text to be inserted into the editor.
 	 */
-	public void insertText(String text) {
+	public void insertText(final String text) {
 		browser.evaluate("insertText('" + escapeToEvaluate(text) + "')");
 	}
 
@@ -440,7 +443,7 @@ public class RichTextEditor extends Composite {
 	 * @param html
 	 *            HTML code to be inserted into the editor.
 	 */
-	public void insertHTML(String html) {
+	public void insertHTML(final String html) {
 		browser.evaluate("insertHTML('" + escapeToEvaluate(html) + "')");
 	}
 
@@ -462,7 +465,7 @@ public class RichTextEditor extends Composite {
 	 * @return The current selected text containing any markup styling tags.
 	 */
 	public String getSelectedHTML() {
-		Object html = browser.evaluate("return getSelectedHTML()");
+		final Object html = browser.evaluate("return getSelectedHTML()");
 		return html != null ? html.toString() : "";
 	}
 
@@ -473,7 +476,7 @@ public class RichTextEditor extends Composite {
 	 *
 	 */
 	public boolean isEditable() {
-		Object result = browser.evaluate("return isEditable()");
+		final Object result = browser.evaluate("return isEditable()");
 		return result != null ? !Boolean.valueOf(result.toString()) : true;
 	}
 
@@ -501,7 +504,7 @@ public class RichTextEditor extends Composite {
 	 * @param editable
 	 *            the new editable state
 	 */
-	public void setEditable(boolean editable) {
+	public void setEditable(final boolean editable) {
 		browser.evaluate("setReadOnly(" + !editable + ")");
 	}
 
@@ -519,7 +522,7 @@ public class RichTextEditor extends Composite {
 	 * @since 1.1
 	 */
 	public RichTextEditorConfiguration getEditorConfiguration() {
-		return this.editorConfig;
+		return editorConfig;
 	}
 
 	/**
@@ -530,7 +533,7 @@ public class RichTextEditor extends Composite {
 	 *            The user interface language localization to use.
 	 * @since 1.1
 	 */
-	public void setLanguage(Locale locale) {
+	public void setLanguage(final Locale locale) {
 		setLanguage(locale, true);
 	}
 
@@ -544,8 +547,8 @@ public class RichTextEditor extends Composite {
 	 *            to be executed explicitly.
 	 * @since 1.1
 	 */
-	public void setLanguage(Locale locale, boolean update) {
-		this.editorConfig.setLanguage(locale);
+	public void setLanguage(final Locale locale, final boolean update) {
+		editorConfig.setLanguage(locale);
 		if (update) {
 			updateEditor();
 		}
@@ -559,7 +562,7 @@ public class RichTextEditor extends Composite {
 	 *            The user interface language localization to use.
 	 * @since 1.1
 	 */
-	public void setLanguage(String language) {
+	public void setLanguage(final String language) {
 		setLanguage(language, true);
 	}
 
@@ -573,8 +576,8 @@ public class RichTextEditor extends Composite {
 	 *            to be executed explicitly.
 	 * @since 1.1
 	 */
-	public void setLanguage(String language, boolean update) {
-		this.editorConfig.setLanguage(language);
+	public void setLanguage(final String language, final boolean update) {
+		editorConfig.setLanguage(language);
 		if (update) {
 			updateEditor();
 		}
@@ -588,7 +591,7 @@ public class RichTextEditor extends Composite {
 	 *
 	 * @see RichTextEditorConfiguration#addToolbarButton(ToolbarButton)
 	 */
-	public void addToolbarButton(ToolbarButton button) {
+	public void addToolbarButton(final ToolbarButton button) {
 		editorConfig.addToolbarButton(button);
 	}
 
@@ -603,7 +606,7 @@ public class RichTextEditor extends Composite {
 	 *
 	 * @see RichTextEditorConfiguration#addToolbarButton(ToolbarButton, BrowserFunction)
 	 */
-	public void addToolbarButton(ToolbarButton button, BrowserFunction function) {
+	public void addToolbarButton(final ToolbarButton button, final BrowserFunction function) {
 		editorConfig.addToolbarButton(button, function);
 	}
 
@@ -615,7 +618,7 @@ public class RichTextEditor extends Composite {
 	 *
 	 * @see RichTextEditorConfiguration#removeToolbarButton(ToolbarButton)
 	 */
-	public void removeToolbarButton(ToolbarButton button) {
+	public void removeToolbarButton(final ToolbarButton button) {
 		editorConfig.removeToolbarButton(button);
 	}
 
@@ -623,7 +626,7 @@ public class RichTextEditor extends Composite {
 	public boolean setFocus() {
 		if (editorLoaded) {
 			browser.evaluate("setFocus();");
-			Object result = browser.evaluate("return hasFocus();");
+			final Object result = browser.evaluate("return hasFocus();");
 			return result != null ? Boolean.valueOf(result.toString()) : false;
 		}
 		else {
@@ -640,28 +643,28 @@ public class RichTextEditor extends Composite {
 	@Override
 	public boolean isFocusControl() {
 		if (editorLoaded) {
-			Object result = browser.evaluate("return hasFocus();");
+			final Object result = browser.evaluate("return hasFocus();");
 			return result != null ? Boolean.valueOf(result.toString()) : false;
 		}
 		return false;
 	}
 
 	@Override
-	public void addFocusListener(FocusListener listener) {
+	public void addFocusListener(final FocusListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		this.focusListener.add(listener);
+		focusListener.add(listener);
 	}
 
 	@Override
-	public void removeFocusListener(FocusListener listener) {
+	public void removeFocusListener(final FocusListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		this.focusListener.remove(listener);
+		focusListener.remove(listener);
 	}
 
 	/**
@@ -673,17 +676,12 @@ public class RichTextEditor extends Composite {
 	public void notifyFocusGained(final FocusEvent event) {
 		checkWidget();
 		// do not handle focus events, e.g. in case a Java callback execution is running
-		if (event == null || !this.handleFocusChanges) {
+		if (event == null || !handleFocusChanges) {
 			return;
 		}
 
 		if (event.display != null) {
-			event.display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					doNotifyFocusGained(event);
-				}
-			});
+			event.display.asyncExec(() -> doNotifyFocusGained(event));
 		}
 		else {
 			// no display in the event, fire the events synchronously
@@ -691,10 +689,10 @@ public class RichTextEditor extends Composite {
 		}
 	}
 
-	private void doNotifyFocusGained(FocusEvent event) {
-		Object[] listeners = this.focusListener.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			((FocusListener) listeners[i]).focusGained(event);
+	private void doNotifyFocusGained(final FocusEvent event) {
+		final Object[] listeners = focusListener.getListeners();
+		for (final Object listener : listeners) {
+			((FocusListener) listener).focusGained(event);
 		}
 	}
 
@@ -707,17 +705,12 @@ public class RichTextEditor extends Composite {
 	public void notifyFocusLost(final FocusEvent event) {
 		checkWidget();
 		// do not handle focus events, e.g. in case a Java callback execution is running
-		if (event == null || !this.handleFocusChanges) {
+		if (event == null || !handleFocusChanges) {
 			return;
 		}
 
 		if (event.display != null) {
-			event.display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					doNotifyFocusLost(event);
-				}
-			});
+			event.display.asyncExec(() -> doNotifyFocusLost(event));
 		}
 		else {
 			// no display in the event, fire the events synchronously
@@ -725,20 +718,20 @@ public class RichTextEditor extends Composite {
 		}
 	}
 
-	private void doNotifyFocusLost(FocusEvent event) {
-		Object[] listeners = this.focusListener.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			((FocusListener) listeners[i]).focusLost(event);
+	private void doNotifyFocusLost(final FocusEvent event) {
+		final Object[] listeners = focusListener.getListeners();
+		for (final Object listener : listeners) {
+			((FocusListener) listener).focusLost(event);
 		}
 	}
 
 	@Override
-	public void setBounds(Rectangle rect) {
+	public void setBounds(final Rectangle rect) {
 		setBounds(rect.x, rect.y, rect.width, rect.height);
 	}
 
 	@Override
-	public void setBounds(int x, int y, int width, int height) {
+	public void setBounds(final int x, final int y, final int width, final int height) {
 		int newX = x;
 		int newY = y;
 		int newWidth = width;
@@ -755,10 +748,10 @@ public class RichTextEditor extends Composite {
 			newWidth = Math.max(width, getMinimumWidth());
 		}
 
-		if (this.embeddedShell != null) {
-			Point shellLocation = super.toDisplay(newX, newY);
-			this.embeddedShell.setBounds(shellLocation.x, shellLocation.y, newWidth, newHeight);
-			this.embeddedShell.setVisible(true);
+		if (embeddedShell != null) {
+			final Point shellLocation = super.toDisplay(newX, newY);
+			embeddedShell.setBounds(shellLocation.x, shellLocation.y, newWidth, newHeight);
+			embeddedShell.setVisible(true);
 		}
 		else {
 			super.setBounds(newX, newY, newWidth, newHeight);
@@ -778,13 +771,13 @@ public class RichTextEditor extends Composite {
 	 * @param height
 	 *            the new height for the receiver
 	 */
-	void setInlineContainerBounds(int x, int y, int width, int height) {
+	void setInlineContainerBounds(final int x, final int y, int width, int height) {
 		width = ScalingHelper.convertHorizontalPixelToDpi(width);
 		height = ScalingHelper.convertVerticalPixelToDpi(height);
-		this.resizedBounds = new Rectangle(x, y, width, height);
-		if (this.embeddedShell != null) {
-			Point shellLocation = this.embeddedShell.getLocation();
-			this.embeddedShell.setBounds(
+		resizedBounds = new Rectangle(x, y, width, height);
+		if (embeddedShell != null) {
+			final Point shellLocation = embeddedShell.getLocation();
+			embeddedShell.setBounds(
 					shellLocation.x,
 					shellLocation.y,
 					width + 2,
@@ -830,8 +823,8 @@ public class RichTextEditor extends Composite {
 	 * @return <code>true</code> if the operation was successful and <code>false</code> otherwise
 	 * @see Browser#execute(String)
 	 */
-	public boolean executeJavascript(String script) {
-		return this.browser.execute(script);
+	public boolean executeJavascript(final String script) {
+		return browser.execute(script);
 	}
 
 	/**
@@ -843,8 +836,8 @@ public class RichTextEditor extends Composite {
 	 * @return the return value, if any, of executing the script
 	 * @see Browser#evaluate(String)
 	 */
-	public Object evaluateJavascript(String script) {
-		return this.browser.evaluate(script);
+	public Object evaluateJavascript(final String script) {
+		return browser.evaluate(script);
 	}
 
 	/**
@@ -862,26 +855,26 @@ public class RichTextEditor extends Composite {
 	 * @param handleFocusChanges
 	 *            <code>true</code> if focus changes should be handled, <code>false</code> if not
 	 */
-	public void setHandleFocusChanges(boolean handleFocusChanges) {
+	public void setHandleFocusChanges(final boolean handleFocusChanges) {
 		this.handleFocusChanges = handleFocusChanges;
 	}
 
 	@Override
-	public void addKeyListener(KeyListener listener) {
+	public void addKeyListener(final KeyListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		this.keyListener.add(listener);
+		keyListener.add(listener);
 	}
 
 	@Override
-	public void removeKeyListener(KeyListener listener) {
+	public void removeKeyListener(final KeyListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		this.keyListener.remove(listener);
+		keyListener.remove(listener);
 	}
 
 	/**
@@ -897,12 +890,7 @@ public class RichTextEditor extends Composite {
 		}
 
 		if (event.display != null) {
-			event.display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					doNotifyKeyPressed(event);
-				}
-			});
+			event.display.asyncExec(() -> doNotifyKeyPressed(event));
 		}
 		else {
 			// no display in the event, fire the events synchronously
@@ -910,10 +898,10 @@ public class RichTextEditor extends Composite {
 		}
 	}
 
-	private void doNotifyKeyPressed(KeyEvent event) {
-		Object[] listeners = this.keyListener.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			((KeyListener) listeners[i]).keyPressed(event);
+	private void doNotifyKeyPressed(final KeyEvent event) {
+		final Object[] listeners = keyListener.getListeners();
+		for (final Object listener : listeners) {
+			((KeyListener) listener).keyPressed(event);
 		}
 	}
 
@@ -930,12 +918,7 @@ public class RichTextEditor extends Composite {
 		}
 
 		if (event.display != null) {
-			event.display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					doNotifyKeyReleased(event);
-				}
-			});
+			event.display.asyncExec(() -> doNotifyKeyReleased(event));
 		}
 		else {
 			// no display in the event, fire the events synchronously
@@ -943,10 +926,10 @@ public class RichTextEditor extends Composite {
 		}
 	}
 
-	private void doNotifyKeyReleased(KeyEvent event) {
-		Object[] listeners = this.keyListener.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			((KeyListener) listeners[i]).keyReleased(event);
+	private void doNotifyKeyReleased(final KeyEvent event) {
+		final Object[] listeners = keyListener.getListeners();
+		for (final Object listener : listeners) {
+			((KeyListener) listener).keyReleased(event);
 		}
 	}
 
@@ -972,12 +955,12 @@ public class RichTextEditor extends Composite {
 	 * @see ModifyListener
 	 * @see #removeModifyListener
 	 */
-	public void addModifyListener(ModifyListener listener) {
+	public void addModifyListener(final ModifyListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		this.modifyListener.add(listener);
+		modifyListener.add(listener);
 	}
 
 	/**
@@ -1001,12 +984,12 @@ public class RichTextEditor extends Composite {
 	 * @see ModifyListener
 	 * @see #addModifyListener
 	 */
-	public void removeModifyListener(ModifyListener listener) {
+	public void removeModifyListener(final ModifyListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		this.modifyListener.remove(listener);
+		modifyListener.remove(listener);
 	}
 
 	/**
@@ -1034,12 +1017,7 @@ public class RichTextEditor extends Composite {
 		}
 
 		if (event.display != null) {
-			event.display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					doNotifyModifyText(event);
-				}
-			});
+			event.display.asyncExec(() -> doNotifyModifyText(event));
 		}
 		else {
 			// no display in the event, fire the events synchronously
@@ -1047,10 +1025,10 @@ public class RichTextEditor extends Composite {
 		}
 	}
 
-	private void doNotifyModifyText(ModifyEvent event) {
-		Object[] listeners = this.modifyListener.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			((ModifyListener) listeners[i]).modifyText(event);
+	private void doNotifyModifyText(final ModifyEvent event) {
+		final Object[] listeners = modifyListener.getListeners();
+		for (final Object listener : listeners) {
+			((ModifyListener) listener).modifyText(event);
 		}
 	}
 
@@ -1063,13 +1041,13 @@ public class RichTextEditor extends Composite {
 	 *            The modifier value sent by ckeditor.
 	 * @return The {@link KeyEvent} containing the tranformed key event information.
 	 */
-	private KeyEvent createKeyEvent(Double keyCode, Double modifier) {
-		Event event = new Event();
-		event.display = this.getDisplay();
+	private KeyEvent createKeyEvent(final Double keyCode, final Double modifier) {
+		final Event event = new Event();
+		event.display = getDisplay();
 		event.widget = this;
 		event.keyCode = keyCode.intValue();
 
-		Double modifierOnly = modifier - keyCode;
+		final Double modifierOnly = modifier - keyCode;
 		if (modifierOnly != 0) {
 			if (modifierOnly.equals(CKEDITOR_ALT + CKEDITOR_CTRL + CKEDITOR_SHIFT)) {
 				event.stateMask = SWT.MOD3 | SWT.MOD1 | SWT.MOD2;
@@ -1219,9 +1197,9 @@ public class RichTextEditor extends Composite {
 		}
 
 		// character
-		String keyCharString = SWTKeySupport.getKeyFormatterForPlatform().format(event.keyCode);
+		final String keyCharString = SWTKeySupport.getKeyFormatterForPlatform().format(event.keyCode);
 		if (keyCharString.length() == 1) {
-			char keyChar = keyCharString.charAt(0);
+			final char keyChar = keyCharString.charAt(0);
 			if (Character.isUpperCase(keyChar) && Character.isAlphabetic(keyChar)) {
 				if (!((event.stateMask & SWT.MOD2) == SWT.MOD2)) {
 					event.character = Character.toLowerCase(keyChar);
@@ -1243,12 +1221,12 @@ public class RichTextEditor extends Composite {
 	 * @param listener
 	 *            The {@link JavaCallbackListener} to add.
 	 */
-	public void addJavaCallbackListener(JavaCallbackListener listener) {
+	public void addJavaCallbackListener(final JavaCallbackListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		this.javaCallbackListener.add(listener);
+		javaCallbackListener.add(listener);
 	}
 
 	/**
@@ -1258,38 +1236,38 @@ public class RichTextEditor extends Composite {
 	 * @param listener
 	 *            The {@link JavaCallbackListener} to remove.
 	 */
-	public void removeJavaCallbackListener(JavaCallbackListener listener) {
+	public void removeJavaCallbackListener(final JavaCallbackListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		this.javaCallbackListener.remove(listener);
+		javaCallbackListener.remove(listener);
 	}
 
 	private void doNotifyJavaExecutionStarted() {
-		Object[] listeners = this.javaCallbackListener.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			((JavaCallbackListener) listeners[i]).javaExecutionStarted();
+		final Object[] listeners = javaCallbackListener.getListeners();
+		for (final Object listener : listeners) {
+			((JavaCallbackListener) listener).javaExecutionStarted();
 		}
 	}
 
 	private void doNotifyJavaExecutionFinished() {
-		Object[] listeners = this.javaCallbackListener.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			((JavaCallbackListener) listeners[i]).javaExecutionFinished();
+		final Object[] listeners = javaCallbackListener.getListeners();
+		for (final Object listener : listeners) {
+			((JavaCallbackListener) listener).javaExecutionFinished();
 		}
 	}
 
 	private FocusEvent createFocusEvent() {
-		Event event = new Event();
-		event.display = this.getDisplay();
+		final Event event = new Event();
+		event.display = getDisplay();
 		event.widget = this;
 		return new FocusEvent(event);
 	}
 
 	private ModifyEvent createModifyEvent() {
-		Event event = new Event();
-		event.display = this.getDisplay();
+		final Event event = new Event();
+		event.display = getDisplay();
 		event.widget = this;
 		return new ModifyEvent(event);
 	}
@@ -1300,12 +1278,12 @@ public class RichTextEditor extends Composite {
 	 */
 	class ModifyFunction extends BrowserFunction {
 
-		public ModifyFunction(Browser browser, String name) {
+		public ModifyFunction(final Browser browser, final String name) {
 			super(browser, name);
 		}
 
 		@Override
-		public Object function(Object[] arguments) {
+		public Object function(final Object[] arguments) {
 			notifyModifyListeners(createModifyEvent());
 			return super.function(arguments);
 		}
@@ -1317,14 +1295,14 @@ public class RichTextEditor extends Composite {
 	 */
 	class KeyPressedFunction extends BrowserFunction {
 
-		public KeyPressedFunction(Browser browser, String name) {
+		public KeyPressedFunction(final Browser browser, final String name) {
 			super(browser, name);
 		}
 
 		@Override
-		public Object function(Object[] arguments) {
-			Double keyCode = (Double) arguments[0];
-			Double modifier = (Double) arguments[1];
+		public Object function(final Object[] arguments) {
+			final Double keyCode = (Double) arguments[0];
+			final Double modifier = (Double) arguments[1];
 			notifyKeyPressed(createKeyEvent(keyCode, modifier));
 			return super.function(arguments);
 		}
@@ -1336,14 +1314,14 @@ public class RichTextEditor extends Composite {
 	 */
 	class KeyReleasedFunction extends BrowserFunction {
 
-		public KeyReleasedFunction(Browser browser, String name) {
+		public KeyReleasedFunction(final Browser browser, final String name) {
 			super(browser, name);
 		}
 
 		@Override
-		public Object function(Object[] arguments) {
-			Double keyCode = (Double) arguments[0];
-			Double modifier = (Double) arguments[1];
+		public Object function(final Object[] arguments) {
+			final Double keyCode = (Double) arguments[0];
+			final Double modifier = (Double) arguments[1];
 			notifyKeyReleased(createKeyEvent(keyCode, modifier));
 			return super.function(arguments);
 		}
@@ -1355,12 +1333,12 @@ public class RichTextEditor extends Composite {
 	 */
 	class FocusInFunction extends BrowserFunction {
 
-		public FocusInFunction(Browser browser, String name) {
+		public FocusInFunction(final Browser browser, final String name) {
 			super(browser, name);
 		}
 
 		@Override
-		public Object function(Object[] arguments) {
+		public Object function(final Object[] arguments) {
 			notifyFocusGained(createFocusEvent());
 			return super.function(arguments);
 		}
@@ -1372,12 +1350,12 @@ public class RichTextEditor extends Composite {
 	 */
 	class FocusOutFunction extends BrowserFunction {
 
-		public FocusOutFunction(Browser browser, String name) {
+		public FocusOutFunction(final Browser browser, final String name) {
 			super(browser, name);
 		}
 
 		@Override
-		public Object function(Object[] arguments) {
+		public Object function(final Object[] arguments) {
 			notifyFocusLost(createFocusEvent());
 			return super.function(arguments);
 		}
@@ -1390,12 +1368,12 @@ public class RichTextEditor extends Composite {
 	 */
 	class JavaExecutionStartedFunction extends BrowserFunction {
 
-		public JavaExecutionStartedFunction(Browser browser, String name) {
+		public JavaExecutionStartedFunction(final Browser browser, final String name) {
 			super(browser, name);
 		}
 
 		@Override
-		public Object function(Object[] arguments) {
+		public Object function(final Object[] arguments) {
 			doNotifyJavaExecutionStarted();
 			return super.function(arguments);
 		}
@@ -1407,12 +1385,12 @@ public class RichTextEditor extends Composite {
 	 */
 	class JavaExecutionFinishedFunction extends BrowserFunction {
 
-		public JavaExecutionFinishedFunction(Browser browser, String name) {
+		public JavaExecutionFinishedFunction(final Browser browser, final String name) {
 			super(browser, name);
 		}
 
 		@Override
-		public Object function(Object[] arguments) {
+		public Object function(final Object[] arguments) {
 			doNotifyJavaExecutionFinished();
 			return super.function(arguments);
 		}
@@ -1422,21 +1400,15 @@ public class RichTextEditor extends Composite {
 		templateURL = RichTextEditor.class.getResource("resources/template.html");
 
 		// if we are in an OSGi context, we need to convert the bundle URL to a file URL
-		Bundle bundle = FrameworkUtil.getBundle(RichTextEditor.class);
+		final Bundle bundle = FrameworkUtil.getBundle(RichTextEditor.class);
 		if (bundle != null) {
 			try {
 				templateURL = FileLocator.toFileURL(templateURL);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
 		} else if (templateURL.toString().startsWith("jar")) {
-			BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
-
-				@Override
-				public void run() {
-					templateURL = ResourceHelper.getRichTextResource("template.html");
-				}
-			});
+			BusyIndicator.showWhile(Display.getDefault(), () -> templateURL = ResourceHelper.getRichTextResource("template.html"));
 		}
 	}
 
@@ -1450,7 +1422,7 @@ public class RichTextEditor extends Composite {
 	 * @param text
 	 *            Text to be escaped.
 	 */
-	private static String escapeToEvaluate(String text) {
+	private static String escapeToEvaluate(final String text) {
 		return text.replace("\\", "\\\\").replace("\'", "\\\'").replace("\n", "\\n").replace("\r", "\\r");
 	}
 }
