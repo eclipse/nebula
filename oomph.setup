@@ -10,7 +10,8 @@
     xmlns:setup.p2="http://www.eclipse.org/oomph/setup/p2/1.0"
     xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
     xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
-    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/JDT.ecore http://www.eclipse.org/oomph/predicates/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/SetupWorkingSets.ecore"
+    xmlns:workingsets="http://www.eclipse.org/oomph/workingsets/1.0"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/JDT.ecore http://www.eclipse.org/oomph/predicates/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/SetupWorkingSets.ecore http://www.eclipse.org/oomph/workingsets/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/WorkingSets.ecore"
     name="nebula"
     label="Nebula">
   <annotation
@@ -27,7 +28,19 @@
           key="/instance/org.eclipse.pde.api.tools/missing_default_api_profile">
         <value>record</value>
       </detail>
+      <detail
+          key="/instance/org.eclipse.oomph.setup.ui/showToolBarContributions">
+        <value>record</value>
+      </detail>
     </annotation>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="org.eclipse.oomph.setup.ui">
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.oomph.setup.ui/showToolBarContributions"
+          value="true"/>
+    </setupTask>
     <setupTask
         xsi:type="setup:CompoundTask"
         name="org.eclipse.pde.api.tools">
@@ -129,14 +142,598 @@
     </targlet>
   </setupTask>
   <setupTask
-      xsi:type="setup.workingsets:WorkingSetTask">
+      xsi:type="setup.workingsets:WorkingSetTask"
+      id="nebula.workingsets">
     <workingSet
-        name="${scope.project.name}">
+        name="Nebula">
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
             xsi:type="predicates:RepositoryPredicate"
             project="org.eclipse.nebula.feature"/>
+        <operand
+            xsi:type="workingsets:ExclusionPredicate"
+            excludedWorkingSet="//'nebula.workingsets'/@workingSets[name='Nebula%20Badged%20Label'] //'nebula.workingsets'/@workingSets[name='Nebula%20Common%20Widget%20Toolkit'] //'nebula.workingsets'/@workingSets[name='Nebula%20Tiles'] //'nebula.workingsets'/@workingSets[name='Nebula%20XViewer'] //'nebula.workingsets'/@workingSets[name='Nebula%20Table%20Combo'] //'nebula.workingsets'/@workingSets[name='Nebula%20Step%20Bar'] //'nebula.workingsets'/@workingSets[name='Nebula%20Split%20Button'] //'nebula.workingsets'/@workingSets[name='Nebula%20Segmented%20Bar'] //'nebula.workingsets'/@workingSets[name='Nebula%20Rounded%20Switch'] //'nebula.workingsets'/@workingSets[name='Nebula%20Rounded%20Checkbox'] //'nebula.workingsets'/@workingSets[name='Nebula%20Rich%20Text'] //'nebula.workingsets'/@workingSets[name='Nebula%20PShelf'] //'nebula.workingsets'/@workingSets[name='Nebula%20Progress%20Circle'] //'nebula.workingsets'/@workingSets[name='Nebula%20PGroup'] //'nebula.workingsets'/@workingSets[name='Nebula%20Password%20Revealer'] //'nebula.workingsets'/@workingSets[name='Nebula%20Paperclips'] //'nebula.workingsets'/@workingSets[name='Nebula%20Oscilloscope'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Titled%20Separator'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Tip%20of%20the%20Day'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Text%20Assist'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Switch%20Button'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Star%20Rating'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Rounded%20Toolbar'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Range%20Slider'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Property%20Table'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Prompt%20Support'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Preference%20Window'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Panels'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Notifier'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Multi%20Choice'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Login%20Dialog'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Launcher'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Horizontal%20Spinner'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Heap%20Manager'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Header'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Dual%20List'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Dialog'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Commons'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Column%20Browser'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Checkbox%20Group'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Calculator'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Breadcrumb'] //'nebula.workingsets'/@workingSets[name='Nebula%20Slider'] //'nebula.workingsets'/@workingSets[name='Nebula%20LED'] //'nebula.workingsets'/@workingSets[name='Nebula%20Grid'] //'nebula.workingsets'/@workingSets[name='Nebula%20Geo%20Map'] //'nebula.workingsets'/@workingSets[name='Nebula%20Gantt%20Chart'] //'nebula.workingsets'/@workingSets[name='Nebula%20Gallery'] //'nebula.workingsets'/@workingSets[name='Nebula%20Formatted%20Text'] //'nebula.workingsets'/@workingSets[name='Nebula%20Font%20Awesome'] //'nebula.workingsets'/@workingSets[name='Nebula%20Floating%20Text'] //'nebula.workingsets'/@workingSets[name='Nebula%20CTree%20Combo'] //'nebula.workingsets'/@workingSets[name='Nebula%20Composite%20Table'] //'nebula.workingsets'/@workingSets[name='Nebula%20Chips'] //'nebula.workingsets'/@workingSets[name='Nebula%20CDate%20TIme'] //'nebula.workingsets'/@workingSets[name='Nebula%20Carousel'] //'nebula.workingsets'/@workingSets[name='Nebula%20Visualization'] //'nebula.workingsets'/@workingSets[name='Nebula%20Effects']"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Badged Label">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/badgedlabel/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Common Widget Toolkit">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/cwt/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Carousel">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/carousel/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula CDate TIme">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/cdatetime/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Chips">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/chips/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula CTree Combo">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/ctreecombo/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Composite Table">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/compositetable/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Effects">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/effects/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Floating Text">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/floatingtext/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Font Awesome">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/fontawesome/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Formatted Text">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/formattedtext/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Gallery">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/gallery/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Gantt Chart">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/ganttchart/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Geo Map">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/geomap/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Grid">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/grid/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula LED">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/led/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Breadcrumb">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/breadcrumb/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Calculator">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/calculator/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Checkbox Group">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/checkboxgroup/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Column Browser">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/columnbrowser/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Commons">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/commons/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Dialog">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/dialog/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Dual List">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/duallist/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Header">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/header/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Heap Manager">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/heapmanager/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Horizontal Spinner">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/horizontalspinner/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Launcher">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/launcher/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Login Dialog">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/logindialog/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Multi Choice">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/multichoice/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Notifier">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/notifier/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Panels">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/panels/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Preference Window">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/preferencewindow/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Prompt Support">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/promptsupport/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Property Table">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/propertytable/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Range Slider">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/rangeslider/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Rounded Toolbar">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/roundedtoolbar/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Star Rating">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/starrating/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Switch Button">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/switchbutton/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Text Assist">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/textassist/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Tip of the Day">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/tipoftheday/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Opal Titled Separator">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/opal/titledseparator/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Oscilloscope">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/oscilloscope/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Paperclips">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/paperclips/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Password Revealer">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/passwordrevealer/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula PGroup">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/pgroup/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Progress Circle">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/progresscircle/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula PShelf">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/pshelf/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Rich Text">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/richtext/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Rounded Checkbox">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/roundedcheckbox/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Rounded Switch">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/roundedswitch/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Segmented Bar">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/segmentedbar/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Slider">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/nebulaslider/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Split Button">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/splitbutton/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Step Bar">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/stepbar/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Table Combo">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/tablecombo/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Tiles">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/tiles/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Visualization">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/visualization/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula XViewer">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/xviewer/.*"/>
       </predicate>
     </workingSet>
     <description>The dynamic working sets for ${scope.project.label}</description>
