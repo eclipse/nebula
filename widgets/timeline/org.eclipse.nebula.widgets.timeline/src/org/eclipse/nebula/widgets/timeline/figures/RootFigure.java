@@ -94,8 +94,12 @@ public class RootFigure extends Figure implements IStyledFigure {
 
 		final TracksLayer tracksLayer = getFigure(figure, TracksLayer.class);
 
-		for (final Object trackFigure : tracksLayer.getChildren())
-			lanes.addAll(((IFigure) trackFigure).getChildren());
+		for (final IFigure trackFigure : tracksLayer.getChildren())
+			for (final IFigure lane : trackFigure.getChildren()) {
+				if (lane instanceof LaneFigure) {
+					lanes.add((LaneFigure) lane);
+				}
+			}
 
 		return lanes;
 	}
