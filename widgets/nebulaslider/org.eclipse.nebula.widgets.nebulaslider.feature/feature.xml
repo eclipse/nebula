@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.widgets.nebulaslider.feature"
       label="Nebula Slider Widget"
-      version="1.0.0.qualifier"
+      version="1.1.0.qualifier"
       provider-name="Eclipse Nebula, Laurent CARON">
 
    <description url="http://eclipse.org/nebula">
@@ -23,7 +23,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="org.eclipse.nebula.widgets.nebulaslider.source"
          download-size="0"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON.
+ * Copyright (c) 2024 Laurent CARON.
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ public class NebulaSliderSnippetOtherRenderer {
 		slider.setMinimum(0);
 		slider.setMaximum(1000);
 		slider.setValue(632);
-		slider.setRenderer(new NebulaCustomSliderRenderer(slider));
+		slider.setRenderer(new NebulaCustomSliderConfiguration(slider));
 		slider.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
 
 		slider.addListener(SWT.Selection, e -> {
