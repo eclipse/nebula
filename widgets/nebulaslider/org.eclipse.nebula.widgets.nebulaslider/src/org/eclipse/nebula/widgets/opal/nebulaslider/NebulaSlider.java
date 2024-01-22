@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron at gmail dot com) - Initial
@@ -17,9 +17,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -40,26 +37,13 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class NebulaSlider extends Canvas {
 
-	private static final int H_MARGIN = 5;
-	private static final int SELECTOR_WIDTH = 78;
-	private static final int BAR_HEIGHT = 12;
-	private static final int SELECTOR_HEIGHT = 32;
-
-	private final Color barInsideColor;
-	private final Color barBorderColor;
-	private final Color barSelectionColor;
-
-	private final Color selectorColor;
-	private final Color selectorColorBorder;
-	private final Color selectorTextColor;
-	private final Color arrowColor;
+	private NebulaSliderRenderer renderer;
 
 	private int minimum;
 	private int maximum;
 	private int value;
 	private int xPosition;
 	private int mouseDeltaX;
-	private final Font textFont;
 
 	private boolean moving = false;
 
@@ -93,24 +77,15 @@ public class NebulaSlider extends Canvas {
 	 *
 	 * @see Widget#getStyle()
 	 */
-	public NebulaSlider(Composite parent, int style) {
+	public NebulaSlider(final Composite parent, final int style) {
 		super(parent, checkStyle(style) | SWT.DOUBLE_BUFFERED);
 
-		barInsideColor = getAndDisposeColor(225, 225, 225);
-		barBorderColor = getAndDisposeColor(211, 211, 211);
-		barSelectionColor = getAndDisposeColor(41, 128, 185);
-
-		selectorColor = getAndDisposeColor(52, 152, 219);
-		selectorColorBorder = getAndDisposeColor(224, 237, 245);
-		selectorTextColor = getAndDisposeColor(255, 255, 255);
-		arrowColor = getAndDisposeColor(153, 203, 237);
+		renderer = new NebularDefaultSliderRenderer(this);
 
 		minimum = Integer.MIN_VALUE;
 		maximum = Integer.MAX_VALUE;
 		value = 0;
 		xPosition = -1;
-
-		textFont = createTextFont();
 
 		addPaintListener(e -> {
 			paintControl(e.gc);
@@ -125,28 +100,7 @@ public class NebulaSlider extends Canvas {
 		return 0;
 	}
 
-	private Color getAndDisposeColor(int r, int g, int b) {
-		final Color color = new Color(getDisplay(), r, g, b);
-		addDisposeListener(e -> {
-			if (!color.isDisposed()) {
-				color.dispose();
-			}
-		});
-		return color;
-	}
-
-	private Font createTextFont() {
-		final FontData fontData = getFont().getFontData()[0];
-		final Font newFont = new Font(getDisplay(), fontData.getName(), Math.max(fontData.getHeight(), 14), SWT.BOLD);
-		addDisposeListener(e -> {
-			if (!newFont.isDisposed()) {
-				newFont.dispose();
-			}
-		});
-		return newFont;
-	}
-
-	private void paintControl(GC gc) {
+	private void paintControl(final GC gc) {
 		gc.setAdvanced(true);
 		gc.setAntialias(SWT.ON);
 
@@ -160,73 +114,90 @@ public class NebulaSlider extends Canvas {
 		drawSelector(gc);
 	}
 
-	private void drawBar(GC gc) {
+	private void drawBar(final GC gc) {
 		final Rectangle rect = getClientArea();
-		gc.setForeground(barBorderColor);
-		gc.setBackground(barInsideColor);
+		gc.setForeground(renderer.getBarBorderColor());
+		gc.setBackground(renderer.getBarInsideColor());
 
-		final int x = H_MARGIN + SELECTOR_WIDTH / 2;
-		final int y = (rect.height - BAR_HEIGHT) / 2;
-		final int width = rect.width - H_MARGIN * 2 - SELECTOR_WIDTH;
+		final int hMargin = renderer.getHorizontalMargin();
+		final int selectorWidth = renderer.getSelectorWidth();
+		final int barHeight = renderer.getBarHeight();
 
-		gc.fillRoundRectangle(x, y, width, BAR_HEIGHT, BAR_HEIGHT, BAR_HEIGHT);
-		gc.drawRoundRectangle(x, y, width, BAR_HEIGHT, BAR_HEIGHT, BAR_HEIGHT);
+		final int x = hMargin + selectorWidth / 2;
+		final int y = (rect.height - barHeight) / 2;
+		final int width = rect.width - hMargin * 2 - selectorWidth;
+
+		gc.fillRoundRectangle(x, y, width, barHeight, barHeight, barHeight);
+		gc.drawRoundRectangle(x, y, width, barHeight, barHeight, barHeight);
 	}
 
-	private void drawSelectionPart(GC gc) {
+	private void drawSelectionPart(final GC gc) {
 		final Rectangle rect = getClientArea();
-		gc.setForeground(barBorderColor);
-		gc.setBackground(barSelectionColor);
+		gc.setForeground(renderer.getBarBorderColor());
+		gc.setBackground(renderer.getBarSelectionColor());
 
-		final int x = H_MARGIN + SELECTOR_WIDTH / 2;
-		final int y = (rect.height - BAR_HEIGHT) / 2;
+		final int barHeight = renderer.getBarHeight();
 
-		gc.fillRoundRectangle(x, y, xPosition, BAR_HEIGHT, BAR_HEIGHT, BAR_HEIGHT);
-		gc.drawRoundRectangle(x, y, xPosition, BAR_HEIGHT, BAR_HEIGHT, BAR_HEIGHT);
+		final int x = renderer.getHorizontalMargin() + renderer.getSelectorWidth() / 2;
+		final int y = (rect.height - barHeight) / 2;
+
+		gc.fillRoundRectangle(x, y, xPosition, barHeight, barHeight, barHeight);
+		gc.drawRoundRectangle(x, y, xPosition, barHeight, barHeight, barHeight);
 	}
 
 	private int computeXPosition() {
-		final int originalWidth = getClientArea().width - H_MARGIN * 2 - SELECTOR_WIDTH;
+		final int originalWidth = getClientArea().width - renderer.getHorizontalMargin() * 2 - renderer.getSelectorWidth();
 		final float coeff = value * 1f / (maximum - minimum);
 		final int position = (int) (coeff * originalWidth);
 		return position;
 	}
 
-	private void drawSelector(GC gc) {
+	private void drawSelector(final GC gc) {
 		final Rectangle rect = getClientArea();
-		gc.setForeground(selectorColorBorder);
-		gc.setBackground(selectorColor);
+		gc.setForeground(renderer.getSelectorColorBorder());
+		gc.setBackground(renderer.getSelectorColor());
 
-		final int y = (rect.height - SELECTOR_HEIGHT) / 2;
+		final int hMargin = renderer.getHorizontalMargin();
+
+		final int selectorWidth = renderer.getSelectorWidth();
+		final int selectorHeight = renderer.getSelectorHeight();
+
+		final int y = (rect.height - selectorHeight) / 2;
 
 		// Draw the body
-		gc.fillRoundRectangle(H_MARGIN + xPosition, y, SELECTOR_WIDTH, SELECTOR_HEIGHT, SELECTOR_HEIGHT, SELECTOR_HEIGHT);
-		gc.drawRoundRectangle(H_MARGIN + xPosition, y, SELECTOR_WIDTH, SELECTOR_HEIGHT, SELECTOR_HEIGHT, SELECTOR_HEIGHT);
+		gc.fillRoundRectangle(hMargin + xPosition, y, selectorWidth, selectorHeight, selectorHeight, selectorHeight);
+		gc.drawRoundRectangle(hMargin + xPosition, y, selectorWidth, selectorHeight, selectorHeight, selectorHeight);
 
 		// Draw the arrows
-		gc.setForeground(arrowColor);
-		gc.setLineWidth(3);
-		final int baseY = y + SELECTOR_HEIGHT / 2;
-		gc.drawLine(H_MARGIN + xPosition + 10, baseY, H_MARGIN + xPosition + 17, baseY - 7);
-		gc.drawLine(H_MARGIN + xPosition + 10, baseY, H_MARGIN + xPosition + 17, baseY + 7);
+		gc.setForeground(renderer.getArrowColor());
+		gc.setLineWidth(renderer.getArrowLineWidth());
+		final int baseY = y + selectorHeight / 2;
+		gc.drawLine(hMargin + xPosition + 10, baseY, hMargin + xPosition + 17, baseY - 7);
+		gc.drawLine(hMargin + xPosition + 10, baseY, hMargin + xPosition + 17, baseY + 7);
 
-		gc.drawLine(H_MARGIN + xPosition + SELECTOR_WIDTH - 10, baseY, H_MARGIN + xPosition + SELECTOR_WIDTH - 17, baseY - 7);
-		gc.drawLine(H_MARGIN + xPosition + SELECTOR_WIDTH - 10, baseY, H_MARGIN + xPosition + SELECTOR_WIDTH - 17, baseY + 7);
+		gc.drawLine(hMargin + xPosition + selectorWidth - 10, baseY, hMargin + xPosition + selectorWidth - 17, baseY - 7);
+		gc.drawLine(hMargin + xPosition + selectorWidth - 10, baseY, hMargin + xPosition + selectorWidth - 17, baseY + 7);
 
 		// And the value
-		gc.setForeground(selectorTextColor);
-		gc.setFont(textFont);
+		gc.setForeground(renderer.getSelectorTextColor());
+		gc.setFont(renderer.getTextFont());
 		final String valueAsString = String.valueOf(value);
 		final Point textSize = gc.textExtent(valueAsString);
 
-		final int xText = H_MARGIN + xPosition + SELECTOR_WIDTH / 2;
-		gc.drawText(valueAsString, xText - textSize.x / 2, y + 2, true);
+		final int xText = hMargin + xPosition + selectorWidth / 2;
+		final int yText = y + selectorHeight / 2;
+
+		gc.drawText(valueAsString, xText - textSize.x / 2, yText - textSize.y / 2, true);
 	}
 
 	private void addMouseListeners() {
+
 		addListener(SWT.MouseDown, e -> {
-			final int y = (getClientArea().height - SELECTOR_HEIGHT) / 2;
-			final Rectangle rect = new Rectangle(xPosition + H_MARGIN, y, SELECTOR_WIDTH, SELECTOR_HEIGHT);
+			final int selectorWidth = renderer.getSelectorWidth();
+			final int selectorHeight = renderer.getSelectorHeight();
+
+			final int y = (getClientArea().height - selectorHeight) / 2;
+			final Rectangle rect = new Rectangle(xPosition + renderer.getHorizontalMargin(), y, selectorWidth, selectorHeight);
 			if (!rect.contains(e.x, e.y)) {
 				return;
 			}
@@ -249,14 +220,14 @@ public class NebulaSlider extends Canvas {
 			if (xPosition < 0) {
 				xPosition = 0;
 			}
-			final int originalWidth = getClientArea().width - H_MARGIN * 2 - SELECTOR_WIDTH;
+			final int originalWidth = getClientArea().width - renderer.getHorizontalMargin() * 2 - renderer.getSelectorWidth();
 
 			if (xPosition > originalWidth) {
 				xPosition = originalWidth;
 			}
 
 			// Update value
-			float ratio = (float) xPosition / originalWidth;
+			final float ratio = (float) xPosition / originalWidth;
 			value = (int) Math.floor(ratio * (maximum - minimum));
 
 			SelectionListenerUtil.fireSelectionListeners(this,e);
@@ -302,7 +273,7 @@ public class NebulaSlider extends Canvas {
 	 * @see org.eclipse.swt.widgets.Control#computeSize(int, int, boolean)
 	 */
 	@Override
-	public Point computeSize(int wHint, int hHint, boolean changed) {
+	public Point computeSize(final int wHint, final int hHint, final boolean changed) {
 		return new Point(Math.max(300, wHint), Math.max(40, hHint));
 	}
 
@@ -361,7 +332,7 @@ public class NebulaSlider extends Canvas {
 	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void setMinimum(int minimum) {
+	public void setMinimum(final int minimum) {
 		checkWidget();
 		if (minimum > maximum) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT, new IllegalArgumentException(String.format("Value %d is greater than the maximum value (%d)", minimum, maximum)));
@@ -398,7 +369,7 @@ public class NebulaSlider extends Canvas {
 	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void setMaximum(int maximum) {
+	public void setMaximum(final int maximum) {
 		checkWidget();
 		if (maximum < minimum) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT, new IllegalArgumentException(String.format("Value %d is lower than the minimum value (%d)", maximum, minimum)));
@@ -435,7 +406,7 @@ public class NebulaSlider extends Canvas {
 	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void setValue(int value) {
+	public void setValue(final int value) {
 		checkWidget();
 		if (value < minimum || value > maximum) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT, new IllegalArgumentException(String.format("Value %d is not int the range [%d - %d]", value, minimum, maximum)));
@@ -444,6 +415,39 @@ public class NebulaSlider extends Canvas {
 		xPosition = -1;
 		redraw();
 		update();
+	}
+
+	/**
+	 * Return the current renderer for this widget
+	 *
+	 * @return the renderer
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public NebulaSliderRenderer getRenderer() {
+		checkWidget();
+		return renderer;
+	}
+
+	/**
+	 * Sets the renderer for this widget
+	 *
+	 * @param renderer the new renderer
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setRenderer(final NebulaSliderRenderer renderer) {
+		checkWidget();
+		this.renderer = renderer;
+		redraw();
 	}
 
 }
