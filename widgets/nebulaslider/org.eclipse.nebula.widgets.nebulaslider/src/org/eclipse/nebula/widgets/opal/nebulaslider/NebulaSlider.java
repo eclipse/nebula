@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Laurent CARON
+ * Copyright (c) 2018-2024 Laurent CARON
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class NebulaSlider extends Canvas {
 
-	private NebulaSliderRenderer renderer;
+	private NebulaSliderGraphicConfiguration renderer;
 
 	private int minimum;
 	private int maximum;
@@ -80,7 +80,7 @@ public class NebulaSlider extends Canvas {
 	public NebulaSlider(final Composite parent, final int style) {
 		super(parent, checkStyle(style) | SWT.DOUBLE_BUFFERED);
 
-		renderer = new NebularDefaultSliderRenderer(this);
+		renderer = new NebularSliderDefaultConfiguration(this);
 
 		minimum = Integer.MIN_VALUE;
 		maximum = Integer.MAX_VALUE;
@@ -428,7 +428,7 @@ public class NebulaSlider extends Canvas {
 	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public NebulaSliderRenderer getRenderer() {
+	public NebulaSliderGraphicConfiguration getRenderer() {
 		checkWidget();
 		return renderer;
 	}
@@ -444,7 +444,7 @@ public class NebulaSlider extends Canvas {
 	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void setRenderer(final NebulaSliderRenderer renderer) {
+	public void setRenderer(final NebulaSliderGraphicConfiguration renderer) {
 		checkWidget();
 		this.renderer = renderer;
 		redraw();

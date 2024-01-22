@@ -132,7 +132,7 @@
    <feature url="features/org.eclipse.nebula.widgets.progresscircle.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.progresscircle.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.nebulaslider.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.nebulaslider.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.nebulaslider.feature_1.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.nebulaslider.feature" version="1.1.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.floatingtext.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.floatingtext.feature" version="1.0.0.qualifier">

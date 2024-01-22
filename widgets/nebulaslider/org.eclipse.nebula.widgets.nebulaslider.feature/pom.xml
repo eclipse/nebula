@@ -22,12 +22,12 @@ Contributors:
 	<parent>
 		<groupId>org.eclipse.nebula</groupId>
 		<artifactId>nebulaslider</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.1.0-SNAPSHOT</version>
 	</parent>
 
   <artifactId>org.eclipse.nebula.widgets.nebulaslider.feature</artifactId>
   <packaging>eclipse-feature</packaging>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.1.0-SNAPSHOT</version>
 
   <name>Nebula Slider Feature</name>
 
