@@ -15,6 +15,7 @@
 package org.eclipse.nebula.widgets.oscilloscope.snippets;
 
 import java.io.File;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope;
@@ -82,7 +83,7 @@ public class MultiScope_Basic {
 
 		for (int i = 0; i < fCounter; i++) {
 
-			int dice = new Random().nextInt(4) + 1;
+			int dice = new SecureRandom().nextInt(4) + 1;
 
 			if (dice == 1) {
 				new SnippetDispatcher() {

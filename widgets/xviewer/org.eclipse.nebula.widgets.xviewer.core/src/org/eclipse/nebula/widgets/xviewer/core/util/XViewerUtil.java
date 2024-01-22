@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.xviewer.core.util;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 /**
@@ -20,7 +21,7 @@ import java.util.Random;
  */
 public class XViewerUtil {
 
-   static Random random = new Random();
+   static Random random = new SecureRandom();
 
    public static String intern(String str) {
       return (str == null) ? null : str.intern();

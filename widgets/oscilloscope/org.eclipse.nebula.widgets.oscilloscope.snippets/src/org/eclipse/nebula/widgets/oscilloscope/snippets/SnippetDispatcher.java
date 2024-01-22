@@ -16,6 +16,7 @@ package org.eclipse.nebula.widgets.oscilloscope.snippets;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope;
@@ -90,8 +91,8 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 		gilloscope.setBackgroundImage(new Image(shell.getDisplay(),
 				new ByteArrayInputStream(bytes)));
 
-		if (new Random().nextInt(2) == 1)
-			gilloscope.setTailSize(0,new Random().nextInt(200) + 1);
+		if (new SecureRandom().nextInt(2) == 1)
+			gilloscope.setTailSize(0,new SecureRandom().nextInt(200) + 1);
 		else
 			gilloscope.setTailSize(0,-1);
 
@@ -173,7 +174,7 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 		pulse.setMaximum(500);
 		pulse.setMinimum(1);
 		pulse.setIncrement(1);
-		pulse.setSelection(new Random().nextInt(70) + 30);
+		pulse.setSelection(new SecureRandom().nextInt(70) + 30);
 		pulse.setToolTipText("Pulse");
 
 		Label lblTicks = new Label(group2a, SWT.NONE);
@@ -189,7 +190,7 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 		delay.setMaximum(500);
 		delay.setMinimum(1);
 		delay.setIncrement(1);
-		delay.setSelection(new Random().nextInt(40) + 5);
+		delay.setSelection(new SecureRandom().nextInt(40) + 5);
 		delay.setToolTipText("redraw delay in ms");
 
 		Label lblMs = new Label(group2a, SWT.NONE);
@@ -216,7 +217,7 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 		lblTail.setText("Max tailsize");
 
 		tailSizeMax = new Button(group2a, SWT.CHECK);
-		tailSizeMax.setSelection(new Random().nextBoolean());
+		tailSizeMax.setSelection(new SecureRandom().nextBoolean());
 
 		Label lblTailsize = new Label(group2a, SWT.NONE);
 		lblTailsize.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
@@ -226,7 +227,7 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 		tailsize.setMaximum(1000);
 		tailsize.setMinimum(1);
 		tailsize.setIncrement(10);
-		tailsize.setSelection(new Random().nextInt(70) + 100);
+		tailsize.setSelection(new SecureRandom().nextInt(70) + 100);
 		tailsize.setToolTipText("tail size");
 
 		Label lblSound = new Label(group2a, SWT.NONE);
@@ -244,7 +245,7 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 		lblSteady.setText("Steady");
 
 		steady = new Button(group2a, SWT.CHECK);
-		steady.setSelection(new Random().nextBoolean());
+		steady.setSelection(new SecureRandom().nextBoolean());
 
 		Label lblPosition = new Label(group2a, SWT.NONE);
 		lblPosition.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
@@ -264,7 +265,7 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 		lblScale.setText("Scale");
 
 		scale = new Button(group2a, SWT.CHECK);
-		scale.setSelection(new Random().nextBoolean());
+		scale.setSelection(new SecureRandom().nextBoolean());
 		new Label(group2a, SWT.NONE);
 		new Label(group2a, SWT.NONE);
 
@@ -287,7 +288,7 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 
 		connectButton = new Button(group2a, SWT.CHECK);
 		connectButton.setToolTipText("connect head and tail");
-		connectButton.setSelection(new Random().nextBoolean());
+		connectButton.setSelection(new SecureRandom().nextBoolean());
 		new Label(group2a, SWT.NONE);
 		new Label(group2a, SWT.NONE);
 
