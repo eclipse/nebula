@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * A simple snippet for the TextAssist Widget
  */
-public class NebulaSliderSnippet {
+public class NebulaSliderSnippetOtherRenderer {
 	public static void main(final String[] args) {
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
@@ -49,6 +49,7 @@ public class NebulaSliderSnippet {
 		slider.setMinimum(0);
 		slider.setMaximum(1000);
 		slider.setValue(632);
+		slider.setRenderer(new NebulaCustomSliderRenderer(slider));
 		slider.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
 
 		slider.addListener(SWT.Selection, e -> {
