@@ -584,7 +584,11 @@ public class TableCombo extends Composite {
 			if (focusControl == arrow || focusControl == table) {
 				return;
 			}
-			if (!isDropped()) {
+			if (isDropped()) {
+				if (isWindows()) {
+					table.setFocus();
+				}
+			} else {
 				text.setFocus();
 			}
 			break;
@@ -595,6 +599,10 @@ public class TableCombo extends Composite {
 			internalLayout(false, true);
 			break;
 		}
+	}
+
+	private boolean isWindows() {
+		return System.getProperty("os.name").indexOf("indows") != -1;
 	}
 
 	/**
