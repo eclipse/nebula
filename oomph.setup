@@ -123,14 +123,20 @@
     <description>${scope.project.label}</description>
   </setupTask>
   <setupTask
+      xsi:type="setup:StringSubstitutionTask"
+      name="nebula.git.clone.location"
+      value="${git.clone.location}"/>
+  <setupTask
       xsi:type="setup.targlets:TargletTask">
     <targlet
         name="${scope.project.label}"
         activeRepositoryList="Nebula Dependencies">
       <requirement
+          name="org.eclipse.sdk.feature.group"/>
+      <requirement
           name="org.eclipse.nebula.feature.feature.group"/>
       <requirement
-          name="org.eclipse.sdk.feature.group"/>
+          name="org.eclipse.nebula.incubation.feature.feature.group"/>
       <sourceLocator
           rootFolder="${git.clone.location}"
           locateNestedProjects="true"/>
@@ -153,7 +159,7 @@
             project="org.eclipse.nebula.feature"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//'nebula.workingsets'/@workingSets[name='Nebula%20Badged%20Label'] //'nebula.workingsets'/@workingSets[name='Nebula%20Common%20Widget%20Toolkit'] //'nebula.workingsets'/@workingSets[name='Nebula%20Tiles'] //'nebula.workingsets'/@workingSets[name='Nebula%20XViewer'] //'nebula.workingsets'/@workingSets[name='Nebula%20Table%20Combo'] //'nebula.workingsets'/@workingSets[name='Nebula%20Step%20Bar'] //'nebula.workingsets'/@workingSets[name='Nebula%20Split%20Button'] //'nebula.workingsets'/@workingSets[name='Nebula%20Segmented%20Bar'] //'nebula.workingsets'/@workingSets[name='Nebula%20Rounded%20Switch'] //'nebula.workingsets'/@workingSets[name='Nebula%20Rounded%20Checkbox'] //'nebula.workingsets'/@workingSets[name='Nebula%20Rich%20Text'] //'nebula.workingsets'/@workingSets[name='Nebula%20PShelf'] //'nebula.workingsets'/@workingSets[name='Nebula%20Progress%20Circle'] //'nebula.workingsets'/@workingSets[name='Nebula%20PGroup'] //'nebula.workingsets'/@workingSets[name='Nebula%20Password%20Revealer'] //'nebula.workingsets'/@workingSets[name='Nebula%20Paperclips'] //'nebula.workingsets'/@workingSets[name='Nebula%20Oscilloscope'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Titled%20Separator'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Tip%20of%20the%20Day'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Text%20Assist'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Switch%20Button'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Star%20Rating'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Rounded%20Toolbar'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Range%20Slider'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Property%20Table'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Prompt%20Support'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Preference%20Window'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Panels'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Notifier'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Multi%20Choice'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Login%20Dialog'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Launcher'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Horizontal%20Spinner'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Heap%20Manager'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Header'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Dual%20List'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Dialog'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Commons'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Column%20Browser'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Checkbox%20Group'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Calculator'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Breadcrumb'] //'nebula.workingsets'/@workingSets[name='Nebula%20Slider'] //'nebula.workingsets'/@workingSets[name='Nebula%20LED'] //'nebula.workingsets'/@workingSets[name='Nebula%20Grid'] //'nebula.workingsets'/@workingSets[name='Nebula%20Geo%20Map'] //'nebula.workingsets'/@workingSets[name='Nebula%20Gantt%20Chart'] //'nebula.workingsets'/@workingSets[name='Nebula%20Gallery'] //'nebula.workingsets'/@workingSets[name='Nebula%20Formatted%20Text'] //'nebula.workingsets'/@workingSets[name='Nebula%20Font%20Awesome'] //'nebula.workingsets'/@workingSets[name='Nebula%20Floating%20Text'] //'nebula.workingsets'/@workingSets[name='Nebula%20CTree%20Combo'] //'nebula.workingsets'/@workingSets[name='Nebula%20Composite%20Table'] //'nebula.workingsets'/@workingSets[name='Nebula%20Chips'] //'nebula.workingsets'/@workingSets[name='Nebula%20CDate%20TIme'] //'nebula.workingsets'/@workingSets[name='Nebula%20Carousel'] //'nebula.workingsets'/@workingSets[name='Nebula%20Visualization'] //'nebula.workingsets'/@workingSets[name='Nebula%20Effects']"/>
+            excludedWorkingSet="//'nebula.workingsets'/@workingSets[name='Nebula%20Badged%20Label'] //'nebula.workingsets'/@workingSets[name='Nebula%20Calandar%20Combo'] //'nebula.workingsets'/@workingSets[name='Nebula%20Carousel'] //'nebula.workingsets'/@workingSets[name='Nebula%20CDate%20TIme'] //'nebula.workingsets'/@workingSets[name='Nebula%20Chips'] //'nebula.workingsets'/@workingSets[name='Nebula%20Collapsible%20Buttons%20'] //'nebula.workingsets'/@workingSets[name='Nebula%20Common%20Widget%20Toolkit'] //'nebula.workingsets'/@workingSets[name='Nebula%20Composite%20Table'] //'nebula.workingsets'/@workingSets[name='Nebula%20CTree%20Combo'] //'nebula.workingsets'/@workingSets[name='Nebula%20Date%20Chooser'] //'nebula.workingsets'/@workingSets[name='Nebula%20Effects'] //'nebula.workingsets'/@workingSets[name='Nebula%20Floating%20Text'] //'nebula.workingsets'/@workingSets[name='Nebula%20Font%20Awesome'] //'nebula.workingsets'/@workingSets[name='Nebula%20Formatted%20Text'] //'nebula.workingsets'/@workingSets[name='Nebula%20Gallery'] //'nebula.workingsets'/@workingSets[name='Nebula%20Gantt%20Chart'] //'nebula.workingsets'/@workingSets[name='Nebula%20Geo%20Map'] //'nebula.workingsets'/@workingSets[name='Nebula%20Grid'] //'nebula.workingsets'/@workingSets[name='Nebula%20LED'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Breadcrumb'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Calculator'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Checkbox%20Group'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Column%20Browser'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Commons'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Dialog'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Dual%20List'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Header'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Heap%20Manager'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Horizontal%20Spinner'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Launcher'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Login%20Dialog'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Multi%20Choice'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Notifier'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Panels'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Preference%20Window'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Prompt%20Support'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Property%20Table'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Range%20Slider'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Rounded%20Toolbar'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Star%20Rating'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Switch%20Button'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Text%20Assist'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Tip%20of%20the%20Day'] //'nebula.workingsets'/@workingSets[name='Nebula%20Opal%20Titled%20Separator'] //'nebula.workingsets'/@workingSets[name='Nebula%20Oscilloscope'] //'nebula.workingsets'/@workingSets[name='Nebula%20Pagination'] //'nebula.workingsets'/@workingSets[name='Nebula%20Paperclips'] //'nebula.workingsets'/@workingSets[name='Nebula%20Password%20Revealer'] //'nebula.workingsets'/@workingSets[name='Nebula%20PGroup'] //'nebula.workingsets'/@workingSets[name='Nebula%20Picture'] //'nebula.workingsets'/@workingSets[name='Nebula%20Progress%20Circle'] //'nebula.workingsets'/@workingSets[name='Nebula%20PShelf'] //'nebula.workingsets'/@workingSets[name='Nebula%20Radio%20Group'] //'nebula.workingsets'/@workingSets[name='Nebula%20Rich%20Text'] //'nebula.workingsets'/@workingSets[name='Nebula%20Rounded%20Checkbox'] //'nebula.workingsets'/@workingSets[name='Nebula%20Rounded%20Switch'] //'nebula.workingsets'/@workingSets[name='Nebula%20Segmented%20Bar'] //'nebula.workingsets'/@workingSets[name='Nebula%20Slider'] //'nebula.workingsets'/@workingSets[name='Nebula%20Split%20Button'] //'nebula.workingsets'/@workingSets[name='Nebula%20Step%20Bar'] //'nebula.workingsets'/@workingSets[name='Nebula%20Table%20Combo'] //'nebula.workingsets'/@workingSets[name='Nebula%20Tiles'] //'nebula.workingsets'/@workingSets[name='Nebula%20Timeline'] //'nebula.workingsets'/@workingSets[name='Nebula%20Tree%20Mapper'] //'nebula.workingsets'/@workingSets[name='Nebula%20Visualization'] //'nebula.workingsets'/@workingSets[name='Nebula%20XViewer']"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -167,13 +173,13 @@
       </predicate>
     </workingSet>
     <workingSet
-        name="Nebula Common Widget Toolkit">
+        name="Nebula Calandar Combo">
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
             xsi:type="predicates:RepositoryPredicate"
             project="org.eclipse.nebula.feature"
-            relativePathPattern="widgets/cwt/.*"/>
+            relativePathPattern="widgets/calendarcombo/.*"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -217,6 +223,26 @@
       </predicate>
     </workingSet>
     <workingSet
+        name="Nebula Collapsible Buttons ">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/collapsiblebuttons/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Common Widget Toolkit">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/cwt/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
         name="Nebula Composite Table">
       <predicate
           xsi:type="predicates:AndPredicate">
@@ -224,6 +250,16 @@
             xsi:type="predicates:RepositoryPredicate"
             project="org.eclipse.nebula.feature"
             relativePathPattern="widgets/compositetable/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Date Chooser">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/datechooser/.*"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -577,6 +613,16 @@
       </predicate>
     </workingSet>
     <workingSet
+        name="Nebula Pagination">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/pagination/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
         name="Nebula Paperclips">
       <predicate
           xsi:type="predicates:AndPredicate">
@@ -607,6 +653,16 @@
       </predicate>
     </workingSet>
     <workingSet
+        name="Nebula Picture">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/picture/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
         name="Nebula Progress Circle">
       <predicate
           xsi:type="predicates:AndPredicate">
@@ -624,6 +680,16 @@
             xsi:type="predicates:RepositoryPredicate"
             project="org.eclipse.nebula.feature"
             relativePathPattern="widgets/pshelf/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Radio Group">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/radiogroup/.*"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -714,6 +780,26 @@
             xsi:type="predicates:RepositoryPredicate"
             project="org.eclipse.nebula.feature"
             relativePathPattern="widgets/tiles/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Timeline">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/timeline/.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Nebula Tree Mapper">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.nebula.feature"
+            relativePathPattern="widgets/treemapper/.*"/>
       </predicate>
     </workingSet>
     <workingSet
