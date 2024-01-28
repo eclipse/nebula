@@ -164,10 +164,12 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 		leftTreeViewer.getTree().addTreeListener(treeListener);
 		rightTreeViewer.getTree().addTreeListener(treeListener);
 
-		control.setWeights(new int[] { 1, 2, 1} );
+		control.setWeights(this.uiConfig.getControlWeights());
 
-		bindTreeForDND(leftTreeViewer, rightTreeViewer, SWT.LEFT_TO_RIGHT);
-		bindTreeForDND(rightTreeViewer, leftTreeViewer, SWT.RIGHT_TO_LEFT);
+		if (this.uiConfig.isDndEnabled()) {
+			bindTreeForDND(leftTreeViewer, rightTreeViewer, SWT.LEFT_TO_RIGHT);
+			bindTreeForDND(rightTreeViewer, leftTreeViewer, SWT.RIGHT_TO_LEFT);
+		}
 	}
 
 	/**
@@ -344,11 +346,14 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 			boolean leftItemVisible = true;
 			TreeItem leftTreeItem = (TreeItem) leftTreeViewer.testFindItem(semanticSupport.resolveLeftItem(mapping));
 			if (leftTreeItem == null) {
-				Policy.getLog().log(
+				if (semanticSupport.signalOnMissingItem()) {
+				    Policy.getLog().log(
 						new Status(IStatus.ERROR,
 								"org.eclipse.nebula.widgets.treemapper",
 								"Could not find left entry of mapping " + mapping.toString() + " in left treeViewer."));
-				return false;
+					return false;
+				}
+				return true;
 			}
 			TreeItem lastVisibleLeftTreeItem = leftTreeItem;
 			while (leftTreeItem.getParentItem() != null) {
@@ -366,11 +371,14 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 			boolean rightItemVisible = true;
 			TreeItem rightTreeItem = (TreeItem) rightTreeViewer.testFindItem(semanticSupport.resolveRightItem(mapping));
 			if (rightTreeItem == null) {
-				Policy.getLog().log(
-						new Status(IStatus.ERROR,
-								"org.eclipse.nebula.widgets.treemapper",
-								"Could not find right entry of mapping " + mapping.toString() + " in right treeViewer."));
-				return false;
+				if (semanticSupport.signalOnMissingItem()) {
+					Policy.getLog().log(
+							new Status(IStatus.ERROR,
+									"org.eclipse.nebula.widgets.treemapper",
+									"Could not find right entry of mapping " + mapping.toString() + " in right treeViewer."));
+					return false;
+				}
+				return true;
 			}
 			TreeItem lastVisibleRightTreeItem = rightTreeItem;
 			while (rightTreeItem.getParentItem() != null) {

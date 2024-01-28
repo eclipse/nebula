@@ -41,7 +41,11 @@ public final class TreeMapperUIConfigProvider {
 		this.defaultWidth = defaultWidth;
 		this.controlWeights = controlWeights;
 	}
-	
+
+	public TreeMapperUIConfigProvider(Color defaultColor, int defaultWidth, Color selectedColor, int selectedWidth) {
+		this(defaultColor, defaultWidth, selectedColor, selectedWidth, new int[] { 1, 2, 1});
+	}
+    	
 	/**
 	 * @return
 	 */
