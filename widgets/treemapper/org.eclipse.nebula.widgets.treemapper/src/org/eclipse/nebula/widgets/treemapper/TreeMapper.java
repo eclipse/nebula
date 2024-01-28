@@ -143,6 +143,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 			if (canvasNeedRedraw || leftTreeViewer.getTree().getTopItem() != leftTopItem) {
 				leftTopItem = leftTreeViewer.getTree().getTopItem();
 				redrawMappings();
+				canvasNeedRedraw = false;
 			}
 		});
 		rightTreeViewer.getTree().addListener(SWT.Paint, e -> {
@@ -624,6 +625,14 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 		rightTreeViewer.refresh();
 		canvasNeedRedraw = true;
 		control.layout(true);
+	}
+	
+	/**
+	 * Force canvas update and redraw
+	 */
+	public void updateCanvas() {
+		canvasNeedRedraw = true;
+		redrawMappings();
 	}
 
 	/**
