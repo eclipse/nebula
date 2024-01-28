@@ -342,7 +342,12 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 
 		final LinkFigure arrowFigure = new LinkFigure(linkRootFigure);
 
-		{
+        {
+            int leftHeaderOffset = 0;
+            if (leftTreeViewer.getTree().getHeaderVisible()) {
+                leftHeaderOffset = leftTreeViewer.getTree().getHeaderHeight();
+            }
+    
 			boolean leftItemVisible = true;
 			TreeItem leftTreeItem = (TreeItem) leftTreeViewer.testFindItem(semanticSupport.resolveLeftItem(mapping));
 			if (leftTreeItem == null) {
@@ -363,11 +368,16 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 				}
 				leftTreeItem = leftTreeItem.getParentItem();
 			}
-			arrowFigure.setLeftPoint(0, lastVisibleLeftTreeItem.getBounds().y + lastVisibleLeftTreeItem.getBounds().height / 2);
+			arrowFigure.setLeftPoint(0, leftHeaderOffset + lastVisibleLeftTreeItem.getBounds().y + lastVisibleLeftTreeItem.getBounds().height / 2);
 			arrowFigure.setLeftMappingVisible(leftItemVisible);
 		}
 
 		{
+            int rightHeaderOffset = 0;
+            if (rightTreeViewer.getTree().getHeaderVisible()) {
+                rightHeaderOffset = rightTreeViewer.getTree().getHeaderHeight();
+            }
+            
 			boolean rightItemVisible = true;
 			TreeItem rightTreeItem = (TreeItem) rightTreeViewer.testFindItem(semanticSupport.resolveRightItem(mapping));
 			if (rightTreeItem == null) {
@@ -388,7 +398,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 				}
 				rightTreeItem = rightTreeItem.getParentItem();
 			}
-			arrowFigure.setRightPoint(linkRootFigure.getBounds().width, lastVisibleRightTreeItem.getBounds().y + rightTreeItem.getBounds().height / 2);
+			arrowFigure.setRightPoint(linkRootFigure.getBounds().width, rightHeaderOffset + lastVisibleRightTreeItem.getBounds().y + rightTreeItem.getBounds().height / 2);
 			arrowFigure.setRightMappingVisible(rightItemVisible);
 		}
 
