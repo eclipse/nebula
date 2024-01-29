@@ -54,4 +54,12 @@ public class DOMSemanticTreeMapperSupport implements ISemanticTreeMapperSupport<
 	public Node resolveRightItem(DOMMappingBean semanticMappingObject) {
 		return semanticMappingObject.right;
 	}
+    
+    /**
+	 * @see org.eclipse.nebula.treemapper.ISemanticTreeMapperSupport#signalOnMissingItem()
+	 */
+    @Override
+    public boolean signalOnMissingItem() {
+        return true;
+    }
 }

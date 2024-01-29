@@ -50,4 +50,10 @@ public interface ISemanticTreeMapperSupport<M, L, R> {
 	 * @return its left bound
 	 */
 	public R resolveRightItem(M semanticMappingObject);
+	
+	/**
+	 * Whether or not to signal a warning in case of fail in item resolution.
+	 * @return true to signal 
+	 */
+	public boolean signalOnMissingItem();
 }

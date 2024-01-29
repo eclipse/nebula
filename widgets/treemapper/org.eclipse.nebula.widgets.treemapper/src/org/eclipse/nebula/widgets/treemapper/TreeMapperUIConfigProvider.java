@@ -29,13 +29,23 @@ public final class TreeMapperUIConfigProvider {
 	private int defaultWidth;
 	private Color defaultColor;
 
-	public TreeMapperUIConfigProvider(Color defaultColor, int defaultWidth, Color selectedColor, int selectedWidth) {
+	private int[] controlWeights;
+	
+	private boolean dndEnabled;
+	
+	public TreeMapperUIConfigProvider(Color defaultColor, int defaultWidth, Color selectedColor, int selectedWidth,
+			int[] controlWeights) {
 		this.selectedColor = selectedColor;
 		this.selectedWidth = selectedWidth;
 		this.defaultColor = defaultColor;
 		this.defaultWidth = defaultWidth;
+		this.controlWeights = controlWeights;
 	}
-	
+
+	public TreeMapperUIConfigProvider(Color defaultColor, int defaultWidth, Color selectedColor, int selectedWidth) {
+		this(defaultColor, defaultWidth, selectedColor, selectedWidth, new int[] { 1, 2, 1});
+	}
+    	
 	/**
 	 * @return
 	 */
@@ -64,4 +74,24 @@ public final class TreeMapperUIConfigProvider {
 		return selectedWidth;
 	}
 	
+	/**
+	 * @return the main control weights
+	 */
+	public int[] getControlWeights() {
+		return controlWeights;
+	}
+
+	/**
+	 * @return the dndEnabled
+	 */
+	public boolean isDndEnabled() {
+		return dndEnabled;
+	}
+
+	/**
+	 * @param dndEnabled the dndEnabled to set
+	 */
+	public void setDndEnabled(boolean dndEnabled) {
+		this.dndEnabled = dndEnabled;
+	}
 }

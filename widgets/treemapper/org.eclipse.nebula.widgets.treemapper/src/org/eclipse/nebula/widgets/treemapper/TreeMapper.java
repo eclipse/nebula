@@ -143,6 +143,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 			if (canvasNeedRedraw || leftTreeViewer.getTree().getTopItem() != leftTopItem) {
 				leftTopItem = leftTreeViewer.getTree().getTopItem();
 				redrawMappings();
+				canvasNeedRedraw = false;
 			}
 		});
 		rightTreeViewer.getTree().addListener(SWT.Paint, e -> {
@@ -164,10 +165,12 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 		leftTreeViewer.getTree().addTreeListener(treeListener);
 		rightTreeViewer.getTree().addTreeListener(treeListener);
 
-		control.setWeights(new int[] { 1, 2, 1} );
+		control.setWeights(this.uiConfig.getControlWeights());
 
-		bindTreeForDND(leftTreeViewer, rightTreeViewer, SWT.LEFT_TO_RIGHT);
-		bindTreeForDND(rightTreeViewer, leftTreeViewer, SWT.RIGHT_TO_LEFT);
+		if (this.uiConfig.isDndEnabled()) {
+			bindTreeForDND(leftTreeViewer, rightTreeViewer, SWT.LEFT_TO_RIGHT);
+			bindTreeForDND(rightTreeViewer, leftTreeViewer, SWT.RIGHT_TO_LEFT);
+		}
 	}
 
 	/**
@@ -340,15 +343,23 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 
 		final LinkFigure arrowFigure = new LinkFigure(linkRootFigure);
 
-		{
+        {
+            int leftHeaderOffset = 0;
+            if (leftTreeViewer.getTree().getHeaderVisible()) {
+                leftHeaderOffset = leftTreeViewer.getTree().getHeaderHeight();
+            }
+    
 			boolean leftItemVisible = true;
 			TreeItem leftTreeItem = (TreeItem) leftTreeViewer.testFindItem(semanticSupport.resolveLeftItem(mapping));
 			if (leftTreeItem == null) {
-				Policy.getLog().log(
+				if (semanticSupport.signalOnMissingItem()) {
+				    Policy.getLog().log(
 						new Status(IStatus.ERROR,
 								"org.eclipse.nebula.widgets.treemapper",
 								"Could not find left entry of mapping " + mapping.toString() + " in left treeViewer."));
-				return false;
+					return false;
+				}
+				return true;
 			}
 			TreeItem lastVisibleLeftTreeItem = leftTreeItem;
 			while (leftTreeItem.getParentItem() != null) {
@@ -358,19 +369,27 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 				}
 				leftTreeItem = leftTreeItem.getParentItem();
 			}
-			arrowFigure.setLeftPoint(0, lastVisibleLeftTreeItem.getBounds().y + lastVisibleLeftTreeItem.getBounds().height / 2);
+			arrowFigure.setLeftPoint(0, leftHeaderOffset + lastVisibleLeftTreeItem.getBounds().y + lastVisibleLeftTreeItem.getBounds().height / 2);
 			arrowFigure.setLeftMappingVisible(leftItemVisible);
 		}
 
 		{
+            int rightHeaderOffset = 0;
+            if (rightTreeViewer.getTree().getHeaderVisible()) {
+                rightHeaderOffset = rightTreeViewer.getTree().getHeaderHeight();
+            }
+            
 			boolean rightItemVisible = true;
 			TreeItem rightTreeItem = (TreeItem) rightTreeViewer.testFindItem(semanticSupport.resolveRightItem(mapping));
 			if (rightTreeItem == null) {
-				Policy.getLog().log(
-						new Status(IStatus.ERROR,
-								"org.eclipse.nebula.widgets.treemapper",
-								"Could not find right entry of mapping " + mapping.toString() + " in right treeViewer."));
-				return false;
+				if (semanticSupport.signalOnMissingItem()) {
+					Policy.getLog().log(
+							new Status(IStatus.ERROR,
+									"org.eclipse.nebula.widgets.treemapper",
+									"Could not find right entry of mapping " + mapping.toString() + " in right treeViewer."));
+					return false;
+				}
+				return true;
 			}
 			TreeItem lastVisibleRightTreeItem = rightTreeItem;
 			while (rightTreeItem.getParentItem() != null) {
@@ -380,7 +399,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 				}
 				rightTreeItem = rightTreeItem.getParentItem();
 			}
-			arrowFigure.setRightPoint(linkRootFigure.getBounds().width, lastVisibleRightTreeItem.getBounds().y + rightTreeItem.getBounds().height / 2);
+			arrowFigure.setRightPoint(linkRootFigure.getBounds().width, rightHeaderOffset + lastVisibleRightTreeItem.getBounds().y + rightTreeItem.getBounds().height / 2);
 			arrowFigure.setRightMappingVisible(rightItemVisible);
 		}
 
@@ -606,6 +625,14 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 		rightTreeViewer.refresh();
 		canvasNeedRedraw = true;
 		control.layout(true);
+	}
+	
+	/**
+	 * Force canvas update and redraw
+	 */
+	public void updateCanvas() {
+		canvasNeedRedraw = true;
+		redrawMappings();
 	}
 
 	/**

@@ -44,5 +44,12 @@ public class ObjectSemanticSupport implements ISemanticTreeMapperSupport<String,
 	public String resolveRightItem(String semanticMappingObject) {
 		return semanticMappingObject;
 	}
-
+    
+    /**
+	 * @see org.eclipse.nebula.treemapper.ISemanticTreeMapperSupport#signalOnMissingItem()
+	 */
+    @Override
+    public boolean signalOnMissingItem() {
+        return true;
+    }
 }
