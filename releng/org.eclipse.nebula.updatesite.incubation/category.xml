@@ -15,9 +15,6 @@
    <feature url="features/org.eclipse.nebula.widgets.radiogroup.feature_0.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.radiogroup.feature" version="0.1.0.qualifier">
       <category name="Nebula Individual Incubation Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.treemapper.feature_0.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.treemapper.feature" version="0.1.0.qualifier">
-      <category name="Nebula Individual Incubation Widgets"/>
-   </feature>
    <feature url="features/org.eclipse.nebula.widgets.pagination.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.pagination.feature" version="1.0.0.qualifier">
       <category name="Nebula Individual Incubation Widgets"/>
    </feature>

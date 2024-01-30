@@ -56,20 +56,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.nebula.widgets.treemapper.examples"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.nebula.widgets.treemapper.examples.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.nebula.widgets.pagination.example"
          download-size="0"
          install-size="0"

@@ -44,7 +44,6 @@ Contributors:
 		<module>../../widgets/formattedtext</module>
 		<module>../../widgets/datechooser</module>
 		<module>../../widgets/radiogroup</module>
-		<module>../../widgets/treemapper</module>
 		<module>../../widgets/calendarcombo</module>
 		<module>../../widgets/pagination</module>
 		<module>../../widgets/picture</module>

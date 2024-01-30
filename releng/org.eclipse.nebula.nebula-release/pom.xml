@@ -81,6 +81,7 @@
 		<module>../../widgets/segmentedbar</module>
 		<module>../../widgets/tiles</module>
 		<module>../../widgets/formattedtext</module>
+		<module>../../widgets/treemapper</module>
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>
