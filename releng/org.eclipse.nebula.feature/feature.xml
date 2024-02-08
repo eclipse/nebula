@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.feature"
-      label="Nebula Widgets"
-      version="3.1.1.qualifier"
+      label="Nebula All Mature Widgets SDK"
+      version="3.1.2.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
@@ -241,7 +241,6 @@
          id="org.eclipse.nebula.widgets.roundedswitch.feature"
          version="0.0.0"/>
 
-
    <includes
          id="org.eclipse.nebula.widgets.segmentedbar.feature"
          version="0.0.0"/>
@@ -249,7 +248,7 @@
    <includes
          id="org.eclipse.nebula.widgets.tiles.feature"
          version="0.0.0"/>
-		 
+
    <includes
          id="org.eclipse.nebula.widgets.roundedcheckbox.feature"
          version="0.0.0"/>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.opal.heapmanager.feature"
-      label="Nebula Opal Heap manager Widget"
+      label="Nebula Opal Heap Manager Widget"
       version="1.0.0.qualifier"
-      provider-name="Eclipse Nebula, Laurent CARON">
+      provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
-      Checkboxgroup
+      Opal Heap Manager Widget
    </description>
 
    <license url="%licenseURL">

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>org.eclipse.nebula</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+	<filteredResources>
+		<filter>
+			<id>1707305303744</id>
+			<name></name>
+			<type>30</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-projectRelativePath-matches-true-true-(examples/org.eclipse.nebula.examples.*|widgets/(opal/)?[^/]+/org.eclipse.nebula.*|releng/org.eclipse.nebula.*)/.*</arguments>
+			</matcher>
+		</filter>
+	</filteredResources>
+</projectDescription>

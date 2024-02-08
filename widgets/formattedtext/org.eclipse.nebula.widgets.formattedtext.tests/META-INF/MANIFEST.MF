@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Tests Fragment
+Bundle-Name: Nebula Formatted Text Tests
 Bundle-SymbolicName: org.eclipse.nebula.widgets.formattedtext.tests
 Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse Nebula
 Fragment-Host: org.eclipse.nebula.widgets.formattedtext;bundle-version="1.0.0"
 Require-Bundle: org.eclipse.swt,
  org.junit

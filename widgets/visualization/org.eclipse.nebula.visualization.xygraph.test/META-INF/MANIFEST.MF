@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: xy graph Tests
+Bundle-Name: Nebula XY Graph Tests
 Bundle-SymbolicName: org.eclipse.nebula.visualization.xygraph.test
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse Nebula
 Fragment-Host: org.eclipse.nebula.visualization.xygraph
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit

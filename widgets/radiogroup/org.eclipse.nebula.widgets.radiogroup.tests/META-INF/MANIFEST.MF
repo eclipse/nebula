@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: RadioGroup Tests
+Bundle-Name: Nebula Radio Group Tests - Incubating
 Bundle-SymbolicName: org.eclipse.nebula.widgets.radiogroup.tests
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: Matthew Hall
+Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Eclipse-RegisterBuddy: org.eclipse.nebula.widgets.radiogroup
 Require-Bundle: org.junit,

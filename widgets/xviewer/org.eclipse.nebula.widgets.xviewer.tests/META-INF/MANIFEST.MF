@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Nebula XViewer Widget Tests
 Bundle-SymbolicName: org.eclipse.nebula.widgets.xviewer.tests;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse Nebula
 Fragment-Host: org.eclipse.nebula.widgets.xviewer
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit

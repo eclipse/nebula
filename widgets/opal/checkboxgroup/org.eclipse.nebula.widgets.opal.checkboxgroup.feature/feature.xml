@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.opal.checkboxgroup.feature"
-      label="Nebula Opal Checkboxgroup Widget"
+      label="Nebula Opal Checkbox Group Widget"
       version="1.0.0.qualifier"
-      provider-name="Eclipse Nebula, Laurent CARON">
+      provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
-      Checkboxgroup
+      Checkbox Group
    </description>
 
    <license url="%licenseURL">

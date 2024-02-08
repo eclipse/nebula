@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nebula PropertyTable Snippets plug-in
+Bundle-Name: Nebula Opal Property Table Snippets
 Bundle-SymbolicName: org.eclipse.nebula.widgets.opal.propertytable.snippets
 Bundle-Version: 1.0.2.qualifier
+Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.nebula.widgets.opal.propertytable,
  org.eclipse.swt

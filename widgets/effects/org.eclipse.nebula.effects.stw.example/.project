@@ -3,7 +3,6 @@
 	<name>org.eclipse.nebula.effects.stw.example</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.nebula.effects.stw</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -3,7 +3,7 @@
       id="org.eclipse.nebula.widgets.picture.feature"
       label="%featureName"
       version="1.0.0.qualifier"
-      provider-name="%provider">
+      provider-name="%providerName">
 
    <description url="%featureDescriptionURL">
       %featureDescriptionText
@@ -19,16 +19,10 @@
 
    <plugin
          id="org.eclipse.nebula.widgets.picture"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.nebula.widgets.picture.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
 </feature>

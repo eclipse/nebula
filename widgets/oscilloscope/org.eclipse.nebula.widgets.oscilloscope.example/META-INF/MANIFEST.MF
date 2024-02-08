@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Oscilloscope Example
+Bundle-Name: Nebula Oscilloscope Example
 Bundle-SymbolicName: org.eclipse.nebula.widgets.oscilloscope.example;singleton:=true
 Bundle-Version: 1.0.1.qualifier
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.nebula.examples;bundle-version="1.0.4",
  org.eclipse.ui,

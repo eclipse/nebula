@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Opal TextAssist Snippets plug-in
+Bundle-Name: Nebula Opal Text Assist Snippets
 Bundle-SymbolicName: org.eclipse.nebula.widgets.opal.textassist.snippets
 Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.nebula.widgets.opal.textassist;bundle-version="1.0.0",
  org.eclipse.swt

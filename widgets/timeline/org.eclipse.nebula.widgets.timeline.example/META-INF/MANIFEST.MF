@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nebula Timeline Widget Example
+Bundle-Name: Nebula Timeline Widget Example - Incubating
 Bundle-SymbolicName: org.eclipse.nebula.widgets.timeline.example;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse Nebula
 Automatic-Module-Name: org.eclipse.nebula.widgets.timeline.example
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.nebula.examples,
  org.eclipse.nebula.widgets.timeline,
  org.eclipse.ui

@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Example
+Bundle-Name: Nebula Table Combo Example
 Bundle-SymbolicName: org.eclipse.nebula.widgets.tablecombo.example;singleton:=true
 Bundle-Version: 1.2.0.qualifier
+Bundle-Vendor: Eclipse Nebula
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.nebula.widgets.tablecombo;bundle-version="1.0.0",
@@ -10,4 +11,3 @@ Require-Bundle: org.eclipse.ui,
 Automatic-Module-Name: org.eclipse.nebula.widgets.tablecombo.example
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Automatic-Module-Name: org.eclipse.nebula.widgets.tablecombo.example

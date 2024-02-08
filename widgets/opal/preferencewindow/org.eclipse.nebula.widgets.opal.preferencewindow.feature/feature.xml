@@ -3,10 +3,10 @@
       id="org.eclipse.nebula.widgets.opal.preferencewindow.feature"
       label="Nebula Opal Preference Window Widget"
       version="1.0.0.qualifier"
-      provider-name="Eclipse Nebula, Laurent CARON">
+      provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
-      Checkboxgroup
+      Preference Window Widget
    </description>
 
    <license url="%licenseURL">

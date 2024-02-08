@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.incubation.feature"
-      label="All Nebula incubation Widgets (+ Source)"
+      label="Nebula All Incubation Widgets SDK"
       version="1.0.0.qualifier"
       provider-name="Eclipse Nebula">
 
@@ -47,9 +47,6 @@
 
    <plugin
          id="org.eclipse.nebula.widgets.timeline"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
 </feature>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.opal.switchbutton.feature"
-      label="Nebula Opal SwitchButton Widget"
+      label="Nebula Opal Switch Button Widget"
       version="1.0.0.qualifier"
-      provider-name="Eclipse Nebula, Laurent CARON">
+      provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
-      TextAssist
+      Switch Button Widget
    </description>
 
    <license url="%licenseURL">

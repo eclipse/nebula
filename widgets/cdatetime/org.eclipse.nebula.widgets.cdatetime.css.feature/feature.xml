@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.cdatetime.css.feature"
-      label="Nebula CDateTime CSS Feature"
+      label="Nebula CDateTime CSS"
       version="1.4.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="https://www.eclipse.org/nebula">
-      CDateTime CSS Feature
+      CDateTime CSS
    </description>
 
    <license url="%licenseURL">

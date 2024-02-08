@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Nebula PGroup
 Bundle-SymbolicName: org.eclipse.nebula.widgets.pgroup
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse Nebula
 Require-Bundle: org.eclipse.swt
 Export-Package: org.eclipse.nebula.widgets.pgroup,
  org.eclipse.nebula.widgets.pgroup.internal;x-internal:=true

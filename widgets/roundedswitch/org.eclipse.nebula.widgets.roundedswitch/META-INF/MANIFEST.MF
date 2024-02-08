@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rounded Switch widget plug-in
+Bundle-Name: Nebula Rounded Switch Widget
 Bundle-SymbolicName: org.eclipse.nebula.widgets.roundedswitch
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: Nebula
+Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.nebula.widgets.roundedswitch
 Require-Bundle: org.eclipse.nebula.widgets.opal.commons;visibility:=reexport,

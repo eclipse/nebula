@@ -15,4 +15,3 @@ Export-Package: org.eclipse.nebula.cwt.animation,
  org.eclipse.nebula.cwt.v
 Automatic-Module-Name: org.eclipse.nebula.cwt
 Require-Bundle: org.eclipse.swt
-Automatic-Module-Name: org.eclipse.nebula.cwt

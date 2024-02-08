@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.oscilloscope.css.feature"
-      label="Nebula Oscilloscope CSS Feature"
+      label="Nebula Oscilloscope CSS"
       version="1.4.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="https://www.eclipse.org/nebula">
-      Oscilloscope CSS Feature
+      Oscilloscope CSS
    </description>
 
    <license url="%licenseURL">

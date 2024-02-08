@@ -12,4 +12,3 @@ Export-Package: org.eclipse.nebula.examples
 Bundle-Activator: org.eclipse.nebula.examples.internal.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
-Automatic-Module-Name: org.eclipse.nebula.examples

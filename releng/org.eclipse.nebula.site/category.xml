@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature id="org.eclipse.nebula.widgets.xviewer.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.ganttchart.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.pshelf.css.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.pshelf.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.grid.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.grid.css.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.richtext.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.paperclips.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.pgroup.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.visualization.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.compositetable.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.gallery.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.examples.feature" version="0.0.0">
+      <category name="Nebula Examples View"/>
+   </feature>
+   <feature id="org.eclipse.nebula.effects.stw.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.geomap.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.examples.release.feature" version="0.0.0">
+      <category name="Nebula All Mature Widgets and Examples"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.oscilloscope.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.cwt.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.breadcrumb.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.checkboxgroup.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.columnbrowser.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.commons.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.dialog.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.duallist.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.header.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.heapmanager.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.logindialog.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.multichoice.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.notifier.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.preferencewindow.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.promptsupport.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.propertytable.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.rangeslider.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.starrating.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.textassist.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.tipoftheday.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.titledseparator.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.roundedtoolbar.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.calculator.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.horizontalspinner.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.launcher.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.panels.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.opal.switchbutton.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.progresscircle.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.nebulaslider.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.floatingtext.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.splitbutton.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.badgedlabel.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.passwordrevealer.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.ctreecombo.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.led.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.stepbar.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.fontawesome.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.chips.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.tablecombo.css.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.feature" version="0.0.0">
+      <category name="Nebula All Mature Widgets and Examples"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.cdatetime.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.cdatetime.css.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.oscilloscope.css.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.segmentedbar.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.tiles.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.roundedcheckbox.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.roundedswitch.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.formattedtext.feature">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.treemapper.feature" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.incubation.feature" version="0.0.0">
+      <category name="Nebula All Incubation Widgets and Examples"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.collapsiblebuttons.feature" version="0.0.0">
+      <category name="Nebula Individual Incubation Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.datechooser.feature" version="0.0.0">
+      <category name="Nebula Individual Incubation Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.radiogroup.feature" version="0.0.0">
+      <category name="Nebula Individual Incubation Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.pagination.feature" version="0.0.0">
+      <category name="Nebula Individual Incubation Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.picture.feature" version="0.0.0">
+      <category name="Nebula Individual Incubation Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.examples.incubation.feature" version="0.0.0">
+      <category name="Nebula All Incubation Widgets and Examples"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.calendarcombo.feature" version="0.0.0">
+      <category name="Nebula Individual Incubation Widgets"/>
+   </feature>
+   <feature id="org.eclipse.nebula.widgets.timeline.feature">
+      <category name="Nebula Individual Incubation Widgets"/>
+   </feature>
+   <bundle id="org.eclipse.nebula.widgets.tablecombo" version="0.0.0">
+      <category name="Nebula Individual Mature Widgets"/>
+   </bundle>
+   <category-def name="Nebula All Mature Widgets and Examples" label="Nebula All Mature Widgets and Examples">
+      <description>
+         Contains all the mature, stable widgets that are part of the combined Nebula release. You can also choose to include the examples and the example view for these widgets.
+      </description>
+   </category-def>
+   <category-def name="Nebula Individual Mature Widgets" label="Nebula Individual Mature Widgets">
+      <description>
+         Contains all that mature, stable widgets that are part of the combined Nebula release.
+      </description>
+   </category-def>
+   <category-def name="Nebula Examples View" label="Nebula Examples View">
+      <description>
+         This feature contains the standalone Nebula examples view. You also need to install the widgets examples because they provide content for this view.
+      </description>
+   </category-def>
+   <category-def name="Nebula All Incubation Widgets and Examples" label="Nebula All Incubation Widgets and Examples">
+      <description>
+         Contains all incubating widgets that are part of the combined Nebula release&apos;s incubator. You can also choose to include the examples and the example view for these widgets.
+      </description>
+   </category-def>
+   <category-def name="Nebula Individual Incubation Widgets" label="Nebula Individual Incubation Widgets"/>
+</site>

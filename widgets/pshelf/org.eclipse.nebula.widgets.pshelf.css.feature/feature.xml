@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.pshelf.css.feature"
-      label="Nebula PShelf CSS Feature"
+      label="Nebula PShelf CSS"
       version="1.0.0.qualifier"
       provider-name="Eclipse Nebula">
 

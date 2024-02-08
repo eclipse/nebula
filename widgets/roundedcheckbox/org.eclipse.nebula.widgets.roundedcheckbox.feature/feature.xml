@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.roundedcheckbox.feature"
-      label="Nebula RoundedCheckbox Widget"
+      label="Nebula Rounded Checkbox Widget"
       version="1.0.0.qualifier"
-      provider-name="Eclipse Nebula, Laurent CARON">
+      provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
-      TitledSeparator
+      Rounded Checkbox
    </description>
 
    <license url="%licenseURL">

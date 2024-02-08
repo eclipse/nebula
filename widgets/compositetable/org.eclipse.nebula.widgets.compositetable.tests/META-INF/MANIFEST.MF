@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Tests Fragment
+Bundle-Name: Nebula Compositetable Tests
 Bundle-SymbolicName: org.eclipse.nebula.widgets.compositetable.tests
 Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse Nebula
 Fragment-Host: org.eclipse.nebula.widgets.compositetable;bundle-version="1.0.0"
 Export-Package: org.eclipse.nebula.widgets.compositetable,
  org.eclipse.nebula.widgets.compositetable.day

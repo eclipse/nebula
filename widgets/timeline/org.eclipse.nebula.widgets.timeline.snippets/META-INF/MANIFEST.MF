@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nebula Timeline Snippets
+Bundle-Name: Nebula Timeline Snippets - Incubating
 Bundle-SymbolicName: org.eclipse.nebula.widgets.timeline.snippets
 Bundle-Version: 0.1.0.qualifier
 Automatic-Module-Name: org.eclipse.nebula.widgets.timeline.snippets
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: Eclipse Nebula
 Require-Bundle: org.eclipse.nebula.widgets.timeline;bundle-version="0.1.0",
  org.eclipse.swt;bundle-version="3.112.0",

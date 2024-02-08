@@ -12,5 +12,6 @@
 	<artifactId>org.eclipse.nebula.widgets.paperclips.example</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
-	<name>Nebula paperclips Example</name>
+	<name>Nebula Paperclips Example</name>
+
 </project>

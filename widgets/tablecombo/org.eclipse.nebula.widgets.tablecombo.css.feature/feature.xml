@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.tablecombo.css.feature"
-      label="Nebula TableCombo CSS Feature"
+      label="Nebula Table Combo CSS"
       version="1.2.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="https://www.eclipse.org/nebula">
-      TableCombo CSS Feature
+      Table Combo CSS
    </description>
 
    <license url="%licenseURL">

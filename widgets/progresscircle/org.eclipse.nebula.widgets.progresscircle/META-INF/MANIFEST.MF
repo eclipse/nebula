@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nebula Progress Circle widget plug-in
+Bundle-Name: Nebula Progress Circle Widget
 Bundle-SymbolicName: org.eclipse.nebula.widgets.progresscircle
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: Nebula
+Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.nebula.widgets.progresscircle
 Require-Bundle: org.eclipse.nebula.widgets.opal.commons;bundle-version="1.0.0";visibility:=reexport,

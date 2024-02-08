@@ -11,9 +11,8 @@ Contributors:
  * Wim Jongman (RemainSoftware)
  * Mickael Istria (Red Hat Inc.)
 -->
-<project
-	xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eclipse.nebula</groupId>
 	<artifactId>nebula-parent</artifactId>
@@ -21,19 +20,21 @@ Contributors:
 	<packaging>pom</packaging>
 
 	<properties>
-
-		<tycho-version>2.6.0</tycho-version>
+		<tycho-version>4.0.4</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
-		<mockito-version>2.8.9</mockito-version>
-		<findbugs-version>2.3.2</findbugs-version>
-		<map-version>2.2-beta-4</map-version>
-		<mjd-version>2.7</mjd-version>
-		<mrp-version>3.0.2</mrp-version>
-		<ejp-version>1.3.2</ejp-version>
-		<pmd-version>2.5</pmd-version>
-		<junit-version>4.13.1</junit-version>
-		<jacoco-version>0.8.5</jacoco-version>
-		
+		<mockito-version>5.10.0</mockito-version>
+		<findbugs-version>3.0.5</findbugs-version>
+		<map-version>3.6.0</map-version>
+		<mjd-version>3.6.3</mjd-version>
+		<mrp-version>3.3.1</mrp-version>
+		<ejp-version>1.3.3</ejp-version>
+		<pmd-version>3.9.0</pmd-version>
+		<junit-version>4.13.2</junit-version>
+		<jacoco-version>0.8.9</jacoco-version>
+		<easymock-version>5.2.0</easymock-version>
+
+		<target-platform>https://download.eclipse.org/releases/latest</target-platform>
+
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 
@@ -42,10 +43,20 @@ Contributors:
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<!-- When running in children tests/* modules, all reports will be in ../target/jacoco.exec -->
 		<sonar.jacoco.reportPath>../target/jacoco.exec</sonar.jacoco.reportPath>
-		<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
-		<tycho.scmUrl>scm:git:https://git.eclipse.org/r/p/nebula/org.eclipse.nebula</tycho.scmUrl>
-	</properties>
 
+		<tycho.scmUrl>scm:git:https://github.com/eclipse/nebula/</tycho.scmUrl>
+
+		<!-- update site promotion -->
+		<eclipse.repo>https://download.eclipse.org/releases/latest</eclipse.repo>
+		<justj.tools.repo>https://download.eclipse.org/justj/tools/updates/nightly/latest</justj.tools.repo>
+		<org.eclipse.storage.user>genie.nebula</org.eclipse.storage.user>
+		<org.eclipse.justj.p2.manager.args><![CDATA[-remote ${org.eclipse.storage.user}@projects-storage.eclipse.org:/home/data/httpd/download.eclipse.org/nebula]]></org.eclipse.justj.p2.manager.args>
+		<org.eclipse.justj.p2.manager.extra.args></org.eclipse.justj.p2.manager.extra.args>
+		<org.eclipse.justj.p2.manager.relative>updates</org.eclipse.justj.p2.manager.relative>
+		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+		<org.eclipse.justj.p2.manager.build.url>http://www.example.com/</org.eclipse.justj.p2.manager.build.url>
+		<build.type>nightly</build.type>
+	</properties>
 
 	<build>
 		<plugins>
@@ -80,35 +91,19 @@ Contributors:
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
-					<resolver>p2</resolver>
+					<executionEnvironment>JavaSE-17</executionEnvironment>
 					<pomDependencies>consider</pomDependencies>
-					<optionalDependencies>require</optionalDependencies>
 					<environments>
 						<environment>
 							<os>linux</os>
 							<ws>gtk</ws>
-							<arch>x86</arch>
-						</environment>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
 							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86</arch>
 						</environment>
 						<environment>
 							<os>win32</os>
 							<ws>win32</ws>
 							<arch>x86_64</arch>
 						</environment>
-	<!--  					<environment>
-							<os>macosx</os>
-							<ws>cocoa</ws>
-							<arch>x86</arch>
-						</environment> -->
 						<environment>
 							<os>macosx</os>
 							<ws>cocoa</ws>
@@ -133,8 +128,7 @@ Contributors:
 							<includes>
 								<include>*.nebula.*</include>
 							</includes>
-							<!-- Append allows all reports from all executions to be stored in 
-								a single file -->
+							<!-- Append allows all reports from all executions to be stored in a single file -->
 							<append>true</append>
 						</configuration>
 					</execution>
@@ -148,22 +142,13 @@ Contributors:
 				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-					<argLine>${tycho.testArgLine} -Xmx512m -Djava.awt.headless=true	${tests.vmargs}</argLine>
-					<dependency-resolution>
-						<extraRequirements>
-							<requirement>
-								<type>eclipse-plugin</type>
-								<id>javax.annotation</id>
-								<versionRange>0.0.0</versionRange>
-							</requirement>
-						</extraRequirements>
-					</dependency-resolution>
+					<argLine>${tycho.testArgLine} -Xmx512m -Djava.awt.headless=true ${tests.vmargs}</argLine>
 				</configuration>
 			</plugin>
+
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-source-plugin</artifactId>
-				<version>${tycho-version}</version>
 				<executions>
 					<execution>
 						<id>plugin-source</id>
@@ -173,6 +158,7 @@ Contributors:
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -191,20 +177,9 @@ Contributors:
 					</configuration>
 				</plugin>
 				<plugin>
-					<!-- TODO remove workaround when https://issues.sonatype.org/browse/TYCHO-473 
-						is fixed -->
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-source-plugin</artifactId>
 					<version>${tycho-version}</version>
-					<executions>
-						<execution>
-							<id>attach-source</id>
-							<phase>process-classes</phase>
-							<goals>
-								<goal>plugin-source</goal>
-							</goals>
-						</execution>
-					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -257,166 +232,7 @@ Contributors:
 			</plugins>
 		</pluginManagement>
 
-
 	</build>
-
-	<profiles>
-		<profile>
-			<id>mac</id>
-			<activation>
-				<os>
-					<name>mac</name>
-				</os>
-			</activation>
-			<properties>
-				<tests.vmargs>-XstartOnFirstThread</tests.vmargs>
-			</properties>
-		</profile>
-
-		<profile>
-			<id>mars</id>
-			<activation> 
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<repositories>
-				<repository>
-					<id>projects</id>
-					<layout>p2</layout>
-					<url>https://download.eclipse.org/releases/mars/</url>
-				</repository>
-
-				<repository>
-					<id>platform</id>
-					<layout>p2</layout>
-					<url>https://download.eclipse.org/eclipse/updates/4.5/</url>
-				</repository>
-			</repositories>
-		</profile>
-
-		<profile>
-			<id>oxygen</id>
-			<activation> 
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<repositories>
-				<repository>
-					<id>projects</id>
-					<layout>p2</layout>
-					<url>https://download.eclipse.org/releases/oxygen/</url>
-				</repository>
-
-				<repository>
-					<id>platform</id>
-					<layout>p2</layout>
-					<url>https://download.eclipse.org/eclipse/updates/4.7/</url>
-				</repository>
-			</repositories>
-		</profile>
-
-		<profile>
-			<id>photon</id>
-			<activation> 
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<repositories>
-				<repository>
-					<id>projects</id>
-					<layout>p2</layout>
-					<url>https://download.eclipse.org/releases/photon/</url>
-				</repository>
-
-				<repository>
-					<id>platform</id>
-					<layout>p2</layout>
-					<url>https://download.eclipse.org/eclipse/updates/4.8/</url>
-				</repository>
-			</repositories>
-		</profile>
-
-		<profile>
-			<id>static-checks</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>findbugs-maven-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-pmd-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>build-server</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho.extras</groupId>
-						<artifactId>tycho-pack200a-plugin</artifactId>
-						<version>${tycho-version}</version>
-						<configuration>
-							<sourceReferences>
-								<generate>true</generate>
-							</sourceReferences>
-						</configuration>
-						<executions>
-							<execution>
-								<id>pack200-normalize</id>
-								<goals>
-									<goal>normalize</goal>
-								</goals>
-								<phase>verify</phase>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.cbi.maven.plugins</groupId>
-						<artifactId>eclipse-jarsigner-plugin</artifactId>
-						<version>${ejp-version}</version>
-						<executions>
-							<execution>
-								<id>sign</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho.extras</groupId>
-						<artifactId>tycho-pack200b-plugin</artifactId>
-						<version>${tycho-version}</version>
-						<executions>
-							<execution>
-								<id>pack200-pack</id>
-								<goals>
-									<goal>pack</goal>
-								</goals>
-								<phase>verify</phase>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-
-			<pluginRepositories>
-				<pluginRepository>
-					<id>cbi</id>
-					<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
-					<releases>
-						<enabled>true</enabled>
-					</releases>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</pluginRepository>
-			</pluginRepositories>
-
-		</profile>
-	</profiles>
 
 	<dependencies>
 		<dependency>
@@ -450,6 +266,13 @@ Contributors:
 		</pluginRepository>
 	</pluginRepositories>
 
+	<repositories>
+		<repository>
+			<id>projects</id>
+			<layout>p2</layout>
+			<url>${target-platform}</url>
+		</repository>
+	</repositories>
 
 	<!-- Metadata -->
 	<mailingLists>
@@ -466,7 +289,7 @@ Contributors:
 		<url>https://github.com/eclipse/nebula/issues</url>
 		<system>Github</system>
 	</issueManagement>
-	
+
 	<scm>
 		<url>https://github.com/eclipse/nebula</url>
 	</scm>
@@ -475,17 +298,167 @@ Contributors:
 		<license>
 			<name>Eclipse Public License 2.0</name>
 			<comments>
-                All rights reserved.
+				All rights reserved.
 
- 				This program and the accompanying materials
-				are made available under the terms of the Eclipse Public License 2.0
+				This program and the accompanying materials
+				are made available under the terms of the Eclipse Public License
+				2.0
 				which accompanies this distribution, and is available at
 				https://www.eclipse.org/legal/epl-2.0/
-				
+
 				SPDX-License-Identifier: EPL-2.0
 			</comments>
-            <url>https://www.eclipse.org/legal/epl-2.0/</url>
+			<url>https://www.eclipse.org/legal/epl-2.0/</url>
 		</license>
 	</licenses>
+
+	<modules>
+
+		<!-- Mature -->
+
+		<module>../../widgets/badgedlabel</module>
+		<module>../../widgets/carousel</module>
+		<module>../../widgets/cdatetime</module>
+		<module>../../widgets/chips</module>
+		<module>../../widgets/compositetable</module>
+		<module>../../widgets/ctreecombo</module>
+		<module>../../widgets/cwt</module>
+		<module>../../widgets/effects</module>
+		<module>../../widgets/floatingtext</module>
+		<module>../../widgets/fontawesome</module>
+		<module>../../widgets/formattedtext</module>
+		<module>../../widgets/gallery</module>
+		<module>../../widgets/ganttchart</module>
+		<module>../../widgets/geomap</module>
+		<module>../../widgets/grid</module>
+		<module>../../widgets/led</module>
+		<module>../../widgets/nebulaslider</module>
+		<module>../../widgets/opal/breadcrumb</module>
+		<module>../../widgets/opal/calculator</module>
+		<module>../../widgets/opal/checkboxgroup</module>
+		<module>../../widgets/opal/columnbrowser</module>
+		<module>../../widgets/opal/commons</module>
+		<module>../../widgets/opal/dialog</module>
+		<module>../../widgets/opal/duallist</module>
+		<module>../../widgets/opal/header</module>
+		<module>../../widgets/opal/heapmanager</module>
+		<module>../../widgets/opal/horizontalspinner</module>
+		<module>../../widgets/opal/launcher</module>
+		<module>../../widgets/opal/logindialog</module>
+		<module>../../widgets/opal/multichoice</module>
+		<module>../../widgets/opal/notifier</module>
+		<module>../../widgets/opal/panels</module>
+		<module>../../widgets/opal/preferencewindow</module>
+		<module>../../widgets/opal/promptsupport</module>
+		<module>../../widgets/opal/propertytable</module>
+		<module>../../widgets/opal/rangeslider</module>
+		<module>../../widgets/opal/roundedtoolbar</module>
+		<module>../../widgets/opal/starrating</module>
+		<module>../../widgets/opal/switchbutton</module>
+		<module>../../widgets/opal/textassist</module>
+		<module>../../widgets/opal/tipoftheday</module>
+		<module>../../widgets/opal/titledseparator</module>
+		<module>../../widgets/oscilloscope</module>
+		<module>../../widgets/paperclips</module>
+		<module>../../widgets/passwordrevealer</module>
+		<module>../../widgets/pgroup</module>
+		<module>../../widgets/progresscircle</module>
+		<module>../../widgets/pshelf</module>
+		<module>../../widgets/richtext</module>
+		<module>../../widgets/roundedcheckbox</module>
+		<module>../../widgets/roundedswitch</module>
+		<module>../../widgets/segmentedbar</module>
+		<module>../../widgets/splitbutton</module>
+		<module>../../widgets/stepbar</module>
+		<module>../../widgets/tablecombo</module>
+		<module>../../widgets/tiles</module>
+		<module>../../widgets/treemapper</module>
+		<module>../../widgets/visualization</module>
+		<module>../../widgets/xviewer</module>
+
+		<!-- Incubation -->
+
+		<module>../../widgets/calendarcombo</module>
+		<module>../../widgets/collapsiblebuttons</module>
+		<module>../../widgets/datechooser</module>
+		<module>../../widgets/pagination</module>
+		<module>../../widgets/picture</module>
+		<module>../../widgets/radiogroup</module>
+		<module>../../widgets/timeline</module>
+
+		<module>../../examples/org.eclipse.nebula.examples</module>
+		<module>../../examples/org.eclipse.nebula.examples.feature</module>
+
+		<!-- Releng -->
+
+		<module>../org.eclipse.nebula.feature</module>
+		<module>../org.eclipse.nebula.examples.release.feature</module>
+
+		<module>../org.eclipse.nebula.incubation.feature</module>
+		<module>../org.eclipse.nebula.examples.incubation.feature</module>
+
+		<module>../org.eclipse.nebula.site</module>
+	</modules>
+
+	<profiles>
+		<profile>
+			<id>promote</id>
+			<modules>
+				<module>../org.eclipse.nebula.site/promotion</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>static-checks</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>findbugs-maven-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-pmd-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>build-server</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.cbi.maven.plugins</groupId>
+						<artifactId>eclipse-jarsigner-plugin</artifactId>
+						<version>${ejp-version}</version>
+						<executions>
+							<execution>
+								<id>sign</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+
+			<pluginRepositories>
+				<pluginRepository>
+					<id>cbi</id>
+					<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
+					<releases>
+						<enabled>true</enabled>
+					</releases>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</pluginRepository>
+			</pluginRepositories>
+
+		</profile>
+	</profiles>
 
 </project>

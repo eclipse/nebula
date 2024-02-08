@@ -1,10 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.eclipse.nebula</groupId>
-	<artifactId>textassist</artifactId>
-	<packaging>pom</packaging>
-	<version>1.0.0-SNAPSHOT</version>
 
 	<parent>
 		<groupId>org.eclipse.nebula</groupId>
@@ -12,11 +9,14 @@
 		<artifactId>opal</artifactId>
 	</parent>
 
+	<artifactId>textassist</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0.0-SNAPSHOT</version>
+
 	<modules>
 		<module>org.eclipse.nebula.widgets.opal.textassist</module>
 		<module>org.eclipse.nebula.widgets.opal.textassist.feature</module>
 		<module>org.eclipse.nebula.widgets.opal.textassist.snippets</module>
 	</modules>
-
 
 </project>

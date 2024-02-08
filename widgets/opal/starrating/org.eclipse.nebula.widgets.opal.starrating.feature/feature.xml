@@ -3,10 +3,10 @@
       id="org.eclipse.nebula.widgets.opal.starrating.feature"
       label="Nebula Opal Star Rating Widget"
       version="1.0.0.qualifier"
-      provider-name="Eclipse Nebula, Laurent CARON">
+      provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
-      Checkboxgroup
+      Star Rating Widget
    </description>
 
    <license url="%licenseURL">

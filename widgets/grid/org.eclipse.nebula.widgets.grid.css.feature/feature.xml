@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.grid.css.feature"
-      label="Nebula Grid CSS Feature"
+      label="Nebula Grid CSS"
       version="1.1.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="https://www.eclipse.org/nebula">
-      Grid CSS Feature
+      Grid CSS
    </description>
 
    <license url="%licenseURL">

@@ -3,7 +3,7 @@
       id="org.eclipse.nebula.widgets.pagination.feature"
       label="%featureName"
       version="1.0.0.qualifier"
-      provider-name="%provider">
+      provider-name="%providerName">
 
    <description url="%featureDescriptionURL">
       %featureDescriptionText

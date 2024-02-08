@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.opal.titledseparator.feature"
-      label="Nebula Opal TitledSeparator Widget"
+      label="Nebula Opal Titled Separator Widget"
       version="1.0.0.qualifier"
-      provider-name="Eclipse Nebula, Laurent CARON">
+      provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
-      TitledSeparator
+      Titled Separator
    </description>
 
    <license url="%licenseURL">
