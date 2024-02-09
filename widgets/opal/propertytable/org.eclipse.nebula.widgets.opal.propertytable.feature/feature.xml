@@ -3,7 +3,7 @@
       id="org.eclipse.nebula.widgets.opal.propertytable.feature"
       label="Nebula Property Table Widget"
       version="1.0.2.qualifier"
-      provider-name="Eclipse Nebula, Laurent CARON">
+      provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
       Property Table

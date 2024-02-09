@@ -3,7 +3,7 @@
       id="org.eclipse.nebula.widgets.opal.rangeslider.feature"
       label="Nebula Opal Range Slider Support Widget"
       version="1.0.0.qualifier"
-      provider-name="Eclipse Nebula, Laurent CARON">
+      provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
       Range Slider

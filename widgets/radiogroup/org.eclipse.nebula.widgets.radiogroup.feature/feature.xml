@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.radiogroup.feature"
-      label="Nebula RadioGroup Widget"
+      label="Nebula Radio Group Widget - Incubating"
       version="0.1.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="http://www.eclipse.org/nebula/widgets/radiogroup/radiogroup.php">
-      Nebula RadioGroup Widget
+      Nebula Radio Group Widget
    </description>
 
    <copyright>
@@ -24,16 +24,10 @@ http://www.eclipse.org/legal/epl-v10.html
 
    <plugin
          id="org.eclipse.nebula.widgets.radiogroup"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.nebula.widgets.radiogroup.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
 </feature>

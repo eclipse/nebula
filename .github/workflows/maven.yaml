@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ '11', '17' ]
+        java: [ '17' ]
     name: Java ${{ matrix.java }} compile
     steps:
     - uses: actions/checkout@v2
@@ -27,10 +27,14 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-   
-    - name: Build Stable Widgets
+    - name: Set up Maven
+      uses: stCarolas/setup-maven@07fbbe97d97ef44336b7382563d66743297e442f # v4.5
+      with:
+        maven-version: 3.9.6
+    - name: Build All Widgets
       run: xvfb-run mvn -V clean verify  -Dtycho.localArtifacts=ignore
-    - name: Build Incubation Widgets
-      run: xvfb-run mvn -V clean verify -Pincubation  -Dtycho.localArtifacts=ignore
+#    - name: Build Incubation Widgets
+#      run: xvfb-run mvn -V clean verify -Pincubation  -Dtycho.localArtifacts=ignore
 #    - name: Publish Unit Test Results
 #      uses: EnricoMi/publish-unit-test-result-action@v1
 #      if: always()

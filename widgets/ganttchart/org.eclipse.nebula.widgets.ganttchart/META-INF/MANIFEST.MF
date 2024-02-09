@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nebula Ganttchart Plug-in
+Bundle-Name: Nebula Gantt Chart
 Bundle-SymbolicName: org.eclipse.nebula.widgets.ganttchart
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.swt
@@ -11,6 +11,6 @@ Export-Package: org.eclipse.nebula.widgets.ganttchart,
  org.eclipse.nebula.widgets.ganttchart.undoredo,
  org.eclipse.nebula.widgets.ganttchart.undoredo.commands,
  org.eclipse.nebula.widgets.ganttchart.utils
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.eclipse.nebula.widgets.ganttchart

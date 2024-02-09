@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nebula RadioGroup plug-in
+Bundle-Name: Nebula Radio Group - Incubating
 Bundle-SymbolicName: org.eclipse.nebula.widgets.radiogroup
 Bundle-Version: 0.1.0.qualifier
-Bundle-Vendor: Matthew Hall
+Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.equinox.common,
  org.eclipse.swt,

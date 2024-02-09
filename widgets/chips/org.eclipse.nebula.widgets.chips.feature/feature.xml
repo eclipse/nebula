@@ -3,7 +3,7 @@
       id="org.eclipse.nebula.widgets.chips.feature"
       label="Nebula Chips Widget"
       version="1.0.0.qualifier"
-      provider-name="Eclipse Nebula, Laurent CARON, Akuiteo">
+      provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
       Chips Widget

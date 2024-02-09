@@ -7,7 +7,7 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Automatic-Module-Name: org.eclipse.nebula.widgets.timeline
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.nebula.widgets.timeline,
  org.eclipse.nebula.widgets.timeline.figures,
  org.eclipse.nebula.widgets.timeline.figures.detail.track,

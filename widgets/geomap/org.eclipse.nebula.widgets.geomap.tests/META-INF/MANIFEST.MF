@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nebula Geomap tests
+Bundle-Name: Nebula GeoMap Tests
 Bundle-SymbolicName: org.eclipse.nebula.widgets.geomap.tests;singleton:=true
 Bundle-Version: 1.0.0.qualifier
+Import-Package: org.slf4j;resolution:=optional
 Bundle-ActivationPolicy: lazy
-Bundle-Vendor: 
- Eclipse Nebula
+Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.swt,
  org.eclipse.swtbot.go,

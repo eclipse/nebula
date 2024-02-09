@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nebula Treemapper Widget
+Bundle-Name: Nebula Tree Mapper Widget
 Bundle-SymbolicName: org.eclipse.nebula.widgets.treemapper
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.core.runtime,

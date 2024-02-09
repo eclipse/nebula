@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.opal.duallist.feature"
-      label="Nebula Opal DualList Widget"
+      label="Nebula Opal Dual List Widget"
       version="1.0.0.qualifier"
-      provider-name="Eclipse Nebula, Laurent CARON">
+      provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
-      DualList
+      Dual List Widget
    </description>
 
    <license url="%licenseURL">

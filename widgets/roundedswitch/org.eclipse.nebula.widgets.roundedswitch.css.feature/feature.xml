@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.roundedswitch.css.feature"
-      label="Nebula RoundedSwitch CSS Feature"
+      label="Nebula RoundedSwitch CSS"
       version="1.0.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="https://www.eclipse.org/nebula">
-      RoundedSwitch CSS Feature
+      RoundedSwitch CSS
    </description>
 
    <license url="%licenseURL">

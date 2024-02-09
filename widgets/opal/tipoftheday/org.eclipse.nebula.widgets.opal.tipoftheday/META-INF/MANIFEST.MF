@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Tip of the day plug-in
+Bundle-Name: Nebula Opal Tip of the Day
 Bundle-SymbolicName: org.eclipse.nebula.widgets.opal.tipoftheday
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: Laurent CARON
+Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.nebula.widgets.opal.commons;bundle-version="1.0.0";visibility:=reexport,
  org.eclipse.nebula.widgets.opal.header;bundle-version="1.0.0",

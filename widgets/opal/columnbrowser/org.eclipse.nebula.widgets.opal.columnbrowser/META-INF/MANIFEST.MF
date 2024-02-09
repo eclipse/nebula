@@ -1,10 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Opal ColumnBrowser plug-in
+Bundle-Name: Nebula Opal Column Browser
 Bundle-SymbolicName: org.eclipse.nebula.widgets.opal.columnbrowser
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: Nebula
+Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.nebula.widgets.opal.commons;bundle-version="1.0.0";visibility:=reexport,
  org.eclipse.swt
 Export-Package: org.eclipse.nebula.widgets.opal.columnbrowser
+Automatic-Module-Name: org.eclipse.nebula.widgets.opal.columnbrowser

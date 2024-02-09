@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.compositetable.feature"
-      label="Nebula CompositeTable Widget"
+      label="Nebula Composite Table Widget"
       version="1.0.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="http://www.eclipse.org/nebula/widgets/compositetable/compositetable.php">
-      Nebula CompositeTable Widget
+      Nebula Composite Table Widget
    </description>
 
    <copyright>

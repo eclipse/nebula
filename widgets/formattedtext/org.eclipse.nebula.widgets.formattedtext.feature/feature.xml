@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.formattedtext.feature"
-      label="Nebula FormattedText Widget"
+      label="Nebula Formatted Text Widget"
       version="1.0.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description>
-      Nebula FormattedText Widget
+      Nebula Formatted Text Widget
    </description>
 
    <copyright>

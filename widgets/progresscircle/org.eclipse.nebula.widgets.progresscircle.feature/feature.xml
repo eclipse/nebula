@@ -3,7 +3,7 @@
       id="org.eclipse.nebula.widgets.progresscircle.feature"
       label="Nebula Progress Circle Widget"
       version="1.0.0.qualifier"
-      provider-name="Eclipse Nebula, Laurent CARON">
+      provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
       ProgressCircle

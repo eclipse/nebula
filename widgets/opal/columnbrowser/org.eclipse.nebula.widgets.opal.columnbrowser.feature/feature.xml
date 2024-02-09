@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.opal.columnbrowser.feature"
-      label="Nebula Opal ColumnBrowser Widget"
+      label="Nebula Opal Column Browser Widget"
       version="1.0.0.qualifier"
-      provider-name="Eclipse Nebula, Laurent CARON">
+      provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
-      ColumnBrowser
+      Column Browser
    </description>
 
    <license url="%licenseURL">

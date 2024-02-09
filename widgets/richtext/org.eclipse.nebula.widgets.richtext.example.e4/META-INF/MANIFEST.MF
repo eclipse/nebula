@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rich Text Example E4
+Bundle-Name: Nebula E4 Rich Text Example
 Bundle-SymbolicName: org.eclipse.nebula.widgets.richtext.example.e4;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Require-Bundle: javax.annotation,
- javax.inject;bundle-version="1.0.0",
- org.eclipse.core.runtime,
+Bundle-Vendor: Eclipse Nebula
+Import-Package: javax.annotation
+Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt,
  org.eclipse.jface,
  org.eclipse.e4.ui.model.workbench;bundle-version="1.1.0",

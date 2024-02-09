@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.ctreecombo.feature"
-      label="Nebula CTreeCombo Widget"
+      label="Nebula CTree Combo Widget"
       version="1.0.0.qualifier"
-      provider-name="Eclipse Nebula, Thomas Schindl, Laurent Caron">
+      provider-name="Eclipse Nebula">
 
    <description url="https://eclipse.org/nebula">
-      CTreeCombo
+      CTree Combo
    </description>
 
    <license url="%licenseURL">

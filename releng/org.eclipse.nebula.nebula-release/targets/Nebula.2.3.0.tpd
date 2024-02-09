@@ -1,4 +1,0 @@
-target "Nebula 2.3.0"
-location "http://download.eclipse.org/nebula/releases/2.3.0" {
-	org.eclipse.nebula.feature.feature.group [2.3.0.201912241810,2.3.0.201912241810]
-}

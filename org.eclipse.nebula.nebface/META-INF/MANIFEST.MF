@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nebface Plug-in
+Bundle-Name: Nebual Nebface
 Bundle-SymbolicName: org.eclipse.swt.nebula.nebface
 Bundle-Version: 1.0.0
+Bundle-Vendor: Eclipse Nebula
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.jface,
  org.eclipse.swt.nebula;visibility:=reexport,

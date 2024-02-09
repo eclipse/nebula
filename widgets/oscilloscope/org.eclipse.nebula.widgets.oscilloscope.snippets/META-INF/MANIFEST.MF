@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Snippets
+Bundle-Name: Nebula Oscilloscope Example Snippets
 Bundle-SymbolicName: org.eclipse.nebula.widgets.oscilloscope.snippets
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: REMAINSOFTWARE
+Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Import-Package: org.eclipse.nebula.widgets.oscilloscope,
  org.eclipse.nebula.widgets.oscilloscope.multichannel

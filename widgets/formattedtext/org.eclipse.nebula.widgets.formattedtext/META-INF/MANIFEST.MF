@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nebula FormattedText
+Bundle-Name: Nebula Formatted Text
 Bundle-SymbolicName: org.eclipse.nebula.widgets.formattedtext
 Bundle-Version: 1.0.0.qualifier
 Export-Package: org.eclipse.nebula.widgets.formattedtext
@@ -10,3 +10,4 @@ Require-Bundle: org.eclipse.jface,
  org.eclipse.core.databinding,
  org.eclipse.jface.databinding,
  org.eclipse.swt
+Automatic-Module-Name: org.eclipse.nebula.widgets.formattedtext

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 Copyright (C) 2018, Laurent CARON.
 
@@ -11,12 +10,10 @@ http://www.eclipse.org/legal/epl-v10.html
 Contributors:
  * Wim Jongman (RemainSoftware)
 -->
-
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.eclipse.nebula</groupId>
@@ -24,9 +21,9 @@ Contributors:
 		<artifactId>commons</artifactId>
 	</parent>
 
-  <artifactId>org.eclipse.nebula.widgets.opal.commons.feature</artifactId>
-  <packaging>eclipse-feature</packaging>
+	<artifactId>org.eclipse.nebula.widgets.opal.commons.feature</artifactId>
+	<packaging>eclipse-feature</packaging>
 
-  <name>Commons Feature</name>
+	<name>Commons Feature</name>
 
 </project>

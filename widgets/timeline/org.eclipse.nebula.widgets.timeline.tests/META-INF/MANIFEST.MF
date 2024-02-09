@@ -8,7 +8,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Fragment-Host: org.eclipse.nebula.widgets.timeline;bundle-version="0.1.0"
 Automatic-Module-Name: org.eclipse.nebula.widgets.timeline.tests
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.nebula.widgets.timeline.tests
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.nebula.widgets.timeline;visibility:=reexport,

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.examples.feature"
-      label="Nebula Examples View Feature"
+      label="Nebula Examples View"
       version="1.0.4.qualifier"
       provider-name="Eclipse Nebula">
 
@@ -19,9 +19,6 @@
 
    <plugin
          id="org.eclipse.nebula.examples"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
 </feature>

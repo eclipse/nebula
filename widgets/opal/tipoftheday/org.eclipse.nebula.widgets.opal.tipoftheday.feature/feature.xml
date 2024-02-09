@@ -3,7 +3,7 @@
       id="org.eclipse.nebula.widgets.opal.tipoftheday.feature"
       label="Nebula Opal Tip of the Day Widget"
       version="1.0.0.qualifier"
-      provider-name="Eclipse Nebula, Laurent CARON">
+      provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
       Tip of the day

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 Copyright (C) 2012, 2013, 2017, RemainSoftware & Red Hat Inc.
 
@@ -12,12 +11,10 @@ Contributors:
  * Wim Jongman (RemainSoftware)
  * Mickael Istria (Red Hat Inc.)
 -->
-
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.eclipse.nebula</groupId>
@@ -25,8 +22,9 @@ Contributors:
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-  <artifactId>org.eclipse.nebula.widgets.pshelf.feature</artifactId>
-  <packaging>eclipse-feature</packaging>
+	<artifactId>org.eclipse.nebula.widgets.pshelf.feature</artifactId>
+	<packaging>eclipse-feature</packaging>
 
-  <name>Nebula PShelf Feature</name>
+	<name>Nebula PShelf Feature</name>
+
 </project>

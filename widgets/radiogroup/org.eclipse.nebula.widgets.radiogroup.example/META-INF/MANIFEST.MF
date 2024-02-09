@@ -1,7 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Example
+Bundle-Name: Nebula Radio Group Example - Incubating
 Bundle-SymbolicName: org.eclipse.nebula.widgets.radiogroup.example;singleton:=true
+Bundle-Vendor: Eclipse Nebula
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

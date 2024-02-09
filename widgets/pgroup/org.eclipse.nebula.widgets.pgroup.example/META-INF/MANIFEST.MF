@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Example
+Bundle-Name: Nebula PGroup Example
 Bundle-SymbolicName: org.eclipse.nebula.widgets.pgroup.example;singleton:=true
 Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse Nebula
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.nebula.examples;bundle-version="1.0.4",

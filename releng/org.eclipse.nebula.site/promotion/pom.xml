@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2022 Eclipse contributors and others.
+
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+-->
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.eclipse.nebula</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+		<artifactId>nebula-parent</artifactId>
+		<relativePath>../../org.eclipse.nebula.nebula-parent</relativePath>
+	</parent>
+
+	<artifactId>org.eclipse.nebula.promote</artifactId>
+	<packaging>pom</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-eclipserun-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<executionEnvironment>JavaSE-17</executionEnvironment>
+					<dependencies>
+						<dependency>
+							<artifactId>org.eclipse.justj.p2</artifactId>
+							<type>eclipse-plugin</type>
+						</dependency>
+						<dependency>
+							<artifactId>org.apache.felix.scr</artifactId>
+							<type>eclipse-plugin</type>
+						</dependency>
+					</dependencies>
+					<repositories>
+						<repository>
+							<id>eclipse.repo</id>
+							<layout>p2</layout>
+							<url>${eclipse.repo}</url>
+						</repository>
+						<repository>
+							<id>justj.tools.repo</id>
+							<layout>p2</layout>
+							<url>${justj.tools.repo}</url>
+						</repository>
+					</repositories>
+				</configuration>
+				<executions>
+					<execution>
+						<id>promote</id>
+						<goals>
+							<goal>eclipse-run</goal>
+						</goals>
+						<phase>verify</phase>
+						<configuration>
+							<argLine></argLine>
+							<appArgLine>
+							<![CDATA[ 
+                              -consoleLog
+                              -application org.eclipse.justj.p2.manager
+                              -data @None
+                              -nosplash
+                              ${org.eclipse.justj.p2.manager.args}
+                              -retain 5
+                              -label "Nebula"
+                              -build-url
+                              ${org.eclipse.justj.p2.manager.build.url}
+                              -root ${project.build.directory}/nebula-sync
+                              -relative
+                              ${org.eclipse.justj.p2.manager.relative}
+                              -version-iu org.eclipse.nebula.feature.feature.group
+                              -commit
+                              https://github.com/eclipse/nebula/commit/${git.commit}
+                              -target-url
+                              https://download.eclipse.org/nebula
+                              -promote
+                              ${project.basedir}/../target/repository
+                              -timestamp ${build.timestamp}
+                              -type ${build.type}
+                              -breadcrumb "Nebula
+                              https://projects.eclipse.org/projects/tools.nebula"
+                              -mapping nebula->Nebula
+                              -favicon
+                              https://eclipse.dev/nebula/favicon.ico
+                              -body-image
+                              https://eclipse.dev/nebula/images/nebula_logo_main_300.png
+                              -title-image
+                              https://eclipse.dev/nebula/images/nebula_logo_main_300.png
+                              ${org.eclipse.justj.p2.manager.extra.args}
+                            ]]>
+							</appArgLine>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
