@@ -88,8 +88,7 @@ SPDX-License-Identifier: EPL-2.0
                               ${project.basedir}/../target/repository
                               -timestamp ${build.timestamp}
                               -type ${build.type}
-                              -breadcrumb "Nebula
-                              https://projects.eclipse.org/projects/tools.nebula"
+                              -breadcrumb "Nebula https://projects.eclipse.org/projects/technology.nebula"
                               -mapping nebula->Nebula
                               -favicon
                               https://eclipse.dev/nebula/favicon.ico
