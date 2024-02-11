@@ -102,7 +102,7 @@ public class RadioGroupViewer extends AbstractListViewer {
 	 *              AbstractListViewer API.
 	 */
 	@Override
-	public void add(Object[] elements) {
+	public void add(Object... elements) {
 		super.add(elements);
 	}
 
@@ -321,7 +321,7 @@ public class RadioGroupViewer extends AbstractListViewer {
 	 *              AbstractListViewer API.
 	 */
 	@Override
-	public void remove(Object[] elements) {
+	public void remove(Object... elements) {
 		super.remove(elements);
 	}
 
