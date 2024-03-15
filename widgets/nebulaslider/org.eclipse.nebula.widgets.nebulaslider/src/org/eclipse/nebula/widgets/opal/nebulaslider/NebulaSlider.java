@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.nebulaslider;
 
+import java.util.function.IntFunction;
+
 import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -46,6 +48,8 @@ public class NebulaSlider extends Canvas {
 	private int mouseDeltaX;
 
 	private boolean moving = false;
+
+	private IntFunction<String> format;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value
@@ -181,13 +185,36 @@ public class NebulaSlider extends Canvas {
 		// And the value
 		gc.setForeground(renderer.getSelectorTextColor());
 		gc.setFont(renderer.getTextFont());
-		final String valueAsString = String.valueOf(value);
+		final String valueAsString = stringValueOf(value);
 		final Point textSize = gc.textExtent(valueAsString);
 
 		final int xText = hMargin + xPosition + selectorWidth / 2;
 		final int yText = y + selectorHeight / 2;
 
 		gc.drawText(valueAsString, xText - textSize.x / 2, yText - textSize.y / 2, true);
+	}
+
+	private String stringValueOf(int value) {
+		if(format != null) {
+			return format.apply(value);
+		}
+		return String.valueOf(value);
+	}
+
+	/**
+	 * Set the format that should be used to format the given number to a string.
+	 * 
+	 * @param format
+	 *                   the format or <code>null</code> to use the default format.
+	 */
+	public void setLabelFormatProvider(IntFunction<String> format) {
+		checkWidget();
+		this.format = format;
+	}
+
+	public IntFunction<String> getLabelFormatProvider() {
+		checkWidget();
+		return format;
 	}
 
 	private void addMouseListeners() {
