@@ -255,10 +255,13 @@ public class NebulaSlider extends Canvas {
 
 			// Update value
 			final float ratio = (float) xPosition / originalWidth;
-			value = (int) Math.floor(ratio * (maximum - minimum));
-
-			SelectionListenerUtil.fireSelectionListeners(this,e);
+			int value = (int)Math.floor(ratio * (maximum - minimum));
+			if(this.value != value) {
+				this.value = value;
+				SelectionListenerUtil.fireSelectionListeners(this, e);
+			}
 			redraw();
+
 		});
 	}
 
