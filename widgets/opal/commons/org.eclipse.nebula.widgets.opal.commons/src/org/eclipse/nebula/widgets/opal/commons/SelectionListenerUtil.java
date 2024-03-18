@@ -65,7 +65,23 @@ public class SelectionListenerUtil {
 	 * @return true if the selection could be changed, false otherwise
 	 */
 	public static boolean fireSelectionListeners(final Control control, final Event sourceEvent) {
-		for (final Listener listener : control.getListeners(SWT.Selection)) {
+		return fireSelectionListenersEvent(control, sourceEvent, SWT.Selection);
+	}
+	
+	/**
+	 * Fire the default selection listeners of a given control
+	 *
+	 * @param control the control that fires the event
+	 * @param sourceEvent mouse event
+	 * @return true if the selection could be changed, false otherwise
+	 */
+	public static boolean fireDefaultSelectionListeners(final Control control, final Event sourceEvent) {
+		return fireSelectionListenersEvent(control, sourceEvent, SWT.DefaultSelection);
+	}
+
+	private static boolean fireSelectionListenersEvent(final Control control, final Event sourceEvent, int type) {
+		Listener[] listeners = control.getListeners(SWT.Selection);
+		for(final Listener listener : listeners) {
 			final Event event = new Event();
 
 			event.button = sourceEvent==null?1:sourceEvent.button;
@@ -76,7 +92,7 @@ public class SelectionListenerUtil {
 			event.time = sourceEvent == null ? 0 : sourceEvent.time;
 			event.x = sourceEvent == null ? 0 : sourceEvent.x;
 			event.y = sourceEvent == null ? 0 : sourceEvent.y;
-			event.type = SWT.Selection;
+			event.type = type;
 
 			listener.handleEvent(event);
 			if (!event.doit) {

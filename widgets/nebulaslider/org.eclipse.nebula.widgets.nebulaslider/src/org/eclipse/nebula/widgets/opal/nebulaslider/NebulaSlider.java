@@ -51,6 +51,8 @@ public class NebulaSlider extends Canvas {
 
 	private IntFunction<String> format;
 
+	private int movingValue;
+
 	/**
 	 * Constructs a new instance of this class given its parent and a style value
 	 * describing its behavior and appearance.
@@ -229,12 +231,16 @@ public class NebulaSlider extends Canvas {
 				return;
 			}
 			moving = true;
+			movingValue = value;
 			mouseDeltaX = xPosition - e.x;
 		});
 
 		addListener(SWT.MouseUp, e -> {
 			moving = false;
 			mouseDeltaX = 0;
+			if(movingValue != value) {
+				SelectionListenerUtil.fireDefaultSelectionListeners(this, e);
+			}
 			redraw();
 		});
 
