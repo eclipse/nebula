@@ -19,6 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -114,16 +115,16 @@ public class NebulaSlider extends Canvas {
 			// Compute xPosition
 			xPosition = computeXPosition();
 		}
-
-		drawBar(gc);
-		drawSelectionPart(gc);
-		drawSelector(gc);
+		boolean enabled = isEnabled();
+		drawBar(gc, enabled);
+		drawSelectionPart(gc, enabled);
+		drawSelector(gc, enabled);
 	}
 
-	private void drawBar(final GC gc) {
+	private void drawBar(final GC gc, boolean enabled) {
 		final Rectangle rect = getClientArea();
-		gc.setForeground(renderer.getBarBorderColor());
-		gc.setBackground(renderer.getBarInsideColor());
+		gc.setForeground(getColor(renderer.getBarBorderColor(), enabled));
+		gc.setBackground(getColor(renderer.getBarInsideColor(), enabled));
 
 		final int hMargin = renderer.getHorizontalMargin();
 		final int selectorWidth = renderer.getSelectorWidth();
@@ -137,10 +138,10 @@ public class NebulaSlider extends Canvas {
 		gc.drawRoundRectangle(x, y, width, barHeight, barHeight, barHeight);
 	}
 
-	private void drawSelectionPart(final GC gc) {
+	private void drawSelectionPart(final GC gc, boolean enabled) {
 		final Rectangle rect = getClientArea();
-		gc.setForeground(renderer.getBarBorderColor());
-		gc.setBackground(renderer.getBarSelectionColor());
+		gc.setForeground(getColor(renderer.getBarBorderColor(), enabled));
+		gc.setBackground(getColor(renderer.getBarSelectionColor(), enabled));
 
 		final int barHeight = renderer.getBarHeight();
 
@@ -158,10 +159,10 @@ public class NebulaSlider extends Canvas {
 		return position;
 	}
 
-	private void drawSelector(final GC gc) {
+	private void drawSelector(final GC gc, boolean enabled) {
 		final Rectangle rect = getClientArea();
-		gc.setForeground(renderer.getSelectorColorBorder());
-		gc.setBackground(renderer.getSelectorColor());
+		gc.setForeground(getColor(renderer.getSelectorColorBorder(), enabled));
+		gc.setBackground(getColor(renderer.getSelectorColor(), enabled));
 
 		final int hMargin = renderer.getHorizontalMargin();
 
@@ -175,7 +176,7 @@ public class NebulaSlider extends Canvas {
 		gc.drawRoundRectangle(hMargin + xPosition, y, selectorWidth, selectorHeight, selectorHeight, selectorHeight);
 
 		// Draw the arrows
-		gc.setForeground(renderer.getArrowColor());
+		gc.setForeground(getColor(renderer.getArrowColor(), enabled));
 		gc.setLineWidth(renderer.getArrowLineWidth());
 		final int baseY = y + selectorHeight / 2;
 		gc.drawLine(hMargin + xPosition + 10, baseY, hMargin + xPosition + 17, baseY - 7);
@@ -185,7 +186,7 @@ public class NebulaSlider extends Canvas {
 		gc.drawLine(hMargin + xPosition + selectorWidth - 10, baseY, hMargin + xPosition + selectorWidth - 17, baseY + 7);
 
 		// And the value
-		gc.setForeground(renderer.getSelectorTextColor());
+		gc.setForeground(getColor(renderer.getSelectorTextColor(), enabled));
 		gc.setFont(renderer.getTextFont());
 		final String valueAsString = stringValueOf(value);
 		final Point textSize = gc.textExtent(valueAsString);
@@ -194,6 +195,35 @@ public class NebulaSlider extends Canvas {
 		final int yText = y + selectorHeight / 2;
 
 		gc.drawText(valueAsString, xText - textSize.x / 2, yText - textSize.y / 2, true);
+	}
+
+	@Override
+	public void setBounds(int x, int y, int width, int height) {
+		xPosition = -1;
+		super.setBounds(x, y, width, height);
+	}
+	
+	@Override
+	public void setEnabled(boolean enabled) {
+		if(!enabled && moving) {
+			moving = false;
+		}
+		super.setEnabled(enabled);
+	}
+	
+	private Color getColor(Color color, boolean enabled) {
+		if(enabled) {
+			return color;
+		}
+		// see https://en.wikipedia.org/wiki/Grayscale#Converting_color_to_grayscale
+		int red = color.getRed();
+		int green = color.getGreen();
+		int blue = color.getBlue();
+		if(red == green && green == blue) {
+			return color;
+		}
+		int g = (int)(0.299 * red + 0.587 * green + 0.114 * blue);
+		return new Color(g, g, g);
 	}
 
 	private String stringValueOf(int value) {
@@ -222,17 +252,19 @@ public class NebulaSlider extends Canvas {
 	private void addMouseListeners() {
 
 		addListener(SWT.MouseDown, e -> {
-			final int selectorWidth = renderer.getSelectorWidth();
-			final int selectorHeight = renderer.getSelectorHeight();
-
-			final int y = (getClientArea().height - selectorHeight) / 2;
-			final Rectangle rect = new Rectangle(xPosition + renderer.getHorizontalMargin(), y, selectorWidth, selectorHeight);
-			if (!rect.contains(e.x, e.y)) {
-				return;
+			if(isEnabled()) {
+				final int selectorWidth = renderer.getSelectorWidth();
+				final int selectorHeight = renderer.getSelectorHeight();
+				
+				final int y = (getClientArea().height - selectorHeight) / 2;
+				final Rectangle rect = new Rectangle(xPosition + renderer.getHorizontalMargin(), y, selectorWidth, selectorHeight);
+				if (!rect.contains(e.x, e.y)) {
+					return;
+				}
+				moving = true;
+				movingValue = value;
+				mouseDeltaX = xPosition - e.x;
 			}
-			moving = true;
-			movingValue = value;
-			mouseDeltaX = xPosition - e.x;
 		});
 
 		addListener(SWT.MouseUp, e -> {
