@@ -692,7 +692,6 @@ public class TableCombo extends Composite {
 	void createPopup(final int selectionIndex) {
 		// create shell and table
 		popup = new Shell(getShell(), SWT.NO_TRIM | SWT.ON_TOP);
-		System.out.println("Popup=" + popup.hashCode() + " shell=" + getShell().hashCode());
 
 		// create table
 		table = new Table(popup, SWT.SINGLE | SWT.FULL_SELECTION);
