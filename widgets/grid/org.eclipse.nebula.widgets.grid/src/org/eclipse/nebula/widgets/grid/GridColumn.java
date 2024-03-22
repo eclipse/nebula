@@ -37,7 +37,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * <p>
@@ -501,11 +500,7 @@ public class GridColumn extends Item {
 	 *             </ul>
 	 */
 	public void addSelectionListener(SelectionListener listener) {
-		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		this.addListener(SWT.Selection, new TypedListener(listener));
+		addTypedListener(listener, SWT.Selection);
 	}
 
 	/**
@@ -525,8 +520,7 @@ public class GridColumn extends Item {
 	 *             </ul>
 	 */
 	public void removeSelectionListener(SelectionListener listener) {
-		checkWidget();
-		this.removeListener(SWT.Selection, listener);
+		removeTypedListener(SWT.Selection, listener);
 	}
 
 	/**
@@ -813,13 +807,7 @@ public class GridColumn extends Item {
 	 *             </ul>
 	 */
 	public void addControlListener(ControlListener listener) {
-		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		TypedListener typedListener = new TypedListener(listener);
-		addListener(SWT.Resize, typedListener);
-		addListener(SWT.Move, typedListener);
+		addTypedListener(listener, SWT.Resize, SWT.Move);
 	}
 
 	/**
@@ -840,12 +828,8 @@ public class GridColumn extends Item {
 	 *             </ul>
 	 */
 	public void removeControlListener(ControlListener listener) {
-		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		removeListener(SWT.Resize, listener);
-		removeListener(SWT.Move, listener);
+		removeTypedListener(SWT.Resize, listener);
+		removeTypedListener(SWT.Move, listener);
 	}
 
 	/**

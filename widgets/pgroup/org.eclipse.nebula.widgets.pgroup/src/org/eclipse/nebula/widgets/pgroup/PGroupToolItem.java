@@ -18,7 +18,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * Instances of this class represent a selectable user interface object that
@@ -76,14 +75,12 @@ public class PGroupToolItem extends Item {
 	}
 
 	public void addSelectionListener(SelectionListener listener) {
-		TypedListener typedListener = new TypedListener(listener);
-		addListener(SWT.Selection, typedListener);
-		addListener(SWT.DefaultSelection, typedListener);
+		addTypedListener(listener, SWT.Selection, SWT.DefaultSelection);
 	}
 
 	public void removeSelectionListener(SelectionListener listener) {
-		removeListener(SWT.Selection, listener);
-		removeListener(SWT.DefaultSelection, listener);
+		removeTypedListener(SWT.Selection, listener);
+		removeTypedListener(SWT.DefaultSelection, listener);
 	}
 
 	void setDropDownArea(Rectangle dropdownArea) {

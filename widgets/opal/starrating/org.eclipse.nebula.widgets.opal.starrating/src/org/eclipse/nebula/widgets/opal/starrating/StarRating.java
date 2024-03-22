@@ -222,8 +222,7 @@ public class StarRating extends Canvas {
 	 * @see SelectionEvent
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
-		checkWidget();
-		SelectionListenerUtil.addSelectionListener(this, listener);
+		addTypedListener(listener, SWT.Selection);
 	}
 
 	/**
@@ -323,8 +322,7 @@ public class StarRating extends Canvas {
 	 * @see #addSelectionListener
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
-		checkWidget();
-		SelectionListenerUtil.removeSelectionListener(this, listener);
+		removeTypedListener(SWT.Selection, listener);
 	}
 
 	/**

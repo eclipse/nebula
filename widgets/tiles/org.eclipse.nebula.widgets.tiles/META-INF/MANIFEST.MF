@@ -6,5 +6,5 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.nebula.widgets.tiles
-Require-Bundle: org.eclipse.swt
+Require-Bundle: org.eclipse.swt;bundle-version="[3.126.0,4.0.0)"
 Automatic-Module-Name: org.eclipse.nebula.widgets.tiles

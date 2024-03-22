@@ -18,7 +18,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TypedListener;
 
 public class SelectionListenerUtil {
 	/**
@@ -27,11 +26,12 @@ public class SelectionListenerUtil {
 	 * @param control control on which the selection listener is added
 	 * @param listener listener to add
 	 */
+	@Deprecated(forRemoval = true)
 	public static void addSelectionListener(final Control control, final SelectionListener listener) {
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		TypedListener typedListener = new TypedListener(listener);
+		var typedListener = new org.eclipse.swt.widgets.TypedListener(listener);
 		control.addListener(SWT.Selection, typedListener);
 	}
 
@@ -41,20 +41,13 @@ public class SelectionListenerUtil {
 	 * @param control control on which the selection listener is removed
 	 * @param listener listener to remove
 	 */
+	@Deprecated(forRemoval = true)
 	public static void removeSelectionListener(final Control control, final SelectionListener listener) {
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		final Listener[] listeners = control.getListeners(SWT.Selection);
-		for (Listener l : listeners) {
-			if (l instanceof TypedListener) {
-				TypedListener typedListener = (TypedListener) l;
-				if (typedListener.getEventListener() == listener) {
-					ReflectionUtils.callMethod(control, "removeListener", SWT.Selection, ((TypedListener) l).getEventListener());
-					return;
-				}
-			}
-		}
+		control.getTypedListeners(SWT.Selection, SelectionListener.class)
+				.forEach(l -> ReflectionUtils.callMethod(control, "removeListener", SWT.Selection, l));
 	}
 
 	/**

@@ -25,7 +25,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * <p>
@@ -122,11 +121,7 @@ public class GridColumnGroup extends Item
      * @see #removeTreeListener
      */
     public void addTreeListener(TreeListener listener) {
-        checkWidget ();
-        if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
-        TypedListener typedListener = new TypedListener (listener);
-        addListener (SWT.Expand, typedListener);
-        addListener (SWT.Collapse, typedListener);
+    	addTypedListener(listener, SWT.Expand, SWT.Collapse);
     }
 
     /**
@@ -147,10 +142,8 @@ public class GridColumnGroup extends Item
      * @see #addTreeListener
      */
     public void removeTreeListener(TreeListener listener) {
-        checkWidget ();
-        if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
-        removeListener (SWT.Expand, listener);
-        removeListener (SWT.Collapse, listener);
+        removeTypedListener(SWT.Expand, listener);
+        removeTypedListener(SWT.Collapse, listener);
     }
 
     /**
