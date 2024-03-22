@@ -15,9 +15,9 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.splitbutton;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -57,7 +56,8 @@ public class SplitButton extends Button {
 
 	private static final int EXTRA_WIDTH = 60;
 
-	private final List<Listener> listeners = new LinkedList<>();
+	private final List<Listener> selectionListeners = new LinkedList<>();
+	private final List<SelectionListener> typedSelectionListeners = new LinkedList<>();
 
 	private int splitButtonAreaLeft = -1;
 	private int splitButtonAreaTop = -1;
@@ -191,12 +191,15 @@ public class SplitButton extends Button {
 					getMenu().setVisible(true);
 
 				} else {
-					for (final Listener listener : listeners) {
-						final Event evt = new Event();
-						evt.widget = SplitButton.this;
-						evt.display = getDisplay();
-						evt.type = SWT.Selection;
+					Event evt = new Event();
+					evt.widget = SplitButton.this;
+					evt.display = getDisplay();
+					evt.type = SWT.Selection;
+					for (Listener listener : selectionListeners) {
 						listener.handleEvent(evt);
+					}
+					for (SelectionListener listener : typedSelectionListeners) {
+						listener.widgetSelected(new SelectionEvent(evt));
 					}
 				}
 			}
@@ -240,8 +243,7 @@ public class SplitButton extends Button {
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		final TypedListener typedListener = new TypedListener(listener);
-		listeners.add(typedListener);
+		typedSelectionListeners.add(listener);
 	}
 
 	/**
@@ -271,17 +273,7 @@ public class SplitButton extends Button {
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-
-		final Iterator<Listener> it = listeners.iterator();
-		while (it.hasNext()) {
-			final Listener current = it.next();
-			if (current instanceof TypedListener) {
-				final TypedListener tl = (TypedListener) current;
-				if (tl.getEventListener() != null && tl.getEventListener().equals(listener)) {
-					it.remove();
-				}
-			}
-		}
+		typedSelectionListeners.removeIf(listener::equals);
 	}
 
 	/**
@@ -317,7 +309,7 @@ public class SplitButton extends Button {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 		if (eventType == SWT.Selection) {
-			listeners.add(listener);
+			selectionListeners.add(listener);
 			return;
 		}
 		super.addListener(eventType, listener);
@@ -354,7 +346,7 @@ public class SplitButton extends Button {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 		if (eventType == SWT.Selection) {
-			listeners.add(listener);
+			selectionListeners.remove(listener);
 			return;
 		}
 		super.removeListener(eventType, listener);
