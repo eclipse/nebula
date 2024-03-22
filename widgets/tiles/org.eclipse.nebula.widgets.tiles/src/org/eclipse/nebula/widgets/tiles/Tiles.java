@@ -35,7 +35,6 @@ import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.TypedListener;
 
 /**
  *
@@ -109,8 +108,7 @@ public class Tiles<T> extends Canvas {
 	 * @param listener
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
-		super.checkWidget();
-		addListener(SWT.Selection, new TypedListener(listener));
+		addTypedListener(listener, SWT.Selection);
 	}
 
 	/**
@@ -253,8 +251,7 @@ public class Tiles<T> extends Canvas {
 	 * @param listener
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
-		super.checkWidget();
-		removeListener(SWT.Selection, listener);
+		removeTypedListener(SWT.Selection, listener);
 	}
 
 	/**

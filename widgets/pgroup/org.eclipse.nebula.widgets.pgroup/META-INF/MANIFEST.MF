@@ -4,7 +4,7 @@ Bundle-Name: Nebula PGroup
 Bundle-SymbolicName: org.eclipse.nebula.widgets.pgroup
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse Nebula
-Require-Bundle: org.eclipse.swt
+Require-Bundle: org.eclipse.swt;bundle-version="[3.126.0,4.0.0)"
 Export-Package: org.eclipse.nebula.widgets.pgroup,
  org.eclipse.nebula.widgets.pgroup.internal;x-internal:=true
 Bundle-RequiredExecutionEnvironment: JavaSE-11
