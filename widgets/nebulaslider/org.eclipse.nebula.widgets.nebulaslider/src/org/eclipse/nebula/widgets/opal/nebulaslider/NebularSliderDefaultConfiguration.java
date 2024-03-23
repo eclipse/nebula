@@ -26,6 +26,7 @@ public class NebularSliderDefaultConfiguration implements NebulaSliderGraphicCon
 	private static final int BAR_HEIGHT = 12;
 	private static final int SELECTOR_HEIGHT = 32;
 	protected final NebulaSlider parentSlider;
+	private Font font;
 
 	public NebularSliderDefaultConfiguration(final NebulaSlider parentSlider) {
 		this.parentSlider = parentSlider;
@@ -68,14 +69,21 @@ public class NebularSliderDefaultConfiguration implements NebulaSliderGraphicCon
 
 	@Override
 	public Font getTextFont() {
-		final FontData fontData = parentSlider.getFont().getFontData()[0];
-		final Font newFont = new Font(parentSlider.getDisplay(), fontData.getName(), Math.max(fontData.getHeight(), 14), SWT.BOLD);
-		parentSlider.addDisposeListener(e -> {
-			if (!newFont.isDisposed()) {
-				newFont.dispose();
-			}
-		});
-		return newFont;
+		if(font == null || font.isDisposed()) {
+			final FontData fontData = parentSlider.getFont().getFontData()[0];
+			Font newFont = new Font(parentSlider.getDisplay(), fontData.getName(), getFontSize(fontData), SWT.BOLD);
+			parentSlider.addDisposeListener(e -> {
+				if(!newFont.isDisposed()) {
+					newFont.dispose();
+				}
+			});
+			this.font = newFont;
+		}
+		return font;
+	}
+
+	protected int getFontSize(FontData fontData) {
+		return Math.max(fontData.getHeight(), 14);
 	}
 
 	@Override
@@ -99,13 +107,7 @@ public class NebularSliderDefaultConfiguration implements NebulaSliderGraphicCon
 	}
 
 	protected Color getAndDisposeColor(final int r, final int g, final int b) {
-		final Color color = new Color(parentSlider.getDisplay(), r, g, b);
-		parentSlider.addDisposeListener(e -> {
-			if (!color.isDisposed()) {
-				color.dispose();
-			}
-		});
-		return color;
+		return new Color(r, g, b);
 	}
 
 	@Override
