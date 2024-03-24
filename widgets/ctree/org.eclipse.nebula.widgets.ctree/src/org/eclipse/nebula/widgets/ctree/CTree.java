@@ -43,7 +43,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
 
@@ -389,18 +388,14 @@ public class CTree extends Composite implements Listener {
 	public void addSelectionListener(SelectionListener listener) {
 		checkWidget();
 		if (listener != null) {
-			TypedListener typedListener = new TypedListener(listener);
-			addListener(SWT.Selection, typedListener);
-			addListener(SWT.DefaultSelection, typedListener);
+			addTypedListener(listener, SWT.Selection, SWT.DefaultSelection);
 		}
 	}
 
 	public void addTreeListener(TreeListener listener) {
 		checkWidget ();
 		if(listener != null) {
-			TypedListener typedListener = new TypedListener (listener);
-			addListener (SWT.Collapse, typedListener);
-			addListener (SWT.Expand, typedListener);
+			addTypedListener(listener, SWT.Collapse, SWT.Expand);
 		}
 	}
 
@@ -1367,16 +1362,16 @@ public class CTree extends Composite implements Listener {
 	public void removeSelectionListener(SelectionListener listener) {
 		checkWidget();
 		if (listener != null) {
-			removeListener(SWT.Selection, listener);
-			removeListener(SWT.DefaultSelection, listener);
+			removeTypedListener(SWT.Selection, listener);
+			removeTypedListener(SWT.DefaultSelection, listener);
 		}
 	}
 
 	public void removeTreeListener(TreeListener listener) {
 		checkWidget ();
 		if(listener != null) {
-			removeListener(SWT.Collapse, listener);
-			removeListener(SWT.Expand, listener);
+			removeTypedListener(SWT.Collapse, listener);
+			removeTypedListener(SWT.Expand, listener);
 		}
 	}
 	

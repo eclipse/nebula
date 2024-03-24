@@ -363,8 +363,7 @@ public class HorizontalSpinner extends Composite {
 	 * @see SelectionEvent
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
-		checkWidget();
-		SelectionListenerUtil.addSelectionListener(this, listener);
+		addTypedListener(listener, SWT.Selection);
 	}
 
 	/**
@@ -627,8 +626,7 @@ public class HorizontalSpinner extends Composite {
 	 * @see #addSelectionListener
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
-		checkWidget();
-		SelectionListenerUtil.removeSelectionListener(this, listener);
+		removeTypedListener(SWT.Selection, listener);
 	}
 
 	/**

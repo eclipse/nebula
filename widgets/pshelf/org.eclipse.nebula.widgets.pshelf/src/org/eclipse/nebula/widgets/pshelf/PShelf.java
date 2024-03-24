@@ -25,7 +25,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * <p>
@@ -594,11 +593,7 @@ public class PShelf extends Canvas {
      * @see SelectionEvent
      */
     public void addSelectionListener(SelectionListener listener) {
-        checkWidget ();
-        if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
-        TypedListener typedListener = new TypedListener(listener);
-        addListener(SWT.Selection,typedListener);
-        addListener(SWT.DefaultSelection,typedListener);
+    	addTypedListener(listener, SWT.Selection, SWT.DefaultSelection);
     }
 
     /**
@@ -619,11 +614,8 @@ public class PShelf extends Canvas {
      * @see #addSelectionListener
      */
     public void removeSelectionListener (SelectionListener listener) {
-        checkWidget ();
-        if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
-
-        removeListener(SWT.Selection, listener);
-        removeListener(SWT.DefaultSelection,listener);
+    	removeTypedListener(SWT.Selection, listener);
+    	removeTypedListener(SWT.DefaultSelection,listener);
     }
 
 	/**

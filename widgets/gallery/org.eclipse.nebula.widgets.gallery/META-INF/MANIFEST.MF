@@ -4,7 +4,7 @@ Bundle-Name: Nebula Gallery Widget
 Bundle-SymbolicName: org.eclipse.nebula.widgets.gallery
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Require-Bundle: org.eclipse.swt,
+Require-Bundle: org.eclipse.swt;bundle-version="[3.126.0,4.0.0)",
  org.eclipse.jface;resolution:=optional
 Export-Package: org.eclipse.nebula.animation,
  org.eclipse.nebula.animation.effects,

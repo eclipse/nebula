@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -692,13 +691,7 @@ public class PGroup extends Canvas
      */
     public void addExpandListener(ExpandListener listener)
     {
-        checkWidget();
-        if (listener == null)
-            SWT.error(SWT.ERROR_NULL_ARGUMENT);
-
-        TypedListener typedListener = new TypedListener(listener);
-        addListener(SWT.Expand, typedListener);
-        addListener(SWT.Collapse, typedListener);
+        addTypedListener(listener, SWT.Expand, SWT.Collapse);
     }
 
     /**
@@ -720,12 +713,8 @@ public class PGroup extends Canvas
      */
     public void removeExpandListener(ExpandListener listener)
     {
-        checkWidget();
-        if (listener == null)
-            SWT.error(SWT.ERROR_NULL_ARGUMENT);
-
-        removeListener(SWT.Expand, listener);
-        removeListener(SWT.Collapse, listener);
+        removeTypedListener(SWT.Expand, listener);
+        removeTypedListener(SWT.Collapse, listener);
     }
 
     /**

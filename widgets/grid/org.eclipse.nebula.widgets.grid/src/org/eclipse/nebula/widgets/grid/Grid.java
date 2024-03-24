@@ -82,7 +82,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
-import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * The Grid widget is a spreadsheet/table component that offers features not
@@ -956,12 +955,7 @@ public class Grid extends Canvas {
 	 *             </ul>
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
-		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		addListener(SWT.Selection, new TypedListener(listener));
-		addListener(SWT.DefaultSelection, new TypedListener(listener));
+		addTypedListener(listener, SWT.Selection, SWT.DefaultSelection);
 	}
 
 	/**
@@ -987,13 +981,7 @@ public class Grid extends Canvas {
 	 * @see org.eclipse.swt.events.TreeEvent
 	 */
 	public void addTreeListener(final TreeListener listener) {
-		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-
-		addListener(SWT.Expand, new TypedListener(listener));
-		addListener(SWT.Collapse, new TypedListener(listener));
+		addTypedListener(listener, SWT.Expand, SWT.Collapse);
 	}
 
 	/**
@@ -3273,9 +3261,8 @@ public class Grid extends Canvas {
 	 *             </ul>
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
-		checkWidget();
-		removeListener(SWT.Selection, listener);
-		removeListener(SWT.DefaultSelection, listener);
+		removeTypedListener(SWT.Selection, listener);
+		removeTypedListener(SWT.DefaultSelection, listener);
 	}
 
 	/**
@@ -3295,9 +3282,8 @@ public class Grid extends Canvas {
 	 *             </ul>
 	 */
 	public void removeTreeListener(final TreeListener listener) {
-		checkWidget();
-		removeListener(SWT.Expand, listener);
-		removeListener(SWT.Collapse, listener);
+		removeTypedListener(SWT.Expand, listener);
+		removeTypedListener(SWT.Collapse, listener);
 	}
 
 	/**

@@ -47,7 +47,6 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * Calendar widget. Presents the monthly view of a calendar for date picking.
@@ -356,12 +355,7 @@ public class DateChooser extends Composite {
 	 * @see #removeSelectionListener
 	 */
 	public void addSelectionListener(SelectionListener lsnr) {
-		checkWidget();
-		if (lsnr == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		final TypedListener typedListener = new TypedListener(lsnr);
-		addListener(SWT.Selection, typedListener);
+		addTypedListener(lsnr, SWT.Selection);
 	}
 
 	/**
@@ -1106,11 +1100,7 @@ public class DateChooser extends Composite {
 	 * @see #addSelectionListener
 	 */
 	public void removeSelectionListener(SelectionListener lsnr) {
-		checkWidget();
-		if (lsnr == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		removeListener(SWT.Selection, lsnr);
+		removeTypedListener(SWT.Selection, lsnr);
 	}
 
 	/**
