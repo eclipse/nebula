@@ -5,7 +5,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -102,7 +102,7 @@ public class GridColumn extends Item {
 
 	private int headerHeight = NOT_CALCULATED_YET;
 
-	int getFooterHeight(GC gc)
+	int getFooterHeight(final GC gc)
 	{
 		if(footerHeight == NOT_CALCULATED_YET) {
 			footerHeight = getFooterRenderer().computeSize(gc, getWidth(), SWT.DEFAULT, this).y;
@@ -110,7 +110,7 @@ public class GridColumn extends Item {
 		return footerHeight;
 	}
 
-	int getHeaderHeight(GC gc)
+	int getHeaderHeight(final GC gc)
 	{
 		if(headerHeight == NOT_CALCULATED_YET) {
 			headerHeight = getHeaderRenderer().computeSize(gc, getWidth(), SWT.DEFAULT, this).y;
@@ -213,7 +213,7 @@ public class GridColumn extends Item {
 	 *             subclass</li>
 	 *             </ul>
 	 */
-	public GridColumn(Grid parent, int style) {
+	public GridColumn(final Grid parent, final int style) {
 		this(parent, style, -1);
 	}
 
@@ -242,7 +242,7 @@ public class GridColumn extends Item {
 	 *             subclass</li>
 	 *             </ul>
 	 */
-	public GridColumn(Grid parent, int style, int index) {
+	public GridColumn(final Grid parent, final int style, final int index) {
 		super(parent, style, index);
 
 		init(parent, style, index);
@@ -272,7 +272,7 @@ public class GridColumn extends Item {
 	 *             subclass</li>
 	 *             </ul>
 	 */
-	public GridColumn(GridColumnGroup parent, int style) {
+	public GridColumn(final GridColumnGroup parent, final int style) {
 		super(parent.getParent(), style, parent.getNewColumnIndex());
 
 		init(parent.getParent(), style, parent.getNewColumnIndex());
@@ -282,8 +282,8 @@ public class GridColumn extends Item {
 		group.newColumn(this, -1);
 	}
 
-	private void init(Grid table, int style, int index) {
-		this.parent = table;
+	private void init(final Grid table, final int style, final int index) {
+		parent = table;
 
 		table.newColumn(this, index);
 
@@ -303,25 +303,26 @@ public class GridColumn extends Item {
 	public void dispose() {
 		if (!parent.isDisposing()) {
 			parent.removeColumn(this);
-			if (group != null)
+			if (group != null) {
 				group.removeColumn(this);
+			}
 
-				if (controlEditor != null ) {
-					controlEditor.dispose();
-				}
+			if (controlEditor != null ) {
+				controlEditor.dispose();
+			}
 		}
 
-        if(cellRenderer != null)
-        {
-        	cellRenderer.setDisplay(null);
-        	cellRenderer = null;
-        }
+		if(cellRenderer != null)
+		{
+			cellRenderer.setDisplay(null);
+			cellRenderer = null;
+		}
 
-        if(headerRenderer != null)
-        {
-        	headerRenderer.setDisplay(null);
-        	headerRenderer = null;
-        }
+		if(headerRenderer != null)
+		{
+			headerRenderer.setDisplay(null);
+			headerRenderer = null;
+		}
 
 		super.dispose();
 	}
@@ -409,12 +410,12 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setWidth(int width) {
+	public void setWidth(final int width) {
 		checkWidget();
 		setWidth(width, true);
 	}
 
-	void setWidth(int width, boolean redraw) {
+	void setWidth(final int width, final boolean redraw) {
 		int widthToSet = Math.max(minimumWidth, width);
 		if (parent.getColumnScrolling()) {
 			/*
@@ -422,7 +423,7 @@ public class GridColumn extends Item {
 			 * can't scroll all to the right
 			 */
 			int availableVisibleWidthForColumns = parent.getClientArea().width;
-			if (IS_MAC && availableVisibleWidthForColumns == 1 && parent.getClientArea().height == 1) {
+			if (IS_MAC && availableVisibleWidthForColumns == 1 && parent.getClientArea().height <= 1) {
 				// One sets column width before the grid size has been layouted
 				availableVisibleWidthForColumns = width;
 			}
@@ -458,7 +459,7 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setSort(int style) {
+	public void setSort(final int style) {
 		checkWidget();
 		sortStyle = style;
 		parent.redraw();
@@ -500,12 +501,12 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void addSelectionListener(SelectionListener listener) {
+	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		this.addListener(SWT.Selection, new TypedListener(listener));
+		addListener(SWT.Selection, new TypedListener(listener));
 	}
 
 	/**
@@ -524,7 +525,7 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void removeSelectionListener(SelectionListener listener) {
+	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
 		this.removeListener(SWT.Selection, listener);
 	}
@@ -533,12 +534,12 @@ public class GridColumn extends Item {
 	 * Fires selection listeners.
 	 */
 	void fireListeners() {
-		Event e = new Event();
-		e.display = this.getDisplay();
+		final Event e = new Event();
+		e.display = getDisplay();
 		e.item = this;
 		e.widget = parent;
 
-		this.notifyListeners(SWT.Selection, e);
+		notifyListeners(SWT.Selection, e);
 	}
 
 	/**
@@ -559,8 +560,8 @@ public class GridColumn extends Item {
 	public boolean isVisible() {
 		checkWidget();
 		if (group != null) {
-			if ((group.getExpanded() && !isDetail())
-					|| (!group.getExpanded() && !isSummary())) {
+			if (group.getExpanded() && !isDetail()
+					|| !group.getExpanded() && !isSummary()) {
 				return false;
 			}
 		}
@@ -597,10 +598,10 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setVisible(boolean visible) {
+	public void setVisible(final boolean visible) {
 		checkWidget();
 
-		boolean before = isVisible();
+		final boolean before = isVisible();
 
 		this.visible = visible;
 
@@ -615,23 +616,23 @@ public class GridColumn extends Item {
 			 *  Move focus to the next visible column on the right
 			 *  (or left if it is not possible)
 			 */
-			 if (parent.getFocusColumn() == this) {
-				GridItem focusItem = parent.getFocusItem();
+			if (parent.getFocusColumn() == this) {
+				final GridItem focusItem = parent.getFocusItem();
 				if (focusItem != null) {
 					GridColumn column = parent.getVisibleColumn_DegradeRight(focusItem, this);
-					if (column != null)
+					if (column != null) {
 						parent.setFocusColumn(column);
-					else {
+					} else {
 						column = parent.getVisibleColumn_DegradeLeft(focusItem, this);
-						if (column != null)
+						if (column != null) {
 							parent.setFocusColumn(column);
+						}
 					}
 				}
 			}
 
-			GridColumn[] colsOrdered = parent.getColumnsInOrder();
-			for (int i = 0; i < colsOrdered.length; i++) {
-				GridColumn column = colsOrdered[i];
+			final GridColumn[] colsOrdered = parent.getColumnsInOrder();
+			for (final GridColumn column : colsOrdered) {
 				if (column != this && column.isVisible()) {
 					column.fireMoved();
 				}
@@ -655,7 +656,7 @@ public class GridColumn extends Item {
 	public void pack() {
 		checkWidget();
 
-		GC gc = new GC(parent);
+		final GC gc = new GC(parent);
 		int newWidth = getHeaderRenderer().computeSize(gc, SWT.DEFAULT,
 				SWT.DEFAULT, this).x;
 
@@ -667,7 +668,7 @@ public class GridColumn extends Item {
 		{
 			for (int i = topIndex; i < bottomIndex; i++)
 			{
-				GridItem item = parent.getItem(i);
+				final GridItem item = parent.getItem(i);
 				if (item.isVisible())
 				{
 					newWidth = Math.max(newWidth, getCellRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, item).x);
@@ -684,7 +685,7 @@ public class GridColumn extends Item {
 		{
 			for (int i = 0; i < parent.getItemCount(); i++)
 			{
-				GridItem item = parent.getItem(i);
+				final GridItem item = parent.getItem(i);
 				if (item.isVisible())
 				{
 					newWidth = Math.max(newWidth, getCellRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, item).x);
@@ -749,7 +750,7 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setCellRenderer(GridCellRenderer cellRenderer) {
+	public void setCellRenderer(final GridCellRenderer cellRenderer) {
 		checkWidget();
 
 		this.cellRenderer = cellRenderer;
@@ -769,7 +770,7 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setHeaderRenderer(GridHeaderRenderer headerRenderer) {
+	public void setHeaderRenderer(final GridHeaderRenderer headerRenderer) {
 		checkWidget();
 		this.headerRenderer = headerRenderer;
 		initHeaderRenderer();
@@ -788,7 +789,7 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setFooterRenderer(GridFooterRenderer footerRenderer) {
+	public void setFooterRenderer(final GridFooterRenderer footerRenderer) {
 		checkWidget();
 		this.footerRenderer = footerRenderer;
 		initFooterRenderer();
@@ -812,12 +813,12 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void addControlListener(ControlListener listener) {
+	public void addControlListener(final ControlListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		TypedListener typedListener = new TypedListener(listener);
+		final TypedListener typedListener = new TypedListener(listener);
 		addListener(SWT.Resize, typedListener);
 		addListener(SWT.Move, typedListener);
 	}
@@ -839,7 +840,7 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void removeControlListener(ControlListener listener) {
+	public void removeControlListener(final ControlListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
@@ -852,24 +853,24 @@ public class GridColumn extends Item {
 	 * Fires moved event.
 	 */
 	void fireMoved() {
-		Event e = new Event();
-		e.display = this.getDisplay();
+		final Event e = new Event();
+		e.display = getDisplay();
 		e.item = this;
 		e.widget = parent;
 
-		this.notifyListeners(SWT.Move, e);
+		notifyListeners(SWT.Move, e);
 	}
 
 	/**
 	 * Fires resized event.
 	 */
 	void fireResized() {
-		Event e = new Event();
-		e.display = this.getDisplay();
+		final Event e = new Event();
+		e.display = getDisplay();
 		e.item = this;
 		e.widget = parent;
 
-		this.notifyListeners(SWT.Resize, e);
+		notifyListeners(SWT.Resize, e);
 	}
 
 	/**
@@ -885,7 +886,7 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setTree(boolean tree) {
+	public void setTree(final boolean tree) {
 		checkWidget();
 
 		this.tree = tree;
@@ -923,7 +924,7 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setAlignment(int alignment) {
+	public void setAlignment(final int alignment) {
 		checkWidget();
 		cellRenderer.setAlignment(alignment);
 	}
@@ -940,26 +941,26 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-    public int getVerticalAlignment() {
-        checkWidget();
-        return cellRenderer.getVerticalAlignment();
-    }
+	public int getVerticalAlignment() {
+		checkWidget();
+		return cellRenderer.getVerticalAlignment();
+	}
 
-    /**
-     * Sets the column's vertical text alignment.
-     *
-     * @param alignment SWT.TOP (default), SWT.CENTER, SWT.BOTTOM
-     * @throws org.eclipse.swt.SWTException
-     * <ul>
-     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
-     * created the receiver</li>
-     * </ul>
-     */
-    public void setVerticalAlignment(int alignment) {
-    	checkWidget();
-    	cellRenderer.setVerticalAlignment(alignment);
-    }
+	/**
+	 * Sets the column's vertical text alignment.
+	 *
+	 * @param alignment SWT.TOP (default), SWT.CENTER, SWT.BOTTOM
+	 * @throws org.eclipse.swt.SWTException
+	 * <ul>
+	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+	 * created the receiver</li>
+	 * </ul>
+	 */
+	public void setVerticalAlignment(final int alignment) {
+		checkWidget();
+		cellRenderer.setVerticalAlignment(alignment);
+	}
 
 
 	/**
@@ -992,7 +993,7 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setMoveable(boolean moveable) {
+	public void setMoveable(final boolean moveable) {
 		checkWidget();
 		this.moveable = moveable;
 		parent.redraw();
@@ -1028,7 +1029,7 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setResizeable(boolean resizeable) {
+	public void setResizeable(final boolean resizeable) {
 		checkWidget();
 		this.resizeable = resizeable;
 	}
@@ -1084,7 +1085,7 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setDetail(boolean detail) {
+	public void setDetail(final boolean detail) {
 		checkWidget();
 		this.detail = detail;
 	}
@@ -1122,7 +1123,7 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setSummary(boolean summary) {
+	public void setSummary(final boolean summary) {
 		checkWidget();
 		this.summary = summary;
 	}
@@ -1133,13 +1134,13 @@ public class GridColumn extends Item {
 	 * @return bounds of the column header
 	 */
 	Rectangle getBounds() {
-		Rectangle bounds = new Rectangle(0, 0, 0, 0);
+		final Rectangle bounds = new Rectangle(0, 0, 0, 0);
 
 		if (!isVisible()) {
 			return bounds;
 		}
 
-		Point loc = parent.getOrigin(this, null);
+		final Point loc = parent.getOrigin(this, null);
 		bounds.x = loc.x;
 		bounds.y = loc.y;
 		bounds.width = getWidth();
@@ -1162,7 +1163,7 @@ public class GridColumn extends Item {
 	 * @param tableCheck
 	 *            the tableCheck to set
 	 */
-	protected void setTableCheck(boolean tableCheck) {
+	protected void setTableCheck(final boolean tableCheck) {
 		this.tableCheck = tableCheck;
 
 		cellRenderer.setCheck(tableCheck || check);
@@ -1198,7 +1199,7 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setCellSelectionEnabled(boolean cellSelectionEnabled) {
+	public void setCellSelectionEnabled(final boolean cellSelectionEnabled) {
 		checkWidget();
 		this.cellSelectionEnabled = cellSelectionEnabled;
 	}
@@ -1253,12 +1254,12 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setCheckable(boolean checkable) {
+	public void setCheckable(final boolean checkable) {
 		checkWidget();
 		this.checkable = checkable;
 	}
 
-	void setColumnIndex(int newIndex) {
+	void setColumnIndex(final int newIndex) {
 		cellRenderer.setColumn(newIndex);
 	}
 
@@ -1295,7 +1296,7 @@ public class GridColumn extends Item {
 	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
-	public void setWordWrap(boolean wordWrap) {
+	public void setWordWrap(final boolean wordWrap) {
 		checkWidget();
 		cellRenderer.setWordWrap(wordWrap);
 		parent.redraw();
@@ -1310,7 +1311,7 @@ public class GridColumn extends Item {
 	 *            Set to true to wrap the text, false otherwise
 	 * @see #getHeaderWordWrap()
 	 */
-	public void setHeaderWordWrap(boolean wordWrap) {
+	public void setHeaderWordWrap(final boolean wordWrap) {
 		checkWidget();
 		headerRenderer.setWordWrap(wordWrap);
 		parent.redraw();
@@ -1335,28 +1336,23 @@ public class GridColumn extends Item {
 	 * @param control
 	 *            the control to be displayed in the header
 	 */
-	public void setHeaderControl(Control control) {
-		if (this.controlEditor == null) {
-			this.controlEditor = new GridHeaderEditor(this);
-			this.controlEditor.initColumn();
+	public void setHeaderControl(final Control control) {
+		if (controlEditor == null) {
+			controlEditor = new GridHeaderEditor(this);
+			controlEditor.initColumn();
 		}
-		this.controlEditor.setEditor(control);
+		controlEditor.setEditor(control);
 		getParent().recalculateHeader();
 
 		if (control != null) {
 			// We need to realign if multiple editors are set it is possible
 			// that
 			// a later one needs more space
-			control.getDisplay().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					if (GridColumn.this.controlEditor != null
-							&& GridColumn.this.controlEditor.getEditor() != null) {
-						GridColumn.this.controlEditor.layout();
-					}
+			control.getDisplay().asyncExec(() -> {
+				if (controlEditor != null
+						&& controlEditor.getEditor() != null) {
+					controlEditor.layout();
 				}
-
 			});
 		}
 	}
@@ -1365,8 +1361,8 @@ public class GridColumn extends Item {
 	 * @return the current header control
 	 */
 	public Control getHeaderControl() {
-		if (this.controlEditor != null) {
-			return this.controlEditor.getEditor();
+		if (controlEditor != null) {
+			return controlEditor.getEditor();
 		}
 		return null;
 	}
@@ -1387,9 +1383,9 @@ public class GridColumn extends Item {
 	 *
 	 * @param tooltip the tooltip text
 	 */
-	public void setHeaderTooltip(String tooltip) {
+	public void setHeaderTooltip(final String tooltip) {
 		checkWidget();
-		this.headerTooltip = tooltip;
+		headerTooltip = tooltip;
 	}
 
 	/**
@@ -1412,11 +1408,12 @@ public class GridColumn extends Item {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void setFooterImage(Image image) {
+	public void setFooterImage(final Image image) {
 		checkWidget();
-		if (image != null && image.isDisposed())
+		if (image != null && image.isDisposed()) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-		this.footerImage = image;
+		}
+		footerImage = image;
 	}
 
 	/**
@@ -1437,11 +1434,12 @@ public class GridColumn extends Item {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void setFooterText(String string) {
+	public void setFooterText(final String string) {
 		checkWidget();
-		if (string == null)
+		if (string == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		this.footerText = string;
+		}
+		footerText = string;
 	}
 
 	/**
@@ -1509,7 +1507,7 @@ public class GridColumn extends Item {
 	 *
 	 * @param font
 	 */
-	public void setHeaderFont(Font font) {
+	public void setHeaderFont(final Font font) {
 		checkWidget();
 		headerFont = font;
 	}
@@ -1541,7 +1539,7 @@ public class GridColumn extends Item {
 	 *
 	 * @param font
 	 */
-	public void setFooterFont(Font font) {
+	public void setFooterFont(final Font font) {
 		checkWidget();
 		footerFont = font;
 	}
@@ -1559,7 +1557,7 @@ public class GridColumn extends Item {
 	 * @param minimumWidth
 	 *            the minimum width
 	 */
-	public void setMinimumWidth(int minimumWidth) {
+	public void setMinimumWidth(final int minimumWidth) {
 		this.minimumWidth = Math.max(0, minimumWidth);
 		if( minimumWidth > getWidth() ) {
 			setWidth(minimumWidth, true);
