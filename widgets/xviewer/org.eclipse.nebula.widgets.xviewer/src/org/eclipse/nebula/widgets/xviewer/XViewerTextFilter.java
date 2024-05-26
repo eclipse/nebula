@@ -5,7 +5,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.xviewer;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,10 +20,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.nebula.widgets.xviewer.core.model.ColumnDateFilter;
 import org.eclipse.nebula.widgets.xviewer.core.model.DateRangeType;
+import org.eclipse.nebula.widgets.xviewer.core.model.SortDataType;
 import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.core.util.Strings;
 
@@ -131,38 +132,39 @@ public class XViewerTextFilter extends ViewerFilter {
                }
             }
             if (colIdToDateFilter.containsKey(xCol.getId())) {
-               String cellStr =
-                  xViewer.getColumnText(element, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
-               if (Strings.isValid(cellStr)) {
-                  Date cellDate = XViewerSorter.parseDatePair(cellStr, "").getFirst();
-                  if (cellDate != null) {
-                     ColumnDateFilter columnDateFilter = colIdToDateFilter.get(xCol.getId());
-                     Calendar cellCal = Calendar.getInstance();
-                     cellCal.setTime(cellDate);
-                     Calendar filterCal = Calendar.getInstance();
-                     Date filterDate1 = columnDateFilter.getDate1();
-                     filterCal.setTime(filterDate1);
-                     DateRangeType rangeType = columnDateFilter.getType();
-                     if (rangeType == DateRangeType.Equals_Date) {
-                        if (cellCal.get(Calendar.YEAR) != filterCal.get(Calendar.YEAR) || cellCal.get(
-                           Calendar.MONTH) != filterCal.get(Calendar.MONTH) || cellCal.get(
-                              Calendar.DAY_OF_MONTH) != filterCal.get(Calendar.DAY_OF_MONTH)) {
-                           return false;
-                        }
-                     } else if (rangeType == DateRangeType.After_Date && cellDate.before(filterDate1)) {
+               Object obj1 = null;
+               IBaseLabelProvider labelProvider = xViewer.getLabelProvider();
+               if (labelProvider instanceof IXViewerLabelProvider) {
+                  try {
+                     obj1 = ((IXViewerLabelProvider) labelProvider).getBackingData(element, xCol,
+                        xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
+                  } catch (Exception ex) {
+                     //Do Nothing
+                  }
+               }
+               if (obj1 != null && xCol.getSortDataType() == SortDataType.Date && obj1 instanceof Date) {
+                  Date cellDate = (Date) obj1;
+                  ColumnDateFilter columnDateFilter = colIdToDateFilter.get(xCol.getId());
+                  Date filterDate1 = columnDateFilter.getDate1();
+                  DateRangeType rangeType = columnDateFilter.getType();
+                  if (rangeType == DateRangeType.Equals_Date) {
+                     if (cellDate.getYear() != filterDate1.getYear() || cellDate.getMonth() != filterDate1.getMonth() || cellDate.getDay() != filterDate1.getDay()) {
                         return false;
-                     } else if (rangeType == DateRangeType.Before_Date && cellDate.after(filterDate1)) {
+                     }
+                  } else if (rangeType == DateRangeType.After_Date && cellDate.before(filterDate1)) {
+                     return false;
+                  } else if (rangeType == DateRangeType.Before_Date && cellDate.after(filterDate1)) {
+                     return false;
+                  } else if (rangeType == DateRangeType.Between_Dates) {
+                     if (cellDate.before(filterDate1)) {
                         return false;
-                     } else if (rangeType == DateRangeType.Between_Dates) {
-                        if (cellDate.before(filterDate1)) {
-                           return false;
-                        }
-                        Date filterDate2 = columnDateFilter.getDate2();
-                        if (cellDate.after(filterDate2)) {
-                           return false;
-                        }
+                     }
+                     Date filterDate2 = columnDateFilter.getDate2();
+                     if (cellDate.after(filterDate2)) {
+                        return false;
                      }
                   }
+
                } else {
                   // Do not show this row if date filter selected and no date is shown
                   return false;
