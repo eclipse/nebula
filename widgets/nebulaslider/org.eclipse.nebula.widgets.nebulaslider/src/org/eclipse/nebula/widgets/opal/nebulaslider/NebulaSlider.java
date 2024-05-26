@@ -342,7 +342,7 @@ public class NebulaSlider extends Canvas {
 	 */
 	@Override
 	public Point computeSize(final int wHint, final int hHint, final boolean changed) {
-		return new Point(Math.max(300, wHint), Math.max(40, hHint));
+		return new Point(Math.max(300, wHint), renderer.getSelectorHeight() + 2);
 	}
 
 	/**
