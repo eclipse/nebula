@@ -3,7 +3,9 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Nebula Table Combo
 Bundle-SymbolicName: org.eclipse.nebula.widgets.tablecombo
 Bundle-Version: 1.2.0.qualifier
-Export-Package: org.eclipse.nebula.jface.tablecomboviewer,
+Export-Package: org.eclipse.nebula.jface.checktablecomboviewer,
+ org.eclipse.nebula.jface.tablecomboviewer,
+ org.eclipse.nebula.widgets.checktablecombo,
  org.eclipse.nebula.widgets.tablecombo
 Automatic-Module-Name: org.eclipse.nebula.widgets.tablecombo
 Bundle-RequiredExecutionEnvironment: JavaSE-11
