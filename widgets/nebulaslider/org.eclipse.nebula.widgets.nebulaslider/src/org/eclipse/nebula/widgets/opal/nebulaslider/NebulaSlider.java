@@ -266,8 +266,15 @@ public class NebulaSlider extends Canvas {
 				mouseDeltaX = xPosition - e.x;
 			}
 		});
+		addListener(SWT.MouseDoubleClick, e -> {
+			moving = false;
+			mouseDeltaX = 0;
+		});
 
 		addListener(SWT.MouseUp, e -> {
+			if(!moving) {
+				return;
+			}
 			moving = false;
 			mouseDeltaX = 0;
 			if(movingValue != value) {
