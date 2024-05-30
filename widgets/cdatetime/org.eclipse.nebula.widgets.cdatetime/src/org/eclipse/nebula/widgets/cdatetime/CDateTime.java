@@ -1729,7 +1729,12 @@ public class CDateTime extends BaseCombo {
 
 	@Override
 	public void setOpen(boolean open, Runnable callback) {
+		if (!isDropDown()) {
+			// no-op for text-only style (may be triggered by CTRL+Space)
+			return;
+		}
 		if (open) {
+			setActiveField(FIELD_NONE); // commit currently active edit field
 			cancelDate = getSelection();
 			createPicker();
 		} else {
