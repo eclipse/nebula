@@ -364,6 +364,7 @@ Contributors:
 		<module>../../widgets/pgroup</module>
 		<module>../../widgets/progresscircle</module>
 		<module>../../widgets/pshelf</module>
+		<module>../../widgets/radiogroup</module>
 		<module>../../widgets/richtext</module>
 		<module>../../widgets/roundedcheckbox</module>
 		<module>../../widgets/roundedswitch</module>
@@ -383,7 +384,6 @@ Contributors:
 		<module>../../widgets/datechooser</module>
 		<module>../../widgets/pagination</module>
 		<module>../../widgets/picture</module>
-		<module>../../widgets/radiogroup</module>
 		<module>../../widgets/timeline</module>
 
 		<module>../../examples/org.eclipse.nebula.examples</module>
