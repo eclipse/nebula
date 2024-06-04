@@ -492,5 +492,13 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+           id="org.eclipse.nebula.widgets.radiogroup.example"
+           version="0.0.0"/>
+
+   <plugin
+           id="org.eclipse.nebula.widgets.radiogroup.example.source"
+           version="0.0.0"/>
+
 
 </feature>
