@@ -86,6 +86,7 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
           getTextLayout(gc, column);
             textLayout.setText(column.getText());
             textLayout.setWidth(plainTextWidth < 1 ? 1 : plainTextWidth);
+			textLayout.setAlignment(getHorizontalAlignment());
 
             x += plainTextWidth + rightMargin;
 
@@ -202,6 +203,7 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         	getTextLayout(gc, column);
         	textLayout.setWidth(width < 1 ? 1 : width);
         	textLayout.setText(text);
+        	textLayout.setAlignment(getHorizontalAlignment());
         	y -= textLayout.getBounds().height;
 
         	// remove the first line shift
