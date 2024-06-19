@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.chips;
 
-import org.eclipse.swt.internal.SWTEventListener;
+import java.util.EventListener;
 
 /**
  * Classes which implement this interface provide methods
@@ -28,9 +28,8 @@ import org.eclipse.swt.internal.SWTEventListener;
  *
  * @see CloseEvent
  */
-@SuppressWarnings("restriction")
 @FunctionalInterface
-public interface CloseListener extends SWTEventListener {
+public interface CloseListener extends EventListener {
 	/**
 	 * Sent when a Chips widget is closed.
 	 *

@@ -65,7 +65,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * The CDateTime provides both textual and graphical means selecting a
@@ -425,9 +424,7 @@ public class CDateTime extends BaseCombo {
 	 */
 	public void addSelectionListener(SelectionListener listener) {
 		if (listener != null) {
-			TypedListener typedListener = new TypedListener(listener);
-			addListener(SWT.Selection, typedListener);
-			addListener(SWT.DefaultSelection, typedListener);
+			addTypedListener(listener, SWT.Selection, SWT.DefaultSelection);
 		}
 	}
 
@@ -1527,9 +1524,8 @@ public class CDateTime extends BaseCombo {
 	 */
 	public void removeSelectionListener(SelectionListener listener) {
 		if (listener != null) {
-			TypedListener l = new TypedListener(listener);
-			removeListener(SWT.Selection, l);
-			removeListener(SWT.DefaultSelection, l);
+			removeTypedListener(SWT.Selection, listener);
+			removeTypedListener(SWT.DefaultSelection, listener);
 		}
 	}
 

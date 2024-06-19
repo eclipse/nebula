@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Nebula Calendar Combo Widget - Incubating
 Bundle-SymbolicName: org.eclipse.nebula.widgets.calendarcombo
 Bundle-Version: 1.0.0.qualifier
-Require-Bundle: org.eclipse.swt
+Require-Bundle: org.eclipse.swt;bundle-version="[3.126.0,4.0.0)"
 Export-Package: org.eclipse.nebula.widgets.calendarcombo
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: Eclipse Nebula

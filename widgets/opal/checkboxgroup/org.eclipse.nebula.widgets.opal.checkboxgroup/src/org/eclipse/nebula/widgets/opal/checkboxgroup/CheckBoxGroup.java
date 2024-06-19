@@ -157,8 +157,7 @@ public class CheckBoxGroup extends Canvas implements PaintListener {
 	 * @see SelectionEvent
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
-		checkWidget();
-		SelectionListenerUtil.addSelectionListener(this, listener);	
+		addTypedListener(listener, SWT.Selection);
 	}
 
 	/**
@@ -207,8 +206,7 @@ public class CheckBoxGroup extends Canvas implements PaintListener {
 	 * @see #addSelectionListener
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
-		checkWidget();
-		SelectionListenerUtil.removeSelectionListener(this, listener);
+		removeTypedListener(SWT.Selection, listener);
 	}
 
 	

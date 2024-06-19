@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.duallist;
 
-import org.eclipse.swt.internal.SWTEventListener;
+import java.util.EventListener;
 
 /**
  * Classes which implement this interface provide methods that deal with the
@@ -27,9 +27,8 @@ import org.eclipse.swt.internal.SWTEventListener;
  *
  * @see SelectionChangeEvent
  */
-@SuppressWarnings("restriction")
 @FunctionalInterface
-public interface SelectionChangeListener extends SWTEventListener {
+public interface SelectionChangeListener extends EventListener {
 
 	/**
 	 * Sent when selection occurs in the control.

@@ -152,8 +152,7 @@ public class Launcher extends Composite {
 	 * @see SelectionEvent
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
-		checkWidget();
-		SelectionListenerUtil.addSelectionListener(this, listener);
+		addTypedListener(listener, SWT.Selection);
 	}
 
 	/**
@@ -395,11 +394,7 @@ public class Launcher extends Composite {
 	 * @see #addSelectionListener
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
-		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		SelectionListenerUtil.removeSelectionListener(this, listener);
+		removeTypedListener(SWT.Selection, listener);
 	}
 
 	/**

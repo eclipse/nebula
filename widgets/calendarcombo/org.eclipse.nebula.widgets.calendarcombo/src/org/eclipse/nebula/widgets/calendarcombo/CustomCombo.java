@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -259,11 +258,7 @@ public class CustomCombo extends Composite {
 	 * @see #removeModifyListener
 	 */
 	public void addModifyListener(ModifyListener listener) {
-		checkWidget();
-		if (listener == null)
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		TypedListener typedListener = new TypedListener(listener);
-		addListener(SWT.Modify, typedListener);
+		addTypedListener(listener, SWT.Modify);
 	}
 
 	/**
@@ -294,12 +289,7 @@ public class CustomCombo extends Composite {
 	 * @see SelectionEvent
 	 */
 	public void addSelectionListener(SelectionListener listener) {
-		checkWidget();
-		if (listener == null)
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		TypedListener typedListener = new TypedListener(listener);
-		addListener(SWT.Selection, typedListener);
-		addListener(SWT.DefaultSelection, typedListener);
+		addTypedListener(listener, SWT.Selection, SWT.DefaultSelection);
 	}
 
 	/**
@@ -325,11 +315,7 @@ public class CustomCombo extends Composite {
 	 * @since 3.3
 	 */
 	public void addVerifyListener(VerifyListener listener) {
-		checkWidget();
-		if (listener == null)
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		TypedListener typedListener = new TypedListener(listener);
-		addListener(SWT.Verify, typedListener);
+		addTypedListener(listener, SWT.Verify);
 	}
 
 	void arrowEvent(Event event) {
@@ -1417,10 +1403,7 @@ public class CustomCombo extends Composite {
 	 * @see #addModifyListener
 	 */
 	public void removeModifyListener(ModifyListener listener) {
-		checkWidget();
-		if (listener == null)
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		removeListener(SWT.Modify, listener);
+		removeTypedListener(SWT.Modify, listener);
 	}
 
 	/**
@@ -1442,11 +1425,8 @@ public class CustomCombo extends Composite {
 	 * @see #addSelectionListener
 	 */
 	public void removeSelectionListener(SelectionListener listener) {
-		checkWidget();
-		if (listener == null)
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		removeListener(SWT.Selection, listener);
-		removeListener(SWT.DefaultSelection, listener);
+		removeTypedListener(SWT.Selection, listener);
+		removeTypedListener(SWT.DefaultSelection, listener);
 	}
 
 	/**
@@ -1470,10 +1450,7 @@ public class CustomCombo extends Composite {
 	 * @since 3.3
 	 */
 	public void removeVerifyListener(VerifyListener listener) {
-		checkWidget();
-		if (listener == null)
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		removeListener(SWT.Verify, listener);
+		removeTypedListener(SWT.Verify, listener);
 	}
 
 	/**
