@@ -1677,7 +1677,7 @@ public class CheckTableCombo extends Composite {
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		this.removeListener(SWT.Modify, listener);
+		this.removeTypedListener(SWT.Modify, listener);
 	}
 
 	/**
@@ -1699,12 +1699,8 @@ public class CheckTableCombo extends Composite {
 	 * @see #addSelectionListener
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
-		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		this.removeListener(SWT.Selection, listener);
-		this.removeListener(SWT.DefaultSelection, listener);
+		this.removeTypedListener(SWT.Selection, listener);
+		this.removeTypedListener(SWT.DefaultSelection, listener);
 	}
 
 	/**
@@ -1728,11 +1724,7 @@ public class CheckTableCombo extends Composite {
 	 * @since 3.3
 	 */
 	public void removeVerifyListener(final VerifyListener listener) {
-		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		this.removeListener(SWT.Verify, listener);
+		this.removeTypedListener(SWT.Verify, listener);
 	}
 
 	/**
