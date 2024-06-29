@@ -35,15 +35,15 @@ import org.eclipse.swt.graphics.Region;
 public class RectangleGroupStrategy extends AbstractGroupStrategy
 {
 
-    private int vMargin = 2;
+    private final int vMargin = 2;
 
-    private int hMargin = 5;
+    private final int hMargin = 5;
 
-    private int titleTextMargin = 2;
+    private final int titleTextMargin = 2;
 
-    private int betweenSpacing = 4;
+    private final int betweenSpacing = 4;
 
-    private int margin = 1;
+    private final int margin = 1;
 
     private Color gradientColors[] = null;
 
@@ -68,7 +68,8 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
     /**
      * @deprecated use constructor with PGroup element instead
      */
-    public RectangleGroupStrategy() {
+    @Deprecated
+	public RectangleGroupStrategy() {
     	this(null);
     }
     
@@ -86,7 +87,8 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
     /** 
      * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#initialize()
      */
-    public void initialize()
+    @Override
+	public void initialize()
     {
         super.initialize();
 
@@ -103,367 +105,378 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
     /** 
      * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#paint(org.eclipse.swt.graphics.GC)
      */
-    public void paint(GC gc)
+    @Override
+	public void paint(GC gc)
     {
-        Point imagePoint = new Point(0, 0);
-        Image image = getGroup().getImage();
-
-        if (getGroup().getToggleRenderer() != null)
-        {
-            Point p = getGroup().getToggleRenderer().getSize();
-            int toggleY = 0;
-            if ((getGroup().getImagePosition() & SWT.TOP) == 0)
-            {
-                toggleY = (titleHeight - p.y) / 2;
-            }
-            else
-            {
-                toggleY = (titleHeight - titleAreaHeight) + (titleAreaHeight - p.y) / 2;
-            }
-            if ((getGroup().getTogglePosition() & SWT.LEAD) != 0)
-            {
-                getGroup().getToggleRenderer().setLocation(new Point(hMargin, toggleY));
-            }
-            else
-            {
-                getGroup().getToggleRenderer().setLocation(
-                                                           new Point(getGroup().getSize().x
-                                                                     - hMargin - p.x, toggleY));
-            }
-        }
-
-        Color back = getGroup().internalGetBackground();
-        if (back != null)
-        {
-            gc.fillRectangle(0,0,getGroup().getSize().x,getGroup().getSize().y);
-
-            int yOffset = 0;
-            if ((getGroup().getImagePosition() & SWT.TOP) != 0 && image != null)
-            {
-                yOffset = titleHeight - titleAreaHeight;
-            }
-
-            Region reg = new Region();
-            reg.add(0,yOffset + 0, 5, 1);
-            reg.add(0,yOffset + 1, 3, 1);
-            reg.add(0,yOffset + 2, 2, 1);
-            reg.add(0,yOffset + 3, 1, 1);
-            reg.add(0,yOffset + 4, 1, 1);
-
-            reg.add(getGroup().getSize().x - 5,yOffset + 0, 5, 1);
-            reg.add(getGroup().getSize().x - 3,yOffset + 1, 3, 1);
-            reg.add(getGroup().getSize().x - 2,yOffset + 2, 2, 1);
-            reg.add(getGroup().getSize().x - 1,yOffset + 3, 1, 1);
-            reg.add(getGroup().getSize().x - 1,yOffset + 4, 1, 1);
-
-            int height = getGroup().getSize().y;
-            if (!getGroup().getExpanded())
-            {
-                height = titleHeight;
-            }
-
-            reg.add(0, height - 1, 5, 1);
-            reg.add(0, height - 2, 3, 1);
-            reg.add(0, height - 3, 2, 1);
-            reg.add(0, height - 4, 1, 1);
-            reg.add(0, height - 5, 1, 1);
-
-            reg.add(getGroup().getSize().x - 5, height - 1, 5, 1);
-            reg.add(getGroup().getSize().x - 3, height - 2, 3, 1);
-            reg.add(getGroup().getSize().x - 2, height - 3, 2, 1);
-            reg.add(getGroup().getSize().x - 1, height - 4, 1, 1);
-            reg.add(getGroup().getSize().x - 1, height - 5, 1, 1);
-
-            if (yOffset != 0)
-            {
-                reg.add(0,0,getGroup().getSize().x,yOffset);
-            }
-
-            if (!getGroup().getExpanded())
-            {
-            	int regionHeight = getGroup().getSize().y - titleHeight;
-           	    if( regionHeight < 0 ) regionHeight = 0;
-                reg.add(new Rectangle(0,titleHeight,getGroup().getSize().x,regionHeight));
-            }
-
-            gc.setClipping(reg);
-
-            getGroup().drawBackground(gc, 0, 0, getGroup().getSize().x,getGroup().getSize().y);
-
-            gc.setClipping((Region)null);
-            reg.dispose();
-        }
-
-        // Paint rectangle
-        int toggleHeight = 0;
-        if (getGroup().getToggleRenderer() != null)
-        {
-            toggleHeight = getGroup().getToggleRenderer().getSize().y + (2 * vMargin);
-        }
-
-        Region reg = null;
-        if ((getGroup().getStyle() & SWT.SMOOTH) != 0)
-        {
-            reg = new Region(getGroup().getDisplay());
-            reg.add(0, 0, getGroup().getSize().x, titleHeight);
-
-            int yOffset = 0;
-            if ((getGroup().getImagePosition() & SWT.TOP) != 0 && image != null)
-            {
-                yOffset = titleHeight - titleAreaHeight;
-            }
-
-            reg.subtract(0, yOffset + 0, 5, 1);
-            reg.subtract(0, yOffset + 1, 3, 1);
-            reg.subtract(0, yOffset + 2, 2, 1);
-            reg.subtract(0, yOffset + 3, 1, 1);
-            reg.subtract(0, yOffset + 4, 1, 1);
-
-            reg.subtract(getGroup().getSize().x - 5, yOffset + 0, 5, 1);
-            reg.subtract(getGroup().getSize().x - 3, yOffset + 1, 3, 1);
-            reg.subtract(getGroup().getSize().x - 2, yOffset + 2, 2, 1);
-            reg.subtract(getGroup().getSize().x - 1, yOffset + 3, 1, 1);
-            reg.subtract(getGroup().getSize().x - 1, yOffset + 4, 1, 1);
-
-            if (!getGroup().getExpanded())
-            {
-                yOffset = titleHeight;
-
-                reg.subtract(0, yOffset - 1, 5, 1);
-                reg.subtract(0, yOffset - 2, 3, 1);
-                reg.subtract(0, yOffset - 3, 2, 1);
-                reg.subtract(0, yOffset - 4, 1, 1);
-                reg.subtract(0, yOffset - 5, 1, 1);
-
-                reg.subtract(getGroup().getSize().x - 5, yOffset - 1, 5, 1);
-                reg.subtract(getGroup().getSize().x - 3, yOffset - 2, 3, 1);
-                reg.subtract(getGroup().getSize().x - 2, yOffset - 3, 2, 1);
-                reg.subtract(getGroup().getSize().x - 1, yOffset - 4, 1, 1);
-                reg.subtract(getGroup().getSize().x - 1, yOffset - 5, 1, 1);
-            }
-
-            gc.setClipping(reg);
-        }
-
-        if ((getGroup().getImagePosition() & SWT.TOP) == 0 || image == null)
-        {
-
-            if (gradientColors != null)
-            {
-                GraphicUtils.fillGradientRectangle(gc, 0, 0, getGroup().getSize().x, Math
-                    .max(titleHeight, toggleHeight), gradientColors, gradientPercents,
-                                                   gradientVertical);
-            }
-            else
-            {
-                gc.fillRectangle(0, 0, getGroup().getSize().x, Math.max(titleHeight, toggleHeight));
-                GraphicUtils.fillRoundRectangle(gc, 0, 0, getGroup().getSize().x, Math
-                    .max(titleHeight, toggleHeight), null, true, !getGroup().getExpanded());
-            }
-            if ((getGroup().getStyle() & SWT.SMOOTH) != 0)
-            {
-                GraphicUtils.drawRoundRectangle(gc, 0, 0, getGroup().getSize().x, Math
-                    .max(titleHeight, toggleHeight), null, null, true, !getGroup().getExpanded());
-            }
-        }
-        else
-        {
-
-            if (gradientColors != null)
-            {
-                GraphicUtils.fillGradientRectangle(gc, 0, titleHeight - titleAreaHeight, getGroup()
-                    .getSize().x, Math.max(titleAreaHeight, toggleHeight), gradientColors,
-                                                   gradientPercents, gradientVertical);
-            }
-            else
-            {
-                gc.setBackground(getGroup().getBackground());
-                gc.fillRectangle(0, titleHeight - titleAreaHeight, getGroup().getSize().x, Math
-                    .max(titleAreaHeight, toggleHeight));
-            }
-
-        }
-
-        if ((getGroup().getStyle() & SWT.SMOOTH) != 0)
-        {
-            gc.setClipping((Region)null);
-            reg.dispose();
-        }
-
-        // Paint Image
-        if (image != null)
-        {
-            if ((getGroup().getImagePosition() & SWT.LEAD) != 0)
-            {
-                if (getGroup().getToggleRenderer() != null)
-                {
-                    if (getGroup().getTogglePosition() == SWT.LEAD)
-                    {
-                        imagePoint.x = hMargin + getGroup().getToggleRenderer().getSize().x
-                                       + betweenSpacing;
-                    }
-                    else
-                    {
-                        imagePoint.x = hMargin;
-                    }
-                }
-                else
-                {
-                    imagePoint.x = hMargin;
-                }
-            }
-            else
-            {
-                if (getGroup().getToggleRenderer() != null)
-                {
-                    if ((getGroup().getTogglePosition() & SWT.LEAD) != 0)
-                    {
-                        imagePoint.x = getGroup().getSize().x - (hMargin + image.getBounds().width);
-                    }
-                    else
-                    {
-                        imagePoint.x = getGroup().getSize().x
-                                       - (hMargin + image.getBounds().width
-                                          + getGroup().getToggleRenderer().getSize().x + betweenSpacing);
-                    }
-                }
-                else
-                {
-                    imagePoint.x = getGroup().getSize().x - (hMargin + image.getBounds().width);
-                }
-            }
-            if ((getGroup().getImagePosition() & SWT.TOP) == 0
-                && image.getImageData().height > titleHeight)
-            {
-                imagePoint.y = (titleHeight - image.getImageData().height) / 2;
-            }
-            else
-            {
-                imagePoint.y = (titleHeight - image.getImageData().height) / 2;
-            }
-            gc.drawImage(image, imagePoint.x, imagePoint.y);
-        }
-
-        Rectangle textBounds = getTextBounds();
-        String shortened = TextUtils.getShortString(gc, getGroup().getText(), textBounds.width);
-
-        if( getGroup().getToolItems().length > 0 && getGroup().getToolItemRenderer() != null ) {
-        	PGroupToolItem[] items = getGroup().getToolItems();
-        	AbstractToolItemRenderer renderer = getGroup().getToolItemRenderer();
-
-        	Point size = new Point(0, 0);
-        	Point minSize = new Point(0, 0);
-
-        	int spacing = 3;
-
-        	for(int i = 0; i < items.length; i++ ) {
-        		PGroupToolItem item = items[i];
-        		Point s0 = renderer.computeSize(gc, item, AbstractToolItemRenderer.DEFAULT);
-        		Point s1 = renderer.computeSize(gc, item, AbstractToolItemRenderer.MIN);
-
-        		size.x += s0.x + spacing;
-    			minSize.x += s1.x + spacing;
-        	}
-
-        	boolean min = false;
-
-        	if( shortened.length() != getGroup().getText().length() ) {
-        		textBounds.width -= minSize.x;
-        		min = true;
-        	} else {
-        		if( ! TextUtils.getShortString(gc, getGroup().getText(), textBounds.width - size.x).equals(getGroup().getText()) ) {
-        			textBounds.width -= minSize.x;
-        			min = true;
-        		} else {
-        			textBounds.width -= size.x;
-        		}
-        	}
-
-        	shortened = TextUtils.getShortString(gc, getGroup().getText(), textBounds.width);
-
-        	int x = textBounds.x + textBounds.width;
-
-        	if( min ) {
-        		toolItemArea = new Rectangle(x, titleHeight - titleAreaHeight + 2, minSize.x, Math.max(titleAreaHeight, toggleHeight)-4);
-        	} else {
-        		toolItemArea = new Rectangle(x, titleHeight - titleAreaHeight + 2, size.x, Math.max(titleAreaHeight, toggleHeight)-4);
-        	}
-        }
-
-        gc.setForeground(getGroup().getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
-        gc.drawText(shortened, textBounds.x, textBounds.y, true);
-        gc.setForeground(getGroup().getForeground());
-
-        if (!getGroup().getExpanded())
-        {
-            gc.setBackground(getGroup().getParent().getBackground());
-        }
-        else
-        {
-            Color _borderColor;
-            if (borderColor == null)
-            {
-                _borderColor = getGroup().getBackground();
-            }
-            else
-            {
-                _borderColor = borderColor;
-            }
-
-            if ((getGroup().getStyle() & SWT.SMOOTH) != 0)
-            {
-                gc.setBackground(getGroup().getBackground());
-                gc.setForeground(_borderColor);
-
-                reg = new Region(getGroup().getDisplay());
-                reg.add(0, 0, getGroup().getSize().x, getGroup().getSize().y);
-
-                int yOffset = getGroup().getSize().y;
-
-                reg.subtract(0, yOffset - 1, 5, 1);
-                reg.subtract(0, yOffset - 2, 3, 1);
-                reg.subtract(0, yOffset - 3, 2, 1);
-                reg.subtract(0, yOffset - 4, 1, 1);
-                reg.subtract(0, yOffset - 5, 1, 1);
-
-                reg.subtract(getGroup().getSize().x - 5, yOffset - 1, 5, 1);
-                reg.subtract(getGroup().getSize().x - 3, yOffset - 2, 3, 1);
-                reg.subtract(getGroup().getSize().x - 2, yOffset - 3, 2, 1);
-                reg.subtract(getGroup().getSize().x - 1, yOffset - 4, 1, 1);
-                reg.subtract(getGroup().getSize().x - 1, yOffset - 5, 1, 1);
-
-                gc.setClipping(reg);
-
-                GraphicUtils.drawRoundRectangle(gc, 0, titleHeight, getGroup().getSize().x - 1,
-                                                getGroup().getSize().y - titleHeight, null, false,
-                                                true);
-
-                reg.dispose();
-                gc.setClipping((Region)null);
-            }
-            else
-            {
-                gc.setForeground(_borderColor);
-                gc.drawRectangle(0, titleHeight, getGroup().getBounds().width - 1, getGroup()
-                    .getBounds().height
-                                                                                   - titleHeight
-                                                                                   - 1);
-            }
-        }
-
-        gc.setBackground(getGroup().getBackground());
-        gc.setForeground(getGroup().getForeground());
-
+		Region originalClip = new Region(gc.getDevice());
+		gc.getClipping(originalClip);
+		try {
+	        Point imagePoint = new Point(0, 0);
+	        Image image = getGroup().getImage();
+	
+	        if (getGroup().getToggleRenderer() != null)
+	        {
+	            Point p = getGroup().getToggleRenderer().getSize();
+	            int toggleY = 0;
+	            if ((getGroup().getImagePosition() & SWT.TOP) == 0)
+	            {
+	                toggleY = (titleHeight - p.y) / 2;
+	            }
+	            else
+	            {
+	                toggleY = (titleHeight - titleAreaHeight) + (titleAreaHeight - p.y) / 2;
+	            }
+	            if ((getGroup().getTogglePosition() & SWT.LEAD) != 0)
+	            {
+	                getGroup().getToggleRenderer().setLocation(new Point(hMargin, toggleY));
+	            }
+	            else
+	            {
+	                getGroup().getToggleRenderer().setLocation(
+	                                                           new Point(getGroup().getSize().x
+	                                                                     - hMargin - p.x, toggleY));
+	            }
+	        }
+	
+	        Color back = getGroup().internalGetBackground();
+	        if (back != null)
+	        {
+	            gc.fillRectangle(0,0,getGroup().getSize().x,getGroup().getSize().y);
+	
+	            int yOffset = 0;
+	            if ((getGroup().getImagePosition() & SWT.TOP) != 0 && image != null)
+	            {
+	                yOffset = titleHeight - titleAreaHeight;
+	            }
+	
+	            Region reg = new Region();
+	            reg.add(0,yOffset + 0, 5, 1);
+	            reg.add(0,yOffset + 1, 3, 1);
+	            reg.add(0,yOffset + 2, 2, 1);
+	            reg.add(0,yOffset + 3, 1, 1);
+	            reg.add(0,yOffset + 4, 1, 1);
+	
+	            reg.add(getGroup().getSize().x - 5,yOffset + 0, 5, 1);
+	            reg.add(getGroup().getSize().x - 3,yOffset + 1, 3, 1);
+	            reg.add(getGroup().getSize().x - 2,yOffset + 2, 2, 1);
+	            reg.add(getGroup().getSize().x - 1,yOffset + 3, 1, 1);
+	            reg.add(getGroup().getSize().x - 1,yOffset + 4, 1, 1);
+	
+	            int height = getGroup().getSize().y;
+	            if (!getGroup().getExpanded())
+	            {
+	                height = titleHeight;
+	            }
+	
+	            reg.add(0, height - 1, 5, 1);
+	            reg.add(0, height - 2, 3, 1);
+	            reg.add(0, height - 3, 2, 1);
+	            reg.add(0, height - 4, 1, 1);
+	            reg.add(0, height - 5, 1, 1);
+	
+	            reg.add(getGroup().getSize().x - 5, height - 1, 5, 1);
+	            reg.add(getGroup().getSize().x - 3, height - 2, 3, 1);
+	            reg.add(getGroup().getSize().x - 2, height - 3, 2, 1);
+	            reg.add(getGroup().getSize().x - 1, height - 4, 1, 1);
+	            reg.add(getGroup().getSize().x - 1, height - 5, 1, 1);
+	
+	            if (yOffset != 0)
+	            {
+	                reg.add(0,0,getGroup().getSize().x,yOffset);
+	            }
+	
+	            if (!getGroup().getExpanded())
+	            {
+	            	int regionHeight = getGroup().getSize().y - titleHeight;
+	           	    if( regionHeight < 0 ) {
+						regionHeight = 0;
+					}
+	                reg.add(new Rectangle(0,titleHeight,getGroup().getSize().x,regionHeight));
+	            }
+	
+	            gc.setClipping(reg);
+	
+	            getGroup().drawBackground(gc, 0, 0, getGroup().getSize().x,getGroup().getSize().y);
+	
+	            gc.setClipping((Region)null);
+	            reg.dispose();
+	        }
+	
+	        // Paint rectangle
+	        int toggleHeight = 0;
+	        if (getGroup().getToggleRenderer() != null)
+	        {
+	            toggleHeight = getGroup().getToggleRenderer().getSize().y + (2 * vMargin);
+	        }
+	
+	        Region reg = null;
+	        if ((getGroup().getStyle() & SWT.SMOOTH) != 0)
+	        {
+	            reg = new Region(getGroup().getDisplay());
+	            reg.add(0, 0, getGroup().getSize().x, titleHeight);
+	
+	            int yOffset = 0;
+	            if ((getGroup().getImagePosition() & SWT.TOP) != 0 && image != null)
+	            {
+	                yOffset = titleHeight - titleAreaHeight;
+	            }
+	
+	            reg.subtract(0, yOffset + 0, 5, 1);
+	            reg.subtract(0, yOffset + 1, 3, 1);
+	            reg.subtract(0, yOffset + 2, 2, 1);
+	            reg.subtract(0, yOffset + 3, 1, 1);
+	            reg.subtract(0, yOffset + 4, 1, 1);
+	
+	            reg.subtract(getGroup().getSize().x - 5, yOffset + 0, 5, 1);
+	            reg.subtract(getGroup().getSize().x - 3, yOffset + 1, 3, 1);
+	            reg.subtract(getGroup().getSize().x - 2, yOffset + 2, 2, 1);
+	            reg.subtract(getGroup().getSize().x - 1, yOffset + 3, 1, 1);
+	            reg.subtract(getGroup().getSize().x - 1, yOffset + 4, 1, 1);
+	
+	            if (!getGroup().getExpanded())
+	            {
+	                yOffset = titleHeight;
+	
+	                reg.subtract(0, yOffset - 1, 5, 1);
+	                reg.subtract(0, yOffset - 2, 3, 1);
+	                reg.subtract(0, yOffset - 3, 2, 1);
+	                reg.subtract(0, yOffset - 4, 1, 1);
+	                reg.subtract(0, yOffset - 5, 1, 1);
+	
+	                reg.subtract(getGroup().getSize().x - 5, yOffset - 1, 5, 1);
+	                reg.subtract(getGroup().getSize().x - 3, yOffset - 2, 3, 1);
+	                reg.subtract(getGroup().getSize().x - 2, yOffset - 3, 2, 1);
+	                reg.subtract(getGroup().getSize().x - 1, yOffset - 4, 1, 1);
+	                reg.subtract(getGroup().getSize().x - 1, yOffset - 5, 1, 1);
+	            }
+				reg.intersect(originalClip);
+	            gc.setClipping(reg);
+	        }
+	
+	        if ((getGroup().getImagePosition() & SWT.TOP) == 0 || image == null)
+	        {
+	
+	            if (gradientColors != null)
+	            {
+	                GraphicUtils.fillGradientRectangle(gc, 0, 0, getGroup().getSize().x, Math
+	                    .max(titleHeight, toggleHeight), gradientColors, gradientPercents,
+	                                                   gradientVertical);
+	            }
+	            else
+	            {
+	                gc.fillRectangle(0, 0, getGroup().getSize().x, Math.max(titleHeight, toggleHeight));
+	                GraphicUtils.fillRoundRectangle(gc, 0, 0, getGroup().getSize().x, Math
+	                    .max(titleHeight, toggleHeight), null, true, !getGroup().getExpanded());
+	            }
+	            if ((getGroup().getStyle() & SWT.SMOOTH) != 0)
+	            {
+	                GraphicUtils.drawRoundRectangle(gc, 0, 0, getGroup().getSize().x, Math
+	                    .max(titleHeight, toggleHeight), null, null, true, !getGroup().getExpanded());
+	            }
+	        }
+	        else
+	        {
+	
+	            if (gradientColors != null)
+	            {
+	                GraphicUtils.fillGradientRectangle(gc, 0, titleHeight - titleAreaHeight, getGroup()
+	                    .getSize().x, Math.max(titleAreaHeight, toggleHeight), gradientColors,
+	                                                   gradientPercents, gradientVertical);
+	            }
+	            else
+	            {
+	                gc.setBackground(getGroup().getBackground());
+	                gc.fillRectangle(0, titleHeight - titleAreaHeight, getGroup().getSize().x, Math
+	                    .max(titleAreaHeight, toggleHeight));
+	            }
+	
+	        }
+	
+	        if ((getGroup().getStyle() & SWT.SMOOTH) != 0)
+	        {
+	            gc.setClipping((Region)null);
+	            reg.dispose();
+	        }
+	
+	        // Paint Image
+	        if (image != null)
+	        {
+	            if ((getGroup().getImagePosition() & SWT.LEAD) != 0)
+	            {
+	                if (getGroup().getToggleRenderer() != null)
+	                {
+	                    if (getGroup().getTogglePosition() == SWT.LEAD)
+	                    {
+	                        imagePoint.x = hMargin + getGroup().getToggleRenderer().getSize().x
+	                                       + betweenSpacing;
+	                    }
+	                    else
+	                    {
+	                        imagePoint.x = hMargin;
+	                    }
+	                }
+	                else
+	                {
+	                    imagePoint.x = hMargin;
+	                }
+	            }
+	            else
+	            {
+	                if (getGroup().getToggleRenderer() != null)
+	                {
+	                    if ((getGroup().getTogglePosition() & SWT.LEAD) != 0)
+	                    {
+	                        imagePoint.x = getGroup().getSize().x - (hMargin + image.getBounds().width);
+	                    }
+	                    else
+	                    {
+	                        imagePoint.x = getGroup().getSize().x
+	                                       - (hMargin + image.getBounds().width
+	                                          + getGroup().getToggleRenderer().getSize().x + betweenSpacing);
+	                    }
+	                }
+	                else
+	                {
+	                    imagePoint.x = getGroup().getSize().x - (hMargin + image.getBounds().width);
+	                }
+	            }
+	            if ((getGroup().getImagePosition() & SWT.TOP) == 0
+	                && image.getImageData().height > titleHeight)
+	            {
+	                imagePoint.y = (titleHeight - image.getImageData().height) / 2;
+	            }
+	            else
+	            {
+	                imagePoint.y = (titleHeight - image.getImageData().height) / 2;
+	            }
+	            gc.drawImage(image, imagePoint.x, imagePoint.y);
+	        }
+	
+	        Rectangle textBounds = getTextBounds();
+	        String shortened = TextUtils.getShortString(gc, getGroup().getText(), textBounds.width);
+	
+	        if( getGroup().getToolItems().length > 0 && getGroup().getToolItemRenderer() != null ) {
+	        	PGroupToolItem[] items = getGroup().getToolItems();
+	        	AbstractToolItemRenderer renderer = getGroup().getToolItemRenderer();
+	
+	        	Point size = new Point(0, 0);
+	        	Point minSize = new Point(0, 0);
+	
+	        	int spacing = 3;
+	
+	        	for(int i = 0; i < items.length; i++ ) {
+	        		PGroupToolItem item = items[i];
+	        		Point s0 = renderer.computeSize(gc, item, AbstractToolItemRenderer.DEFAULT);
+	        		Point s1 = renderer.computeSize(gc, item, AbstractToolItemRenderer.MIN);
+	
+	        		size.x += s0.x + spacing;
+	    			minSize.x += s1.x + spacing;
+	        	}
+	
+	        	boolean min = false;
+	
+	        	if( shortened.length() != getGroup().getText().length() ) {
+	        		textBounds.width -= minSize.x;
+	        		min = true;
+	        	} else {
+	        		if( ! TextUtils.getShortString(gc, getGroup().getText(), textBounds.width - size.x).equals(getGroup().getText()) ) {
+	        			textBounds.width -= minSize.x;
+	        			min = true;
+	        		} else {
+	        			textBounds.width -= size.x;
+	        		}
+	        	}
+	
+	        	shortened = TextUtils.getShortString(gc, getGroup().getText(), textBounds.width);
+	
+	        	int x = textBounds.x + textBounds.width;
+	
+	        	if( min ) {
+	        		toolItemArea = new Rectangle(x, titleHeight - titleAreaHeight + 2, minSize.x, Math.max(titleAreaHeight, toggleHeight)-4);
+	        	} else {
+	        		toolItemArea = new Rectangle(x, titleHeight - titleAreaHeight + 2, size.x, Math.max(titleAreaHeight, toggleHeight)-4);
+	        	}
+	        }
+	
+	        gc.setForeground(getGroup().getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
+	        gc.drawText(shortened, textBounds.x, textBounds.y, true);
+	        gc.setForeground(getGroup().getForeground());
+	
+	        if (!getGroup().getExpanded())
+	        {
+	            gc.setBackground(getGroup().getParent().getBackground());
+	        }
+	        else
+	        {
+	            Color _borderColor;
+	            if (borderColor == null)
+	            {
+	                _borderColor = getGroup().getBackground();
+	            }
+	            else
+	            {
+	                _borderColor = borderColor;
+	            }
+	
+	            if ((getGroup().getStyle() & SWT.SMOOTH) != 0)
+	            {
+	                gc.setBackground(getGroup().getBackground());
+	                gc.setForeground(_borderColor);
+	
+	                reg = new Region(getGroup().getDisplay());
+	                reg.add(0, 0, getGroup().getSize().x, getGroup().getSize().y);
+	
+	                int yOffset = getGroup().getSize().y;
+	
+	                reg.subtract(0, yOffset - 1, 5, 1);
+	                reg.subtract(0, yOffset - 2, 3, 1);
+	                reg.subtract(0, yOffset - 3, 2, 1);
+	                reg.subtract(0, yOffset - 4, 1, 1);
+	                reg.subtract(0, yOffset - 5, 1, 1);
+	
+	                reg.subtract(getGroup().getSize().x - 5, yOffset - 1, 5, 1);
+	                reg.subtract(getGroup().getSize().x - 3, yOffset - 2, 3, 1);
+	                reg.subtract(getGroup().getSize().x - 2, yOffset - 3, 2, 1);
+	                reg.subtract(getGroup().getSize().x - 1, yOffset - 4, 1, 1);
+	                reg.subtract(getGroup().getSize().x - 1, yOffset - 5, 1, 1);
+					reg.intersect(originalClip);
+	                gc.setClipping(reg);
+	
+	                GraphicUtils.drawRoundRectangle(gc, 0, titleHeight, getGroup().getSize().x - 1,
+	                                                getGroup().getSize().y - titleHeight, null, false,
+	                                                true);
+	
+	                reg.dispose();
+	                gc.setClipping((Region)null);
+	            }
+	            else
+	            {
+	                gc.setForeground(_borderColor);
+	                gc.drawRectangle(0, titleHeight, getGroup().getBounds().width - 1, getGroup()
+	                    .getBounds().height
+	                                                                                   - titleHeight
+	                                                                                   - 1);
+	            }
+	        }
+	
+	        gc.setBackground(getGroup().getBackground());
+	        gc.setForeground(getGroup().getForeground());
+		} finally {
+			gc.setClipping(originalClip);
+			originalClip.dispose();
+		}
     }
 
-    public Rectangle getToolItemArea() {
+    @Override
+	public Rectangle getToolItemArea() {
     	return toolItemArea;
     }
 
     /** 
      * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#isToggleLocation(int, int)
      */
-    public boolean isToggleLocation(int x, int y)
+    @Override
+	public boolean isToggleLocation(int x, int y)
     {
     	if( getGroup().getToolItems().length == 0 ) {
             if (y >= titleHeight - titleAreaHeight && y <= titleHeight) {
@@ -542,7 +555,8 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
     /** 
      * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#getClientArea()
      */
-    public Rectangle getClientArea()
+    @Override
+	public Rectangle getClientArea()
     {
         Rectangle area = getGroup().getBounds();
         area.x = margin;
@@ -562,7 +576,8 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
     /** 
      * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#computeTrim(int, int, int, int)
      */
-    public Rectangle computeTrim(int x, int y, int width, int height)
+    @Override
+	public Rectangle computeTrim(int x, int y, int width, int height)
     {
         Rectangle area = new Rectangle(x, y, width, height);
         area.x -= margin;
@@ -586,7 +601,8 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
     /** 
      * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#dispose()
      */
-    public void dispose()
+    @Override
+	public void dispose()
     {
         g1.dispose();
         g2.dispose();
@@ -682,20 +698,23 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
                 same = (gradientColors[i] == colors[i])
                        || ((gradientColors[i] == null) && (colors[i] == background))
                        || ((gradientColors[i] == background) && (colors[i] == null));
-                if (!same)
-                    break;
+                if (!same) {
+					break;
+				}
             }
             if (same)
             {
                 for (int i = 0; i < gradientPercents.length; i++)
                 {
                     same = gradientPercents[i] == percents[i];
-                    if (!same)
-                        break;
+                    if (!same) {
+						break;
+					}
                 }
             }
-            if (same && this.gradientVertical == vertical)
-                return;
+            if (same && this.gradientVertical == vertical) {
+				return;
+			}
         }
 
         // Store the new settings
@@ -708,11 +727,13 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
         else
         {
             gradientColors = new Color[colors.length];
-            for (int i = 0; i < colors.length; ++i)
-                gradientColors[i] = (colors[i] != null) ? colors[i] : background;
+            for (int i = 0; i < colors.length; ++i) {
+				gradientColors[i] = (colors[i] != null) ? colors[i] : background;
+			}
             gradientPercents = new int[percents.length];
-            for (int i = 0; i < percents.length; ++i)
-                gradientPercents[i] = percents[i];
+            for (int i = 0; i < percents.length; ++i) {
+				gradientPercents[i] = percents[i];
+			}
             gradientVertical = vertical;
         }
         // Refresh with the new settings
@@ -741,15 +762,17 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
         this.borderColor = borderColor;
     }
 
-    public void update()
+    @Override
+	public void update()
     {
         GC gc = new GC(getGroup());
 
         titleHeight = 0;
 
         int imageHeight = 0;
-        if (getGroup().getImage() != null)
-            imageHeight = getGroup().getImage().getBounds().height;
+        if (getGroup().getImage() != null) {
+			imageHeight = getGroup().getImage().getBounds().height;
+		}
         if ((getGroup().getImagePosition() & SWT.TOP) == 0)
         {
             titleHeight = Math.max(gc.getFontMetrics().getHeight() + (2 * titleTextMargin),
