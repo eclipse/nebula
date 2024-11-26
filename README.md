@@ -6,6 +6,7 @@ This repositority contains a large set of UI elements that can be used in fat or
 ## Download
 Downloads are available at the following location:
 * [https://download.eclipse.org/nebula/updates/](https://download.eclipse.org/nebula/updates/)
+* [Link to the archives](https://archive.eclipse.org/nebula/)
 
 These sites provide both mature, stable widgets as well as incubating widgets; the latter are clearly marked as *incubating* and may break API from release to release.
 
@@ -17,14 +18,12 @@ Refer to the [general document](https://eclipse.dev/justj/?page=tools#p2-anatomy
 * [Mailing List](https://dev.eclipse.org/mailman/listinfo/nebula-dev)
 
 ## Contribute
-
 We can accept your patches if you have [properly set up an account](https://github.com/eclipse-platform/.github/blob/main/CONTRIBUTING.md#setting-up-your-eclipse-and-github-account).
 
 For every patch we require a [corresponding GitHub issue](https://github.com/eclipse/nebula/issues).
 See the [recommended workflow](https://github.com/eclipse-platform/.github/blob/main/CONTRIBUTING.md#setting-up-your-eclipse-and-github-account) for guidelines.
 
 ## Setup a Development enviroment
-
 Please use the following automated setup to configure a development environment pull requests:
 
 [![Create Eclipse Development Environment for Eclipse Nebula](https://download.eclipse.org/oomph/www/setups/svg/Nebula.svg)](https://www.eclipse.org/setups/installer/?url=https://raw.githubusercontent.com/eclipse/nebula/master/configuration.setup&show=true "Click to open Eclipse-Installer Auto Launch or drag into your running installer")
@@ -35,6 +34,7 @@ After admin approval, pull requests get built by this job:
 
 ## Building locally
     git clone https://github.com/eclipse/nebula.git
+    cd nebula
     mvn verify
 
 More info can be found on Nebula's [Build Server](https://ci.eclipse.org/nebula/).
