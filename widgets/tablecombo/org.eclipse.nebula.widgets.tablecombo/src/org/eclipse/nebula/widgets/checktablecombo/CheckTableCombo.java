@@ -54,7 +54,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -283,12 +282,7 @@ public class CheckTableCombo extends Composite {
 	 * @see #removeModifyListener
 	 */
 	public void addModifyListener(final ModifyListener listener) {
-		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		final TypedListener typedListener = new TypedListener(listener);
-		addListener(SWT.Modify, typedListener);
+		addTypedListener(listener, SWT.Modify);
 	}
 
 	/**
@@ -316,14 +310,7 @@ public class CheckTableCombo extends Composite {
 	 * @see SelectionEvent
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
-		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-
-		final TypedListener typedListener = new TypedListener(listener);
-		addListener(SWT.Selection, typedListener);
-		addListener(SWT.DefaultSelection, typedListener);
+		addTypedListener(listener, SWT.Selection, SWT.DefaultSelection);
 	}
 
 	/**
@@ -395,12 +382,7 @@ public class CheckTableCombo extends Composite {
 	 * @since 3.3
 	 */
 	public void addVerifyListener(final VerifyListener listener) {
-		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		final TypedListener typedListener = new TypedListener(listener);
-		addListener(SWT.Verify, typedListener);
+		addTypedListener(listener, SWT.Verify);
 	}
 
 	/**
