@@ -120,9 +120,7 @@
   <setupTask
       xsi:type="setup.p2:P2Task">
     <repository
-        url="http://download.eclipse.org/nebula/snapshot"/>
-    <repository
-        url="http://download.eclipse.org/nebula/incubation/snapshot"/>
+        url="http://download.eclipse.org/nebula/updates/nightly/latest"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
   </setupTask>
   <setupTask
