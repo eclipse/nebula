@@ -11,7 +11,7 @@
         <listEntry value="org.eclipse.justj.p2.manager.args=-remote localhost:${nebula.git.clone.location}/releng/org.eclipse.nebula.site"/>
         <listEntry value="build.type=nightly"/>
         <listEntry value="git.commit=4140e9828cc4a0be360b761c54413efd5dcd0ded"/>
-        <listEntry value="target-platform=https://download.eclipse.org/releases/2024-03"/>
+        <listEntry value="target-platform=https://download.eclipse.org/releases/milestone"/>
     </listAttribute>
     <stringAttribute key="M2_RUNTIME" value="EMBEDDED"/>
     <booleanAttribute key="M2_SKIP_TESTS" value="false"/>

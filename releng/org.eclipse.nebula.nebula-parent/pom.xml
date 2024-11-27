@@ -33,7 +33,7 @@ Contributors:
 		<jacoco-version>0.8.9</jacoco-version>
 		<easymock-version>5.2.0</easymock-version>
 
-		<target-platform>https://download.eclipse.org/releases/latest</target-platform>
+		<target-platform>https://download.eclipse.org/releases/milestone</target-platform>
 
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
