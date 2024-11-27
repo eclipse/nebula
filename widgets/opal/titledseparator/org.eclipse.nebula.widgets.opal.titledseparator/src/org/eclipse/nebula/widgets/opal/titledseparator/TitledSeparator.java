@@ -146,9 +146,8 @@ public class TitledSeparator extends Composite {
 	 * Create a separator
 	 */
 	private void createSeparator() {
-		final Label separator = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.SHADOW_OUT);
+		final Label separator = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		separator.setBackground(getBackground());
 	}
 
 	/**
