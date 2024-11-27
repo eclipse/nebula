@@ -1500,6 +1500,7 @@ public class TableCombo extends Composite {
 		if (closeDropDown && isDropped()) {
 			dropDown(false);
 		}
+		recreatePopup();
 		final Rectangle rect = getClientArea();
 		final int width = rect.width;
 		final int height = rect.height;
