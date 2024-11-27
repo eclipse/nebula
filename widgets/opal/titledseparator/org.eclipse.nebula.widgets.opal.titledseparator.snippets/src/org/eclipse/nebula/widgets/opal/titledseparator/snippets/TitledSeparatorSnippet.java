@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.titledseparator.snippets;
 
+import java.io.ByteArrayInputStream;
+import java.util.Base64;
+
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.nebula.widgets.opal.titledseparator.TitledSeparator;
 import org.eclipse.swt.SWT;
@@ -28,6 +31,24 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class TitledSeparatorSnippet {
 
+	private static final String IMAGE = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M"
+		+ "/3AAAAB3RJTUUH2woHCQsOaNepFwAAAAlwSFlzAAAewgAAHsIBbtB1"
+		+ "PgAAAARnQU1BAACxjwv8YQUAAAI+SURBVHjalVF7SNNRFP5+mzhkGbX"
+		+ "IZSqyBg2igtQFTsyBKURJjB7EgkhSe+wP6QG9/7WCaaRgFEWjKKEsMh"
+		+ "2Z6VZiVKQLVKYVuVyauWCQSkG636l7ZXev+qMP7j2H8/ju/c6RiAgMC"
+		+ "nY1nygjSUS0pZ3U+nKIwCLnCxdSuUlLzOcll5xfqedTCLKvG6InDM42"
+		+ "7aylPaWZ8xlWce/4Fnr9PjjPMdVmp4rZQzx51FUY4fC03yfXdRv3v/"
+		+ "2QccEZkJifFCYf839G1dlGxIMz5FnraF91BbxQIjDB/4H8LwT9utHIE"
+		+ "xcfDJLjrpf7qiVquA8UQL1mkZSgIx7iD/Ydy0i9OBlTw9+x8rADFotF"
+		+ "EsIZDKadMOZsRjBVhVb7wUSGomIzt6dNJXje9SxWBRu7PnsFvPXbedD"
+		+ "mqcZkx0b+hMRGODFF6JxTCYkZ8gy6m2+h984RSYGGEtxseiKSYbh3U+QJ"
+		+ "hm3HmmjkFSBnKrGrWIeTlUYppiAa0XsJTf6EUpsCvfWykJ6wimiwea2dm"
+		+ "Ub/glTRzCwbz5xSi9pHAzEkSfGMuuzlKDp1A/l+F/zjclTcjMeOyoTfKuI"
+		+ "DPsMZtNWUcz8rSycOa2a5f0po6QvS/pohuBry4CMF2sd+iSI2YXP6LHI1I"
+		+ "ZTZ+nD1XA625moiQ3xbZySDvgCNgQ14s3QT0tLlmLXI40Fuh/8otib7UZ1"
+		+ "2G4NdPVhf3yvxqlV7r/HAaL8bHx56eDMjETozNPwEWgaQMvIU7z6+wOqqK3"
+		+ "/fwv/iN7ZiFLq3HVKbAAAAAElFTkSuQmCC";
+
 	/**
 	 * @param args
 	 */
@@ -35,8 +56,9 @@ public class TitledSeparatorSnippet {
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
 		shell.setLayout(new GridLayout(1, false));
-
-		final Image icon = new Image(display, TitledSeparatorSnippet.class.getResourceAsStream("user.png"));
+		
+		final byte[] imageBytes = Base64.getDecoder().decode(IMAGE);
+        	final Image icon = new Image(display, new ByteArrayInputStream(imageBytes));
 		final Font font = new Font(display, "Courier New", 18, SWT.BOLD | SWT.ITALIC);
 
 		// Default separator (no image, title aligned on the left)
