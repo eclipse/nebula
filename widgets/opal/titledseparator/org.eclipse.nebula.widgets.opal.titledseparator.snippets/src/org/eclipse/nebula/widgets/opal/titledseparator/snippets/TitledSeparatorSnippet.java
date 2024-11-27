@@ -57,8 +57,8 @@ public class TitledSeparatorSnippet {
 		final Shell shell = new Shell(display);
 		shell.setLayout(new GridLayout(1, false));
 		
-		byte[] imageBytes = Base64.getDecoder().decode(IMAGE);
-        final Image icon = new Image(display, new ByteArrayInputStream(imageBytes));
+		final byte[] imageBytes = Base64.getDecoder().decode(IMAGE);
+        	final Image icon = new Image(display, new ByteArrayInputStream(imageBytes));
 		final Font font = new Font(display, "Courier New", 18, SWT.BOLD | SWT.ITALIC);
 
 		// Default separator (no image, title aligned on the left)
