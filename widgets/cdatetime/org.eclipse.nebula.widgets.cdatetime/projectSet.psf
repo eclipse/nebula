@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <psf version="2.0">
 <provider id="org.eclipse.egit.core.GitProvider">
-<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/cdatetime/org.eclipse.nebula.jface.cdatetime"/>
-<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime"/>
-<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.example"/>
-<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.feature"/>
-<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.snippets"/>
-<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.tests"/>
+<project reference="1.0,https://github.com/EclipseNebula/nebula.git,master,widgets/cdatetime/org.eclipse.nebula.jface.cdatetime"/>
+<project reference="1.0,https://github.com/EclipseNebula/nebula.git,master,widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime"/>
+<project reference="1.0,https://github.com/EclipseNebula/nebula.git,master,widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.example"/>
+<project reference="1.0,https://github.com/EclipseNebula/nebula.git,master,widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.feature"/>
+<project reference="1.0,https://github.com/EclipseNebula/nebula.git,master,widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.snippets"/>
+<project reference="1.0,https://github.com/EclipseNebula/nebula.git,master,widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.tests"/>
 </provider>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704597612_5" label="CDateTime" name="CDateTime">
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.cdatetime.feature" type="4"/>

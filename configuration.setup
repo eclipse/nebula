@@ -20,18 +20,18 @@
       label="Nebula Installation">
     <productVersion
         href="index:/org.eclipse.setup#//@productCatalogs[name='org.eclipse.products']/@products[name='epp.package.committers']/@versions[name='latest']"/>
-    <description>The Nebula installation provides the tools needed to work with  the set of projects from &lt;a href=&quot;https://github.com/eclipse/nebula&quot;>Nebula's GitHub repository&lt;/a>.</description>
+    <description>The Nebula installation provides the tools needed to work with  the set of projects from &lt;a href=&quot;https://github.com/EclipseNebula/nebula&quot;>Nebula's GitHub repository&lt;/a>.</description>
   </installation>
   <workspace
       name="nebula.workspace"
       label="Nebula Workspace">
     <stream
         href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@projects[name='nebula']/@streams[name='master']"/>
-    <description>The Nebula workspace provides the set of projects from &lt;a href=&quot;https://github.com/eclipse/nebula&quot;>Nebula'SimRel GitHub repository&lt;/a>.</description>
+    <description>The Nebula workspace provides the set of projects from &lt;a href=&quot;https://github.com/EclipseNebula/nebula&quot;>Nebula'SimRel GitHub repository&lt;/a>.</description>
   </workspace>
   <description>
     &lt;p>
-    The Nebula configuration provisions a dedicated development environment for working with the set of projects from &lt;a href=&quot;https://github.com/eclipse/Nebula&quot;>Nebula's GitHub repository&lt;/a>.
+    The Nebula configuration provisions a dedicated development environment for working with the set of projects from &lt;a href=&quot;https://github.com/EclipseNebula/nebula&quot;>Nebula's GitHub repository&lt;/a>.
     &lt;/p>
     &lt;p>
     The installation is based on the latest EPP Committers package,

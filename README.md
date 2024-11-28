@@ -13,27 +13,27 @@ These sites provide both mature, stable widgets as well as incubating widgets; t
 Refer to the [general document](https://eclipse.dev/justj/?page=tools#p2-anatomy) for details about the update site structure.
 
 ## Contact
-* [Issues](https://github.com/eclipse/nebula/issues)
-* [Questions](https://github.com/eclipse/nebula/discussions) 
+* [Issues](https://github.com/EclipseNebula/nebula/issues)
+* [Questions](https://github.com/EclipseNebula/nebula/discussions) 
 * [Mailing List](https://dev.eclipse.org/mailman/listinfo/nebula-dev)
 
 ## Contribute
 We can accept your patches if you have [properly set up an account](https://github.com/eclipse-platform/.github/blob/main/CONTRIBUTING.md#setting-up-your-eclipse-and-github-account).
 
-For every patch we require a [corresponding GitHub issue](https://github.com/eclipse/nebula/issues).
+For every patch we require a [corresponding GitHub issue](https://github.com/EclipseNebula/nebula/issues).
 See the [recommended workflow](https://github.com/eclipse-platform/.github/blob/main/CONTRIBUTING.md#setting-up-your-eclipse-and-github-account) for guidelines.
 
 ## Setup a Development enviroment
 Please use the following automated setup to configure a development environment pull requests:
 
-[![Create Eclipse Development Environment for Eclipse Nebula](https://download.eclipse.org/oomph/www/setups/svg/Nebula.svg)](https://www.eclipse.org/setups/installer/?url=https://raw.githubusercontent.com/eclipse/nebula/master/configuration.setup&show=true "Click to open Eclipse-Installer Auto Launch or drag into your running installer")
+[![Create Eclipse Development Environment for Eclipse Nebula](https://download.eclipse.org/oomph/www/setups/svg/Nebula.svg)](https://www.eclipse.org/setups/installer/?url=https://raw.githubusercontent.com/EclipseNebula/nebula/master/configuration.setup&show=true "Click to open Eclipse-Installer Auto Launch or drag into your running installer")
 
 ## Building on our build server
 After admin approval, pull requests get built by this job:
  * [Pull Request Builds](https://ci.eclipse.org/nebula/job/nebula-build/view/change-requests/)
 
 ## Building locally
-    git clone https://github.com/eclipse/nebula.git
+    git clone https://github.com/EclipseNebula/nebula.git
     cd nebula
     mvn verify
 

@@ -19,16 +19,13 @@ more.
 
 The project maintains the following source code repositories
 
-* https://git.eclipse.org/r/plugins/gitiles/nebula/org.eclipse.nebula
-* https://github.com/eclipse/nebula
+* https://github.com/EclipseNebula/nebula
 
-This project uses Bugzilla to track ongoing development and issues.
+This project uses issues  to track ongoing development and issues.
 
-* Search for issues: https://bugs.eclipse.org/bugs/buglist.cgi?product=Nebula
-* Create a new report:
-   https://bugs.eclipse.org/bugs/enter_bug.cgi?product=Nebula
+* https://github.com/EclipseNebula/nebula/issues
 
-Be sure to search for existing bugs before you create another one. Remember that
+Be sure to search for existing issues before you create another one. Remember that
 contributions are always welcome!
 
 ## Eclipse Contributor Agreement

@@ -121,7 +121,7 @@ public class PaperclipsExampleTab extends AbstractExampleTab {
 
 	public String[] createLinks() {
 		String[] links = {
-				"<a href=\"https://github.com/eclipse/nebula/tree/master/widgets/paperclips/org.eclipse.nebula.paperclips.snippets/src/org/eclipse/nebula/paperclips/snippets\" >Paperclips Snippets</a>" };
+				"<a href=\"https://github.com/EclipseNebula/nebula/tree/master/widgets/paperclips/org.eclipse.nebula.paperclips.snippets/src/org/eclipse/nebula/paperclips/snippets\" >Paperclips Snippets</a>" };
 		return links;
 	}
 }

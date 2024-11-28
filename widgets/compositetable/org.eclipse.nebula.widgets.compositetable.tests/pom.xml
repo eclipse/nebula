@@ -27,7 +27,7 @@ Contributors:
 	<packaging>eclipse-test-plugin</packaging>
 
 	<properties>
-		<!-- Currently, test fails see https://github.com/eclipse/nebula/issues/396 -->
+		<!-- Currently, test fails see https://github.com/EclipseNebula/nebula/issues/396 -->
 		<skipTests>true</skipTests>
 	</properties>
 

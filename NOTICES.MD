@@ -26,8 +26,7 @@ SPDX-License-Identifier: EPL-2.0
 
 The project maintains the following source code repositories:
 
-* https://git.eclipse.org/r/plugins/gitiles/nebula/org.eclipse.nebula
-* https://github.com/eclipse/nebula
+* https://github.com/EclipseNebula/nebula/issues
 
 ## Third-party Content
 
