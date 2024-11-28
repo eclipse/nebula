@@ -44,7 +44,7 @@ Contributors:
 		<!-- When running in children tests/* modules, all reports will be in ../target/jacoco.exec -->
 		<sonar.jacoco.reportPath>../target/jacoco.exec</sonar.jacoco.reportPath>
 
-		<tycho.scmUrl>scm:git:https://github.com/eclipse/nebula/</tycho.scmUrl>
+		<tycho.scmUrl>scm:git:https://github.com/EclipseNebula/nebula/</tycho.scmUrl>
 
 		<!-- update site promotion -->
 		<eclipse.repo>https://download.eclipse.org/releases/latest</eclipse.repo>
@@ -286,12 +286,12 @@ Contributors:
 	</mailingLists>
 
 	<issueManagement>
-		<url>https://github.com/eclipse/nebula/issues</url>
+		<url>https://github.com/EclipseNebula/nebula/issues</url>
 		<system>Github</system>
 	</issueManagement>
 
 	<scm>
-		<url>https://github.com/eclipse/nebula</url>
+		<url>https://github.com/EclipseNebula/nebula</url>
 	</scm>
 
 	<licenses>

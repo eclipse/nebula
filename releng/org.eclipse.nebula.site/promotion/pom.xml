@@ -81,7 +81,7 @@ SPDX-License-Identifier: EPL-2.0
                               ${org.eclipse.justj.p2.manager.relative}
                               -version-iu org.eclipse.nebula.feature.feature.group
                               -commit
-                              https://github.com/eclipse/nebula/commit/${git.commit}
+                              https://github.com/EclipseNebula/nebula/commit/${git.commit}
                               -target-url
                               https://download.eclipse.org/nebula
                               -promote

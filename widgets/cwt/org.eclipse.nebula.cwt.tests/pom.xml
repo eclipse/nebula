@@ -30,7 +30,7 @@ Contributors:
 	<version>1.0.0-SNAPSHOT</version>
 
 	<properties>
-		<!-- Currently, test fails see https://github.com/eclipse/nebula/issues/396 -->
+		<!-- Currently, test fails see https://github.com/EclipseNebula/nebula/issues/396 -->
 		<skipTests>true</skipTests>
 	</properties>
 
