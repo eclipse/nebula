@@ -150,7 +150,7 @@ public class MaskFormatter extends AbstractFormatter {
 		for (int i = 0; i < editValue.length(); i++) {
 			char c = editPattern.charAt(i);
 			if (c == P_DIGIT || c == P_ALPHANUM || c == P_UPPERCASE
-					|| c == P_LOWERCASE || c == P_UHEXDIGIT || c != P_LHEXDIGIT) {
+					|| c == P_LOWERCASE || c == P_UHEXDIGIT || c == P_LHEXDIGIT) {
 				value.append(editValue.charAt(i));
 			}
 		}
