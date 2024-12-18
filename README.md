@@ -1,7 +1,9 @@
 # Nebula and Opal: Rich SWT Widgets
 Welcome to the [Eclipse Nebula project](https://projects.eclipse.org/projects/technology.nebula).
 
-This repositority contains a large set of UI elements that can be used in fat or thin client applications based on Java and SWT.
+This repository contains a large set of UI elements that can be used in applications based on Java and SWT.
+See [Nebula Widgets](https://github.com/EclipseNebula/nebula/blob/master/docs/Widgets.md) for information about the available widgets.
+
 
 ## Download
 Downloads are available at the following location:
